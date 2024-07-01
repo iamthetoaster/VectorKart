@@ -12,15 +12,11 @@ if (!gl) {
 
 
 async function setup() {
+    let fragmentResponse = await fetch("shaders/fragment_shader.glsl");
+    let vertexResponse = await fetch("shaders/vertex_shader.glsl");
 
-    let fragmentPromise = fetch("fragment_shader.glsl");
-    let vertexPromise = fetch("vertex_shader.glsl");
-
-    // consider shader embedded in string
-
-    let vertexShaderSource = await (await vertexPromise).text();
-
-    let fragmentShaderSource = await (await fragmentPromise).text();
+    let vertexShaderSource = await vertexResponse.text();
+    let fragmentShaderSource = await fragmentResponse.text();
 
 
     let vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
@@ -33,7 +29,7 @@ async function setup() {
     let positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    let obj = await fetch("meat-tenderizer.obj")
+    let obj = await fetch("resources/meat-tenderizer.obj")
         .then((response) => response.text())
         .then((text) => parseObjText(text));
     console.log(obj);
