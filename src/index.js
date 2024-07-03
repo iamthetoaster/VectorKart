@@ -1,4 +1,4 @@
-import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./modules/webgl_utils.js"
+import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./webgl_utils.js"
 "use strict";
 
 
@@ -12,8 +12,8 @@ if (!gl) {
 
 
 async function setup() {
-    let fragmentResponse = await fetch("shaders/fragment_shader.glsl");
-    let vertexResponse = await fetch("shaders/vertex_shader.glsl");
+    let fragmentResponse = await fetch("/resources/shaders/fragment_shader.glsl");
+    let vertexResponse = await fetch("/resources/shaders/vertex_shader.glsl");
 
     let vertexShaderSource = await vertexResponse.text();
     let fragmentShaderSource = await fragmentResponse.text();
@@ -29,7 +29,7 @@ async function setup() {
     let positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    let obj = await fetch("resources/meat-tenderizer.obj")
+    let obj = await fetch("/resources/models/meat-tenderizer.obj")
         .then((response) => response.text())
         .then((text) => parseObjText(text));
     console.log(obj);
