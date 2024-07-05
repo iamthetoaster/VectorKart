@@ -8,10 +8,6 @@ export class GameController {
         // generate map
         // load cars/objects
             // store all objects in an array for rendering
-
-        // click input callback for testing
-        let canvas = document.querySelector("canvas");
-        canvas.addEventListener("click", this.update, false);
     }
 
     // likely need a time param
@@ -28,6 +24,4 @@ export class GameController {
         // recursive draw callback
         requestAnimationFrame(draw);
     }
-
-
 }
