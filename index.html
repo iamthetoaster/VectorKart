@@ -6,11 +6,7 @@
         <title>Untitled</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
         <link rel="stylesheet" href="/src/style.css">
-        <!-- Place favicon.ico in the root directory -->
-
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -20,11 +16,15 @@
             your experience.
             </p>
         <![endif]-->
-
+    
+        <!-- Car Image -->
+        <img id="car" src="resources/objects/car.webp" alt="Car" style="position: absolute; left: 0; top: 0; z-index: 10;">
+    
+        <!-- WebGL Canvas -->
         <canvas id="c"></canvas>
 
+        <!-- Scripts -->
         <script type="module" src="/src/index.js"></script>
         <script type="module" src="/src/webgl_utils.js"></script>
-
     </body>
 </html>
