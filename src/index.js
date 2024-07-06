@@ -1,5 +1,6 @@
+// FIXME: Move WebGL code into RenderEngine and RenderObject
 import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./webgl_utils.js"
-import { VectorRace } from "./engine/VectorRace.js"
+import { VectorRace } from "./state-objects/VectorRace.js"
 "use strict";
 
 
