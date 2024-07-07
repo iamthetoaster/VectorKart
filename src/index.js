@@ -1,15 +1,13 @@
 import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./webgl_utils.js"
+import { mat4, radToDeg, degToRad } from "./math_utils.js"
 "use strict";
 
 
 let canvas = document.querySelector("#c");
 let gl = canvas.getContext("webgl2");
 if (!gl) {
-  console.log("AHH");
+    console.log("AHH");
 }
-
-
-
 
 async function setup() {
     let fragmentResponse = await fetch("/resources/shaders/fragment_shader.glsl");
@@ -26,26 +24,32 @@ async function setup() {
 
     let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
+    let matrixLocation = gl.getUniformLocation(program, "u_matrix");
+
+
     let positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     let obj = await fetch("/resources/models/meat-tenderizer.obj")
         .then((response) => response.text())
         .then((text) => parseObjText(text));
-    console.log(obj);
+    // console.log(obj);
 
-  let positions = obj.map((vert) => {
-    return vert.position;
+    let positions = obj.map((vert) => {
+        return vert.position;
 
-  });
-  let count = positions.length;
-  console.log(positions);
-  positions = positions.flat();
+    });
+    let count = positions.length;
+    console.log(positions);
+    positions = positions.flat();
     // [
     //   0, 0, 0, 1,
     //   0, 0, 0.5, 1,
     //   0.7, 0, 0, 1,
     // ];
+
+    console.log(Math.min(...positions));
+    console.log(Math.max(...positions));
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -59,7 +63,7 @@ async function setup() {
     let stride = 0;
     let offset = 0;
     gl.vertexAttribPointer(
-      positionAttributeLocation, size, type, normalize, stride, offset);
+        positionAttributeLocation, size, type, normalize, stride, offset);
 
     resizeCanvasToDisplaySize(canvas);
 
@@ -70,6 +74,19 @@ async function setup() {
 
     gl.useProgram(program);
     gl.bindVertexArray(vao);
+
+    let translation = [45, 100, 0];
+    let rotation = [degToRad(40), degToRad(25), degToRad(325)];
+    let scale = [100, 100, 100];
+
+    let matrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+    matrix = mat4.translate(matrix, translation[0], translation[1], translation[2]);
+    matrix = mat4.xRotate(matrix, rotation[0]);
+    matrix = mat4.yRotate(matrix, rotation[1]);
+    matrix = mat4.zRotate(matrix, rotation[2]);
+    matrix = mat4.scale(matrix, scale[0], scale[1], scale[2]);
+
+    gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
     let primitiveType = gl.TRIANGLES;
     offset = 0;

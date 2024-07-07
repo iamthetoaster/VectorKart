@@ -78,16 +78,16 @@ function parseObjText(text) {
 }
 
 function createShader(gl, type, source) {
-    let shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (success) {
-        return shader;
-    }
+  let shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (success) {
+    return shader;
+  }
 
-    console.log(gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
+  console.log(gl.getShaderInfoLog(shader));
+  gl.deleteShader(shader);
 }
 
 function createProgram(gl, vertexShader, fragmentShader) {
@@ -107,15 +107,15 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 
 function resizeCanvasToDisplaySize(canvas, multiplier) {
-    multiplier = multiplier || 1;
-    const width  = canvas.clientWidth  * multiplier | 0;
-    const height = canvas.clientHeight * multiplier | 0;
-    if (canvas.width !== width ||  canvas.height !== height) {
-        canvas.width  = width;
-        canvas.height = height;
-        return true;
-    }
-    return false;
+  multiplier = multiplier || 1;
+  const width  = canvas.clientWidth  * multiplier | 0;
+  const height = canvas.clientHeight * multiplier | 0;
+  if (canvas.width !== width ||  canvas.height !== height) {
+    canvas.width  = width;
+    canvas.height = height;
+    return true;
+  }
+  return false;
 }
 
 export { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram };
