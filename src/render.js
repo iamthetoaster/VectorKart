@@ -38,6 +38,12 @@ let render = {
 
     render.makeModel("car", obj, program);
 
+    // transform data for model
+    render.models.car.transform.translation = [200, 200, 0];
+    render.models.car.transform.rotation = [degToRad(40), degToRad(25), 0];
+    render.models.car.transform.scale = [100, 100, 100];
+
+
     requestAnimationFrame(render.draw);
   },
 
@@ -58,11 +64,7 @@ let render = {
     gl.clearColor(0,0,0,0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // transform data for model
-    render.models.car.transform.translation = [200, 200, 0];
-    render.models.car.transform.rotation = [degToRad(40), degToRad(25), time / 1000];
-    render.models.car.transform.scale = [100, 100, 100];
-
+    render.models.car.transform.translation[0] = 200 + 100 * Math.sin(performance.now() / 1000);
 
     render.models.car.draw();
 
@@ -146,6 +148,7 @@ let render = {
         transformMatrix = mat4.yRotate(transformMatrix, rotation[1]);
         transformMatrix = mat4.zRotate(transformMatrix, rotation[2]);
         transformMatrix = mat4.scale(transformMatrix, scale[0], scale[1], scale[2]);
+
 
         gl.uniformMatrix4fv(this.matrixLocation, false, transformMatrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount);
