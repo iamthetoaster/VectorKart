@@ -1,11 +1,13 @@
+// FIXME: Move WebGL code into RenderEngine and RenderObject
 import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./webgl_utils.js"
+import { VectorRace } from "./state-objects/VectorRace.js"
 "use strict";
 
 
 let canvas = document.querySelector("#c");
 let gl = canvas.getContext("webgl2");
 if (!gl) {
-  console.log("AHH");
+    console.log("AHH");
 }
 
 
@@ -30,17 +32,17 @@ async function setup() {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     let obj = await fetch("/resources/models/meat-tenderizer.obj")
-        .then((response) => response.text())
-        .then((text) => parseObjText(text));
+      .then((response) => response.text())
+      .then((text) => parseObjText(text));
     console.log(obj);
 
-  let positions = obj.map((vert) => {
-    return vert.position;
+    let positions = obj.map((vert) => {
+      return vert.position;
 
-  });
-  let count = positions.length;
-  console.log(positions);
-  positions = positions.flat();
+    });
+    let count = positions.length;
+    console.log(positions);
+    positions = positions.flat();
     // [
     //   0, 0, 0, 1,
     //   0, 0, 0.5, 1,
@@ -65,7 +67,7 @@ async function setup() {
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    gl.clearColor(0,0,0,0);
+    gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.useProgram(program);
@@ -74,6 +76,10 @@ async function setup() {
     let primitiveType = gl.TRIANGLES;
     offset = 0;
     gl.drawArrays(primitiveType, offset, count);
+
+    let vectorRace = new VectorRace();
+    vectorRace.init();
 }
 
 setup();
+

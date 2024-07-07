@@ -1,3 +1,4 @@
+// FIXME: Move WebGL code into RenderEngine and RenderObject
 "use strict";
 
 // todo figure out modules export import
