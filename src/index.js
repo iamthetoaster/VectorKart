@@ -8,6 +8,9 @@ if (!gl) {
   console.log("AHH");
 }
 
+
+
+
 async function setup() {
     let fragmentResponse = await fetch("/resources/shaders/fragment_shader.glsl");
     let vertexResponse = await fetch("/resources/shaders/vertex_shader.glsl");
@@ -74,4 +77,3 @@ async function setup() {
 }
 
 setup();
-
