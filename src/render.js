@@ -3,14 +3,13 @@ import { mat4, radToDeg, degToRad } from "./math_utils.js"
 
 "use strict";
 
-let models = {};
 let gl = null;
-let car_model = null;
 
 let render = {
   setup: async function (canvas) {
 
     gl = canvas.getContext("webgl2");
+    render.gl = gl;
     if (!gl) {
       console.log("AHH");
     }
@@ -37,18 +36,21 @@ let render = {
     // set program and vao
     gl.useProgram(program);
 
-    car_model = render.makeModel("car", obj, program);
-    // resizing canvas
-    resizeCanvasToDisplaySize(canvas);
+    render.makeModel("car", obj, program);
 
     requestAnimationFrame(render.draw);
   },
 
   draw: function(time) {
+
+    let deltaTime = render.lastTime !== null ? time - render.lastTime : 0;
     // enabling gl features
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
+
+    // resizing canvas
+    resizeCanvasToDisplaySize(gl.canvas);
     // setting viewport
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -57,21 +59,12 @@ let render = {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // transform data for model
-    let translation = [100, 100, 0];
-    let rotation = [degToRad(40), degToRad(25), time / 1000];
-    let scale = [100, 100, 100];
+    render.models.car.transform.translation = [200, 200, 0];
+    render.models.car.transform.rotation = [degToRad(40), degToRad(25), time / 1000];
+    render.models.car.transform.scale = [100, 100, 100];
 
-    // generating matrix from transform data
-    let matrix = mat4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
-    matrix = mat4.translate(matrix, translation[0], translation[1], translation[2]);
-    matrix = mat4.xRotate(matrix, rotation[0]);
-    matrix = mat4.yRotate(matrix, rotation[1]);
-    matrix = mat4.zRotate(matrix, rotation[2]);
-    matrix = mat4.scale(matrix, scale[0], scale[1], scale[2]);
 
-    render.models[car_model].transformMatrix = matrix;
-
-    render.models[car_model].draw();
+    render.models.car.draw();
 
     requestAnimationFrame(render.draw);
   },
@@ -132,18 +125,36 @@ let render = {
       vertexCount: count,
       matrixLocation: matrixLocation,
 
-      transformMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+      transform: {
+        translation: [0, 0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+      },
 
       draw: function () {
         gl.useProgram(this.program);
         gl.bindVertexArray(this.vao);
-        gl.uniformMatrix4fv(this.matrixLocation, false, this.transformMatrix);
+
+        let translation = this.transform.translation;
+        let rotation = this.transform.rotation;
+        let scale = this.transform.scale;
+
+        // generating transformMatrix from transform data
+        let transformMatrix = mat4.projection(render.gl.canvas.clientWidth, render.gl.canvas.clientHeight, 400);
+        transformMatrix = mat4.translate(transformMatrix, translation[0], translation[1], translation[2]);
+        transformMatrix = mat4.xRotate(transformMatrix, rotation[0]);
+        transformMatrix = mat4.yRotate(transformMatrix, rotation[1]);
+        transformMatrix = mat4.zRotate(transformMatrix, rotation[2]);
+        transformMatrix = mat4.scale(transformMatrix, scale[0], scale[1], scale[2]);
+
+        gl.uniformMatrix4fv(this.matrixLocation, false, transformMatrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount);
       },
     }
     render.models[name] = model;
     return name;
-  }
+  },
+  lastTime: null,
 };
 
 export { render };
