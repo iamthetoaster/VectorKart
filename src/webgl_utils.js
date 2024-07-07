@@ -45,7 +45,7 @@ function parseObjText(text) {
       case "f": {
         // console.log("Face:");
 
-        let faceVerts = tokens.slice(1).map((token) => {
+        let faceVerts = tokens.slice(1).filter((token) => token.length > 0).map((token) => {
           let indices = token.split("/").map(Number);
           while (indices.length < 3) {
             indices.push(0);
