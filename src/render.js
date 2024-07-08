@@ -36,11 +36,16 @@ let render = {
     // set program and vao
     gl.useProgram(program);
 
+    render.camera = {
+      position: [1000, 1000, 0],
+      target: [0, 0, 0],
+    }
+
     render.makeModel("car", obj, program);
 
     // transform data for model
-    render.models.car.transform.translation = [200, 200, 0];
-    render.models.car.transform.rotation = [degToRad(40), degToRad(25), 0];
+    render.models.car.transform.translation = [0, 0, 0];
+    render.models.car.transform.rotation = [0, degToRad(25), 0];
     render.models.car.transform.scale = [100, 100, 100];
 
 
@@ -64,7 +69,23 @@ let render = {
     gl.clearColor(0,0,0,0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    render.models.car.transform.translation[0] = 200 + 100 * Math.sin(performance.now() / 1000);
+    // Compute the camera's matrix
+    let up = [0, 1, 0];
+    let cameraMatrix = mat4.lookAt(render.camera.position, render.camera.target, up);
+
+    let viewMatrix = mat4.inverse(cameraMatrix);
+
+    let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    let zNear = 1;
+    let zFar = 2000;
+    let fov = 0.5;
+    render.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+
+    //render.models.car1.transform.translation[0] = 100 * Math.sin(performance.now() / 3000);
+    //render.models.car1.transform.rotation[1] = performance.now() / 1000;
+
+    //render.models.car2.transform.translation[1] = 100 * Math.sin(performance.now() / 1000);
+    //render.models.car2.transform.rotation[1] = performance.now() / 800;
 
     render.models.car.draw();
 
@@ -142,7 +163,7 @@ let render = {
         let scale = this.transform.scale;
 
         // generating transformMatrix from transform data
-        let transformMatrix = mat4.projection(render.gl.canvas.clientWidth, render.gl.canvas.clientHeight, 400);
+        let transformMatrix = render.viewProjectionMatrix;
         transformMatrix = mat4.translate(transformMatrix, translation[0], translation[1], translation[2]);
         transformMatrix = mat4.xRotate(transformMatrix, rotation[0]);
         transformMatrix = mat4.yRotate(transformMatrix, rotation[1]);
