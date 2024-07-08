@@ -1,6 +1,6 @@
 import { render } from "./render.js"
 import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./webgl_utils.js"
-import { VectorRace } from "./state-objects/VectorRace.js"
+import VectorRace from "./state-objects/VectorRace.js"
 "use strict";
 
 

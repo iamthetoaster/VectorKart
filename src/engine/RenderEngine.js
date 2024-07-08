@@ -1,24 +1,29 @@
 "use strict";
 
+// import GameController from "./GameController";
+
 export default class RenderEngine {
 
     run() {
-        this.draw()
+        this.draw();
+        // requestAnimationFrame();
     }
 
     update(callback) {
         this.runUpdate = callback;
+        console.log("update(callback)");
     }
 
-    runUpdate() {
+    runUpdate(time) {
         console.warn("Not Implemented");
     }
 
-    draw(time) {
+    draw = (time) => {
         time *= 0.005; // convert to seconds
-
-        this.runUpdate();
+    
+        this.runUpdate(time); // updates rendering logic/contents
+    
         // recursive draw callback
-        requestAnimationFrame(draw);
+        requestAnimationFrame(this.draw);
     }
 }
