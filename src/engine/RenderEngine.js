@@ -1,21 +1,22 @@
 "use strict";
 
-// import GameController from "./GameController";
+import GameController from "./GameController";
 
 export default class RenderEngine {
 
     run() {
         this.draw();
-        // requestAnimationFrame();
     }
 
+    // sets runUpdate callback (for frame updating)
     update(callback) {
         this.runUpdate = callback;
         console.log("update(callback)");
     }
 
+    // callback for updating frame, animations and such
     runUpdate(time) {
-        console.warn("Not Implemented");
+        console.warn("Not Implemented"); // callback, currently set to GameController.frameUpdate()
     }
 
     draw = (time) => {
