@@ -11,6 +11,7 @@ export default class VectorRace {
     }
 
     init() {
+        // initialize game state, state machine
     }
 
     run() {
