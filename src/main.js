@@ -5,7 +5,8 @@ import GameController from "./engine/GameController.js";
 const canvasId = "c";
 const game = new GameController();
 
-document.getElementById(canvasId);
-canvasId.addEventListener(game.clickUpdate);
+// Retrieve the actual canvas element and then add the event listener
+const canvas = document.getElementById(canvasId);
+canvas.addEventListener('click', (event) => game.clickUpdate(event));
 
 game.run();
