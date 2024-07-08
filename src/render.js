@@ -3,12 +3,10 @@ import { mat4, radToDeg, degToRad } from "./math_utils.js"
 
 "use strict";
 
-let gl = null;
-
 let render = {
   setup: async function (canvas) {
 
-    gl = canvas.getContext("webgl2");
+    let gl = canvas.getContext("webgl2");
     render.gl = gl;
     if (!gl) {
       console.log("AHH");
@@ -28,7 +26,6 @@ let render = {
 
     // building program from shaders
     let program = createProgram(gl, vertexShader, fragmentShader);
-
 
     // set program and vao
     gl.useProgram(program);
@@ -119,7 +116,6 @@ let render = {
     let offset = 0;
     gl.vertexAttribPointer(
       positionAttributeLocation, size, type, normalize, stride, offset);
-
 
     // ditto for normals
     let normals = obj.map((vert) => {
