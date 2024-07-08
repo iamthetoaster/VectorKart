@@ -23,5 +23,5 @@ render.setup(canvas).then(() => {
     //render.models.car.velocity?
 });
 canvas.addEventListener("click", () => {
-    render.models.car.transform.rotation[1] = performance.now() / 1000;
+    // render.models.car.transform.rotation[1] = performance.now() / 1000;
 });

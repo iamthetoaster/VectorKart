@@ -35,15 +35,6 @@ let render = {
       target: [0, 0, 0],
     }
 
-
-
-
-    // transform data for model
-    render.models.car.transform.translation = [200, 200, 0];
-    render.models.car.transform.rotation = [degToRad(40), degToRad(25), 0];
-    render.models.car.transform.scale = [100, 100, 100];
-
-
     requestAnimationFrame(render.draw);
   },
 
