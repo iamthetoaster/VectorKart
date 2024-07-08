@@ -21,4 +21,4 @@ render.setup(canvas).then(() => {
 let button = document.querySelector("#testButton");
 canvas.addEventListener("click", () => {
     render.models.car.transform.rotation[1] = performance.now() / 1000;
-})
+});
