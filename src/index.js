@@ -1,12 +1,10 @@
 import { render } from "./render.js"
 import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "./webgl_utils.js"
-import { VectorRace } from "./engine/VectorRace.js"
-
+import { VectorRace } from "./state-objects/VectorRace.js"
 "use strict";
 
 
 let canvas = document.querySelector("#c");
-<<<<<<< HEAD
 render.setup(canvas).then(() => {
     fetch("/resources/models/race.obj")
         .then((response) => response.text())
