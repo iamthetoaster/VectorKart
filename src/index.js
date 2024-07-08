@@ -22,7 +22,6 @@ render.setup(canvas).then(() => {
     render.models.car.transform.scale = [100, 100, 100];
     //render.models.car.velocity?
 });
-let button = document.querySelector("#testButton");
 canvas.addEventListener("click", () => {
     render.models.car.transform.rotation[1] = performance.now() / 1000;
 });

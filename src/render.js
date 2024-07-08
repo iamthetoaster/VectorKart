@@ -38,6 +38,12 @@ let render = {
 
 
 
+    // transform data for model
+    render.models.car.transform.translation = [200, 200, 0];
+    render.models.car.transform.rotation = [degToRad(40), degToRad(25), 0];
+    render.models.car.transform.scale = [100, 100, 100];
+
+
     requestAnimationFrame(render.draw);
   },
 
@@ -69,14 +75,6 @@ let render = {
     let zFar = 2000;
     let fov = 0.5;
     render.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
-
-    //render.models.car1.transform.translation[0] = 100 * Math.sin(performance.now() / 3000);
-    //render.models.car1.transform.rotation[1] = performance.now() / 1000;
-
-    //render.models.car2.transform.translation[1] = 100 * Math.sin(performance.now() / 1000);
-    //render.models.car2.transform.rotation[1] = performance.now() / 800;
-
-    render.models.car.draw();
 
     requestAnimationFrame(render.draw);
   },
