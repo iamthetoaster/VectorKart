@@ -29,10 +29,7 @@ let render = {
     // building program from shaders
     let program = createProgram(gl, vertexShader, fragmentShader);
 
-    // grabbing model data
-    let obj = await fetch("/resources/models/race.obj")
-        .then((response) => response.text())
-        .then((text) => parseObjText(text));
+
     // set program and vao
     gl.useProgram(program);
 
@@ -41,12 +38,7 @@ let render = {
       target: [0, 0, 0],
     }
 
-    render.makeModel("car", obj, program);
 
-    // transform data for model
-    render.models.car.transform.translation = [0, 0, 0];
-    render.models.car.transform.rotation = [0, degToRad(25), 0];
-    render.models.car.transform.scale = [100, 100, 100];
 
 
     requestAnimationFrame(render.draw);
