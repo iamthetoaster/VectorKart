@@ -1,6 +1,6 @@
 "use strict";
 
-import GameController from "./GameController";
+import GameController from "./GameController.js";
 
 export default class RenderEngine {
 

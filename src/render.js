@@ -26,6 +26,7 @@ let render = {
 
     // building program from shaders
     let program = createProgram(gl, vertexShader, fragmentShader);
+      render.program = program;
 
     // set program and vao
     gl.useProgram(program);
@@ -39,6 +40,7 @@ let render = {
   },
 
   draw: function(time) {
+      let gl = render.gl;
 
     let deltaTime = render.lastTime !== null ? time - render.lastTime : 0;
     // enabling gl features
@@ -73,6 +75,7 @@ let render = {
   models: {},
 
   makeModel: function(name, obj, program) {
+      let gl = render.gl;
     // find location of items for given program
     let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     let normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
