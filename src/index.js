@@ -18,9 +18,12 @@ render.setup(canvas).then(() => {
             render.models.car.transform.translation = [0, 0, 0];//update the velocity and position here
             render.models.car.transform.rotation = [0, degToRad(25), 0];// was 0, degToRad(25), 0
             render.models.car.transform.scale = [100, 100, 100];
-        });
+        })
+        .then(() => {
+            render.draw();
+        }) ;
     
 });
-canvas.addEventListener("click", () => {
+//canvas.addEventListener("click", () => {
     // render.models.car.transform.rotation[1] = performance.now() / 1000;
-});
+//});

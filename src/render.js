@@ -67,7 +67,8 @@ let render = {
     let zNear = 1;
     let zFar = 2000;
     let fov = 0.5;
-    render.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+      render.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+      Object.keys(render.models).forEach((name) => { render.models[name].draw(); } );
 
     requestAnimationFrame(render.draw);
   },

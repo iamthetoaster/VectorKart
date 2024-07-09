@@ -25,6 +25,6 @@ export default class RenderEngine {
         this.runUpdate(time); // updates rendering logic/contents
     
         // recursive draw callback
-        requestAnimationFrame(this.draw);
+        // requestAnimationFrame(this.draw);
     }
 }
