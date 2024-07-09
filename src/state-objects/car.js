@@ -1,47 +1,32 @@
-class Car {
-    constructor(elementId) {
-        this.element = document.getElementById(elementId);
-        this.position = { x: 0, y: 0 };
-        this.rotation = 0; // Default rotation
-        this.scale = { x: 1, y: 1, z: 1 }; // Default scale
-        this.velocity = { x: 0, y: 0 }; // Velocity in pixels per frame
-        this.history = []; // History of positions
+export default class Car {
+    constructor() {
+        this.position = { x: 0, y: 0, z: 0 }; // 3D position
+        this.rotation = { x: 0, y: 0, z: 0 }; // Rotation in degrees
+        this.scale = { x: 1, y: 1, z: 1 }; // Scale
+        this.velocity = { x: 0, y: 0, z: 0 }; // Velocity for potential motion physics
+        this.history = []; // History of positions for tracking or undo functionality
     }
 
-    setPosition(x, y) {
-        this.position.x = x;
-        this.position.y = y;
-        this.history.push({x: x, y: y}); // Store position in history
-        this.render();
+    setPosition(x, y, z) {
+        this.position = { x, y, z };
+        this.history.push({ ...this.position }); // Keep a history of positions
     }
 
-    setRotation(degrees) {
-        this.rotation = degrees;
-        this.render();
+    setRotation(x, y, z) {
+        this.rotation = { x, y, z };
     }
 
     setScale(x, y, z) {
-        this.scale.x = x;
-        this.scale.y = y;
-        this.scale.z = z;
-        this.render();
+        this.scale = { x, y, z };
     }
 
-    updateVelocity(vx, vy) {
-        this.velocity.x = vx;
-        this.velocity.y = vy;
+    update(deltaTime) {
+        // Example of a simple physics integration
+        this.position.x += this.velocity.x * deltaTime;
+        this.position.y += this.velocity.y * deltaTime;
+        this.position.z += this.velocity.z * deltaTime;
     }
 
-    updatePositionWithVelocity() {
-        this.setPosition(this.position.x + this.velocity.x, this.position.y + this.velocity.y);
-    }
-
-    render() {
-        // Apply transformation styles based on position, rotation, and scale
-        this.element.style.transform = `translate(${this.position.x}px, ${this.position.y}px) rotate(${this.rotation}deg) scale(${this.scale.x}, ${this.scale.y})`;
-    }
-
-    // Method to get the last state from history
     getLastPosition() {
         return this.history.length > 0 ? this.history[this.history.length - 1] : null;
     }
