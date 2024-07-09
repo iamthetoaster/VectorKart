@@ -22,7 +22,6 @@ export default class GameController {
     // controls game logic
 
     run() {
-        this.init();
         this.start();
         this.renderEngine.run();
     }
