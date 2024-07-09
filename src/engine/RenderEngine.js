@@ -19,7 +19,7 @@ export default class RenderEngine {
         console.warn("Not Implemented"); // callback, currently set to GameController.frameUpdate()
     }
 
-    draw = (time) => {
+    draw(time) {
         time *= 0.005; // convert to seconds
     
         this.runUpdate(time); // updates rendering logic/contents
