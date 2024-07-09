@@ -3,12 +3,10 @@ import { mat4, radToDeg, degToRad } from "./math_utils.js"
 
 "use strict";
 
-let gl = null;
-
 let render = {
   setup: async function (canvas) {
 
-    gl = canvas.getContext("webgl2");
+    let gl = canvas.getContext("webgl2");
     render.gl = gl;
     if (!gl) {
       console.log("AHH");
@@ -28,7 +26,7 @@ let render = {
 
     // building program from shaders
     let program = createProgram(gl, vertexShader, fragmentShader);
-
+      render.program = program;
 
     // set program and vao
     gl.useProgram(program);
@@ -38,13 +36,11 @@ let render = {
       target: [0, 0, 0],
     }
 
-
-
-
     requestAnimationFrame(render.draw);
   },
 
   draw: function(time) {
+      let gl = render.gl;
 
     let deltaTime = render.lastTime !== null ? time - render.lastTime : 0;
     // enabling gl features
@@ -71,15 +67,8 @@ let render = {
     let zNear = 1;
     let zFar = 2000;
     let fov = 0.5;
-    render.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
-
-    //render.models.car1.transform.translation[0] = 100 * Math.sin(performance.now() / 3000);
-    //render.models.car1.transform.rotation[1] = performance.now() / 1000;
-
-    //render.models.car2.transform.translation[1] = 100 * Math.sin(performance.now() / 1000);
-    //render.models.car2.transform.rotation[1] = performance.now() / 800;
-
-    render.models.car.draw();
+      render.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+      Object.keys(render.models).forEach((name) => { render.models[name].draw(); } );
 
     requestAnimationFrame(render.draw);
   },
@@ -87,6 +76,7 @@ let render = {
   models: {},
 
   makeModel: function(name, obj, program) {
+      let gl = render.gl;
     // find location of items for given program
     let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     let normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
@@ -119,7 +109,6 @@ let render = {
     let offset = 0;
     gl.vertexAttribPointer(
       positionAttributeLocation, size, type, normalize, stride, offset);
-
 
     // ditto for normals
     let normals = obj.map((vert) => {

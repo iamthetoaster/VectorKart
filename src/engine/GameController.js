@@ -1,17 +1,25 @@
 import RenderEngine from "./RenderEngine.js";
-import { Car } from './car.js';
+import VectorRace from "../state-objects/VectorRace.js"
+import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "../webgl_utils.js"
+import { mat4, radToDeg, degToRad } from "../math_utils.js"
+import  { render } from "../render.js"
 
 "use strict";
 
 export default class GameController {
     constructor() {
-        this.car = new Car("car"); // the car's HTML element ID is 'car'
-        this.renderEngine = new RenderEngine();
-        this.renderEngine.update(this.frameUpdate.bind(this)); // Binding this to ensure context
+        // initialize references to RenderEngine (View/DOM) and VectorRace (Model)
+        this.renderEngine = new RenderEngine(this);
+        this.renderEngine.update(this.frameUpdate);
 
-        // Add event listener for click events on the canvas
-        document.getElementById('c').addEventListener('click', (event) => this.clickUpdate(event));
+        this.vectorRace = new VectorRace(this);
+
+        this.frameDebug = false;
+        this.pt = 0;
+        this.dt = 0;
     }
+
+    // controls game logic
 
     run() {
         this.start();
@@ -20,46 +28,50 @@ export default class GameController {
 
     start() {
         console.log("GameController: start");
-        // Initialization logic if any, for example, loading objects
+        // generate map
+        // load cars/objects
+        // store all objects in an array for rendering
+
+        let canvas = document.querySelector("#c");
+        render.setup(canvas).then(() => {
+            fetch("/resources/models/race.obj")
+                .then((response) => response.text())
+                .then((text) => parseObjText(text))
+                .then((obj) => {
+                    render.makeModel("car", obj, render.program);
+
+                    // transform data for model
+                    render.models.car.transform.translation = [0, 0, 0];//update the velocity and position here
+                    render.models.car.transform.rotation = [0, degToRad(25), 0];// was 0, degToRad(25), 0
+                    render.models.car.transform.scale = [100, 100, 100];
+                })
+                .then(() => {
+                    render.draw();
+                }) ; 
+        });
     }
 
-    frameUpdate() {
-        // Update logic for each frame, which can include the smooth movement
-        // If smooth movement is ongoing, this could manage the transition
-    }
-
-    clickUpdate(event) {
-        console.log("Click event triggered"); // Debugging to see if clicks are being detected
-        const canvasRect = document.getElementById('c').getBoundingClientRect();
-        const mouseX = event.clientX - canvasRect.left;
-        const mouseY = event.clientY - canvasRect.top;
-
-        console.log("Mouse X:", mouseX, "Mouse Y:", mouseY); // Check calculated positions
-
-        // Call the smooth movement method to start moving the car
-        this.smoothMoveTo(mouseX, mouseY);
-    }
-
-    smoothMoveTo(targetX, targetY) {
-        const dx = targetX - this.car.position.x;
-        const dy = targetY - this.car.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance > 5) { // You can adjust the threshold for when the animation should stop
-            this.car.setPosition(
-                this.car.position.x + dx * 0.1, // Move 10% of the distance per frame
-                this.car.position.y + dy * 0.1
-            );
-            requestAnimationFrame(() => this.smoothMoveTo(targetX, targetY));
-        } else {
-            this.car.setPosition(targetX, targetY); // Set final position
-            console.log("Final position set:", targetX, targetY); // Confirm final position
+    // updates every frame
+    frameUpdate = (time) => {
+        // likely need a time param
+        if (this.frameDebug) {
+            console.log("frame update: " + time);
         }
+
+        if (render.models.car) {
+            render.models.car.transform.rotation = [0, degToRad(100 * time % 360), 0];// was 0, degToRad(25), 0
+        }
+
+        this.dt = time - this.pt;
+        this.pt = time;
+    }
+
+    // handles clicks
+    clickUpdate = (event) => {
+        // most likely call game state update
+        // log clicks for testing
+
+        console.log("update (canvas clicked)");
+        this.frameDebug = !this.frameDebug;
     }
 }
-
-// In index.js or entry point
-document.addEventListener('DOMContentLoaded', () => {
-    const game = new GameController();
-    game.run();
-});
