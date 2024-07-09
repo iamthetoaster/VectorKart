@@ -1,3 +1,7 @@
+import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from "../webgl_utils.js"
+import { mat4, radToDeg, degToRad } from "../math_utils.js"
+import { render } from "../render.js"
+
 "use strict";
 
 // import GameController from "./GameController.js";
@@ -15,7 +19,7 @@ export default class RenderEngine {
     // sets runUpdate callback (for frame updating)
     update(callback) {
         this.runUpdate = callback;
-        console.log("update(callback)");
+        // console.log("update(callback)");
     }
 
     // callback for updating frame, animations and such
@@ -25,7 +29,7 @@ export default class RenderEngine {
 
     draw = (time) => {
         time *= 0.005; // convert to seconds
-    
+
         this.runUpdate(time); // updates rendering logic/contents
     
         // recursive draw callback
