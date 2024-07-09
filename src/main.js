@@ -5,7 +5,7 @@ import GameController from "./engine/GameController.js";
 const canvasId = "c";
 const game = new GameController();
 
-document.getElementById(canvasId);
-canvasId.addEventListener(game.clickUpdate);
+const canvas = document.getElementById(canvasId);
+canvas.addEventListener("click", game.clickUpdate);
 
 game.run();

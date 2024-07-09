@@ -4,7 +4,7 @@ import RenderEngine from "./RenderEngine.js";
 
 export default class GameController {
     constructor() {
-        this.renderEngine = new RenderEngine;
+        this.renderEngine = new RenderEngine(this);
         this.renderEngine.update(this.frameUpdate);
     }
 
@@ -23,9 +23,9 @@ export default class GameController {
     } 
 
     // updates every frame
-    frameUpdate() { 
+    frameUpdate(time) { 
         // likely need a time param
-
+        console.log("frame update: " + time);
     }
 
     // handles clicks
@@ -36,7 +36,3 @@ export default class GameController {
         console.log("update (canvas clicked)");
     }
 }
-
-// In index.js or entry point
-const game = new GameController();
-game.run();
