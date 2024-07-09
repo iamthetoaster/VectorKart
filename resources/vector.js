@@ -10,6 +10,8 @@ class vector {
         //coordinates for point b
         this.b_x = a_x; //b_x and b_y will be determined by user input, so they can just be made the same as point a by default
         this.b_y = a_y;
+        this.velocity = velocity //should take in either starting velocity or velocity from previous vector
+        this.acceleration = acceleration //likewise with acceleration, see above comment
 
         //render function keeps the first coordinates on spot but is constantly taking in point b coordinates 
     }
