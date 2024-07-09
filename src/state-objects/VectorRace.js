@@ -6,9 +6,9 @@ export default class VectorRace {
     // holds game state
     // state machine
 
-    constructor() {
+    constructor(game) {
         // initialize game state, state machine
 
-        this.game = new GameController();
+        this.game = game;
     }
 }

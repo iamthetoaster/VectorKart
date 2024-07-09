@@ -4,6 +4,10 @@
 
 export default class RenderEngine {
 
+    constructor(game) {
+        this.game = game;
+    }
+
     run() {
         this.draw();
     }
@@ -25,6 +29,6 @@ export default class RenderEngine {
         this.runUpdate(time); // updates rendering logic/contents
     
         // recursive draw callback
-        // requestAnimationFrame(this.draw);
+        requestAnimationFrame(this.draw);
     }
 }
