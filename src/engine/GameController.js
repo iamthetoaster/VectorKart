@@ -16,7 +16,13 @@ export default class GameController {
         this.rotating = true; // Flag to control rotation state
         this.pt = 0; // Previous time stamp
         this.dt = 0; // Time difference between frames
-        this.car = new Car(); // The car object with position, velocity, etc.
+        // this.car = new Car(); // The car object with position, velocity, etc.
+
+        // render.models.car.transform.translation = [0, 0, 0];
+        // render.models.car.transform.rotation = [0, 0, 0];
+        // render.models.car.transform.scale = [20, 20, 20];
+
+        // render.draw();
 
         // Setup to prevent adding multiple listeners to the same canvas
         let canvas = document.querySelector("#c");
@@ -29,7 +35,7 @@ export default class GameController {
     run() {
         // Start the game logic and rendering process
         this.start();
-        this.renderEngine.run();
+        // this.renderEngine.run();
     }
 
     start() {
@@ -45,23 +51,23 @@ export default class GameController {
                     }
                     // Set initial car properties and draw it on the canvas
                     this.car = new Car();
-                    // this.car.setPosition(0, 0, 0);
-                    // this.car.setRotation(0, 0, 0);
-                    // this.car.setScale(100, 100, 100);
-                    // this.car.updateTransform();
                     render.draw();
                 });
             })
             .catch(error => console.error("Error loading model:", error));
+
+        this.renderEngine.run();
     }
 
     frameUpdate = (time) => {
         // Update the state of the game each frame
         if (this.rotating && render.models.car) {
             let rotationAngle = degToRad(10 * time % 360);
-            this.car.setRotation(0, rotationAngle, 0);
-            this.car.updateTransform();
+            if (this.car)
+                this.car.setRotation(0, rotationAngle, 0);
+            // this.car.updateTransform();
         }
+
         // Update time variables for smooth animations
         this.dt = time - this.pt;
         this.pt = time;
@@ -87,10 +93,10 @@ export default class GameController {
         // Update the car's state and redraw
         this.car.setVelocity(velocity.x, velocity.y, velocity.z);
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
-        this.car.updateTransform();
+        // this.car.updateTransform();
 
         // Log the car's new position and velocity for debugging
-        console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
+        // console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
     }
 }
 
@@ -98,4 +104,7 @@ export default class GameController {
 document.addEventListener('DOMContentLoaded', () => {
     const game = new GameController();
     game.run();
+
+    const canvas = document.getElementById("c");
+    canvas.addEventListener("click", game.clickUpdate);
 });
