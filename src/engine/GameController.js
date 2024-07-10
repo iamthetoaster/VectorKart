@@ -78,9 +78,9 @@ export default class GameController {
 
         // Compute the new velocity based on position change
         const velocity = {
-            x: newPos.x - this.car.position.x,
+            x: 0,
             y: newPos.y - this.car.position.y,
-            z: 0
+            z: newPos.z - this.car.position.z
         };
 
         // Update the car's state and redraw
