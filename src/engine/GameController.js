@@ -13,7 +13,7 @@ export default class GameController {
         this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
         this.vectorRace = new VectorRace(this); // Manages the state of the game
         this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
-        this.rotating = false; // Flag to control rotation state
+        this.rotating = true; // Flag to control rotation state
         this.pt = 0; // Previous time stamp
         this.dt = 0; // Time difference between frames
         this.car = new Car(); // The car object with position, velocity, etc.
@@ -44,10 +44,11 @@ export default class GameController {
                         return;
                     }
                     // Set initial car properties and draw it on the canvas
-                    this.car.setPosition(0, 0, 0);
-                    this.car.setRotation(0, 0, 0);
-                    this.car.setScale(100, 100, 100);
-                    this.car.updateTransform();
+                    this.car = new Car();
+                    // this.car.setPosition(0, 0, 0);
+                    // this.car.setRotation(0, 0, 0);
+                    // this.car.setScale(100, 100, 100);
+                    // this.car.updateTransform();
                     render.draw();
                 });
             })
@@ -57,9 +58,9 @@ export default class GameController {
     frameUpdate = (time) => {
         // Update the state of the game each frame
         if (this.rotating && render.models.car) {
-            let rotationAngle = degToRad(100 * time % 360);
+            let rotationAngle = degToRad(10 * time % 360);
             this.car.setRotation(0, rotationAngle, 0);
-            this.updateCarTransform();
+            this.car.updateTransform();
         }
         // Update time variables for smooth animations
         this.dt = time - this.pt;

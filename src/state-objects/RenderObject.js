@@ -1,12 +1,16 @@
 import { render } from "../render.js"
 
 export default class RenderObject {
-    constructor(position) {
-        this.position = position;
-        this.velocity = { x: 0, y: 0, z: 0 };
-        this.rotation = { x: 0, y: 0, z: 0 };
-        this.acceleration = { x: 0, y: 0, z: 0 };
-        this.scale = { x: 1, y: 1, z: 1};
+    constructor(modelName) {
+        this.model = render.models[modelName];
+
+        this.setPosition(0, 0, 0);
+        this.setVelocity(0, 0, 0);
+        this.setRotation(0, 0, 0);
+        this.setAcceleration(0, 0, 0);
+        this.setScale(20, 20, 20);
+
+        this.updateTransform();
     }
 
     setPosition(x, y, z) {
