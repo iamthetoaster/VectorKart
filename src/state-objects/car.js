@@ -1,3 +1,5 @@
+import { render } from "../render.js";
+
 export default class Car {
     constructor() {
         this.position = { x: 0, y: 0, z: 0 };
@@ -20,6 +22,16 @@ export default class Car {
 
     setVelocity(vx, vy, vz) {
         this.velocity = { x: vx, y: vy, z: vz };
+    }
+
+    updateTransform() {
+        // Update the WebGL transformation matrices based on the car's state
+        if (render.models.car) {
+            render.models.car.transform.translation = [this.position.x, this.position.y, this.position.z];
+            render.models.car.transform.rotation = [this.rotation.x, this.rotation.y, this.rotation.z];
+            render.models.car.transform.scale = [this.scale.x, this.scale.y, this.scale.z];
+            render.draw(); // Redraw the scene with updated transformations
+        }
     }
 
     printState() {
