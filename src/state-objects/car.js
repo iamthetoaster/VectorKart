@@ -25,7 +25,7 @@ export default class Car {
         this.scale = { x, y, z };
     }
 
-    setVelocity(x, y, z) {
+    _setVelocity(x, y, z) {
         this.velocity = { x, y, z };
 
         const speed = Math.sqrt((x * x) + (y * y) + (z * z));
@@ -43,6 +43,11 @@ export default class Car {
             y: this.velocity.y + this.acceleration.y,
             z: this.velocity.z + this.acceleration.z,
         };
+    }
+
+    stepVelocity() {
+        const newVelocity = this.getStepVelocity;
+        this._setVelocity(newVelocity.x, newVelocity.y, newVelocity.z);
     }
 
     updateTransform() {

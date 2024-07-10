@@ -84,7 +84,6 @@ export default class GameController {
         };
 
         // Update the car's state and redraw
-        this.car.setVelocity(velocity.x, velocity.y, velocity.z);
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
         this.car.updateTransform();
 
