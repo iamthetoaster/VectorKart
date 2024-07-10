@@ -68,12 +68,12 @@ export default class GameController {
 
     handleCanvasClick(event) {
         // Handle clicks on the canvas to move the car to random positions
-        const maxX = event.target.width;
+        const maxZ = event.target.width;
         const maxY = event.target.height;
         const newPos = {
-            x: Math.random() * maxX,
+            x: 0,
             y: Math.random() * maxY,
-            z: 0  // Assuming Z-axis is not used in 2D space
+            z: Math.random() * maxZ
         };
 
         // Compute the new velocity based on position change
