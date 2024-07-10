@@ -9,16 +9,14 @@ import Car from "../state-objects/car.js";
 
 export default class GameController {
     constructor() {
-        // Initialize the core components of the game
-        this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
-        this.vectorRace = new VectorRace(this); // Manages the state of the game
-        this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
-        this.rotating = false; // Flag to control rotation state
-        this.pt = 0; // Previous time stamp
-        this.dt = 0; // Time difference between frames
-        this.car = new Car(); // The car object with position, velocity, etc.
+        this.renderEngine = new RenderEngine(this);
+        this.vectorRace = new VectorRace(this);
+        this.renderEngine.update(this.frameUpdate);
+        this.rotating = false;
+        this.pt = 0;
+        this.dt = 0;
+        this.car = new Car();
 
-        // Setup to prevent adding multiple listeners to the same canvas
         let canvas = document.querySelector("#c");
         if (!canvas.hasAttribute('data-listener-added')) {
             canvas.addEventListener('click', this.handleCanvasClick.bind(this));
@@ -27,13 +25,11 @@ export default class GameController {
     }
 
     run() {
-        // Start the game logic and rendering process
         this.start();
         this.renderEngine.run();
     }
 
     start() {
-        // Load the car model and initialize the game components
         fetch("/resources/models/race.obj")
             .then(response => response.text())
             .then(parseObjText)
@@ -43,11 +39,10 @@ export default class GameController {
                         console.error("Failed to create model");
                         return;
                     }
-                    // Set initial car properties and draw it on the canvas
                     this.car.setPosition(0, 0, 0);
                     this.car.setRotation(0, 0, 0);
                     this.car.setScale(100, 100, 100);
-                    this.car.updateTransform();
+                    this.updateCarTransform();
                     render.draw();
                 });
             })
@@ -55,39 +50,55 @@ export default class GameController {
     }
 
     frameUpdate = (time) => {
-        // Update the state of the game each frame
         if (this.rotating && render.models.car) {
             let rotationAngle = degToRad(100 * time % 360);
             this.car.setRotation(0, rotationAngle, 0);
             this.updateCarTransform();
         }
-        // Update time variables for smooth animations
         this.dt = time - this.pt;
         this.pt = time;
     }
 
     handleCanvasClick(event) {
-        // Handle clicks on the canvas to move the car to random positions
-        const maxZ = event.target.width;
-        const maxY = event.target.height;
+        const rect = event.target.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const maxZ = event.target.width;  // width for Z-axis
+        const maxY = event.target.height; // height for Y-axis
+
+        // Position is now determined by mouse click
         const newPos = {
-            x: 0, // Assuming X-axis is not used in 2D space
-            y: (Math.random() * maxY) - (maxY / 2), // vertical on screen
-            z: (Math.random() * maxZ) - (maxZ / 2) // horizontal on screen
+            x: 0, 
+            y: mouseY - maxY / 2,
+            z: mouseX - maxZ / 2
         };
 
-        // Compute the new velocity based on position change
         const velocity = {
             x: 0,
             y: newPos.y - this.car.position.y,
             z: newPos.z - this.car.position.z
         };
 
-        // Update the car's state and redraw
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
-        this.car.updateTransform();
+        this.car._setVelocity(velocity.x, velocity.y, velocity.z);
+        this.updateCarTransform();
 
-        // Log the car's new position and velocity for debugging
-        console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
+        console.log(`Mouse clicked at position: (${mouseX}, ${mouseY})`);
+        console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${velocity.x}, ${velocity.y}, ${velocity.z})`);
+    }
+
+    updateCarTransform() {
+        if (render.models.car) {
+            render.models.car.transform.translation = [this.car.position.x, this.car.position.y, this.car.position.z];
+            render.models.car.transform.rotation = [this.car.rotation.x, this.car.rotation.y, this.car.rotation.z];
+            render.models.car.transform.scale = [this.car.scale.x, this.car.scale.y, this.car.scale.z];
+            render.draw();
+        }
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const game = new GameController();
+    game.run();
+});
