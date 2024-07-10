@@ -71,9 +71,9 @@ export default class GameController {
         const maxZ = event.target.width;
         const maxY = event.target.height;
         const newPos = {
-            x: 0,
-            y: (Math.random() * maxY) - (maxY / 2),
-            z: (Math.random() * maxZ) - (maxZ / 2)  // Assuming Z-axis is not used in 2D space
+            x: 0, // Assuming X-axis is not used in 2D space
+            y: (Math.random() * maxY) - (maxY / 2), // vertical on screen
+            z: (Math.random() * maxZ) - (maxZ / 2) // horizontal on screen
         };
 
         // Compute the new velocity based on position change
