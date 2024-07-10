@@ -3,7 +3,7 @@ import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
 import { degToRad } from "../math_utils.js";
 import { render } from "../render.js";
-import Car from "../state-objects/car.js";
+import Car from "../state-objects/Car.js";
 
 "use strict";
 
