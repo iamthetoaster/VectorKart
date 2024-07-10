@@ -47,7 +47,7 @@ export default class GameController {
                     this.car.setPosition(0, 0, 0);
                     this.car.setRotation(0, 0, 0);
                     this.car.setScale(100, 100, 100);
-                    this.updateCarTransform();
+                    this.car.updateTransform();
                     render.draw();
                 });
             })
@@ -71,40 +71,23 @@ export default class GameController {
         const maxZ = event.target.width;
         const maxY = event.target.height;
         const newPos = {
-            x: 0,
-            y: Math.random() * maxY,
-            z: Math.random() * maxZ
+            x: 0, // Assuming X-axis is not used in 2D space
+            y: (Math.random() * maxY) - (maxY / 2), // vertical on screen
+            z: (Math.random() * maxZ) - (maxZ / 2) // horizontal on screen
         };
 
         // Compute the new velocity based on position change
         const velocity = {
-            x: newPos.x - this.car.position.x,
+            x: 0,
             y: newPos.y - this.car.position.y,
-            z: 0
+            z: newPos.z - this.car.position.z
         };
 
         // Update the car's state and redraw
-        this.car.setVelocity(velocity.x, velocity.y, velocity.z);
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
-        this.updateCarTransform();
+        this.car.updateTransform();
 
         // Log the car's new position and velocity for debugging
         console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
     }
-
-    updateCarTransform() {
-        // Update the WebGL transformation matrices based on the car's state
-        if (render.models.car) {
-            render.models.car.transform.translation = [this.car.position.x, this.car.position.y, this.car.position.z];
-            render.models.car.transform.rotation = [this.car.rotation.x, this.car.rotation.y, this.car.rotation.z];
-            render.models.car.transform.scale = [this.car.scale.x, this.car.scale.y, this.car.scale.z];
-            render.draw(); // Redraw the scene with updated transformations
-        }
-    }
 }
-
-// Initialize the game once the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const game = new GameController();
-    game.run();
-});
