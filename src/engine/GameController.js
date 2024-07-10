@@ -92,9 +92,3 @@ export default class GameController {
         console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
     }
 }
-
-// Initialize the game once the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const game = new GameController();
-    game.run();
-});
