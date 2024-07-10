@@ -6,6 +6,11 @@ export default class Car {
         this.rotation = { x: 0, y: 0, z: 0 };
         this.scale = { x: 1, y: 1, z: 1 };
         this.velocity = { x: 0, y: 0, z: 0 };
+        this.acceleration = { x: 0, y: 0, z: 0 };
+        this.statistics = {
+            turnCount: 0,
+            maxSpeed: 0,
+        }
     }
 
     setPosition(x, y, z) {
@@ -20,8 +25,24 @@ export default class Car {
         this.scale = { x, y, z };
     }
 
-    setVelocity(vx, vy, vz) {
-        this.velocity = { x: vx, y: vy, z: vz };
+    setVelocity(x, y, z) {
+        this.velocity = { x, y, z };
+
+        const speed = Math.sqrt((x * x) + (y * y) + (z * z));
+        if (speed > this.statistics.maxSpeed) {
+            this.statistics.maxSpeed = speed;
+        }
+    }
+
+    setAcceleration(x, y, z) {
+        this.acceleration = { x, y, z };
+    }
+
+    getStepVelocity() {
+        return { x: this.velocity.x + this.acceleration.x,
+            y: this.velocity.y + this.acceleration.y,
+            z: this.velocity.z + this.acceleration.z,
+        };
     }
 
     updateTransform() {
