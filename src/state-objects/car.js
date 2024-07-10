@@ -11,10 +11,18 @@ export default class Car extends RenderObject {
     }
 
     setVelocity(vx, vy, vz) {
-        this.velocity = { x: vx, y: vy, z: vz };
+        this._velocity = { x: vx, y: vy, z: vz };
+    }
+
+    getVelocity() {
+        return this._velocity;
     }
 
     setAcceleration(x, y, z) {
-        this.acceleration = { x: x, y: y, z: z };
+        this._acceleration = { x: x, y: y, z: z };
+    }
+
+    getAcceleration() {
+        return this._acceleration;
     }
 }

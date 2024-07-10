@@ -10,21 +10,33 @@ export default class RenderObject {
     }
 
     setPosition(x, y, z) {
-        this.position = { x, y, z };
+        this._position = { x, y, z };
         if(this.model)
-            this.model.transform.translation = [this.position.x, this.position.y, this.position.z];
+            this.model.transform.translation = [x, y, z];
+    }
+
+    getPosition() {
+        return this._position;
     }
 
     setRotation(x, y, z) {
-        this.rotation = { x, y, z };
+        this._rotation = { x, y, z };
         if(this.model)
-            this.model.transform.rotation = [this.rotation.x, this.rotation.y, this.rotation.z];
+            this.model.transform.rotation = [x, y, z];
+    }
+
+    getRotation() {
+        return this._rotation;
     }
 
     setScale(x, y, z) {
-        this.scale = { x, y, z };
+        this._scale = { x, y, z };
         if(this.model)
-            this.model.transform.scale = [this.scale.x, this.scale.y, this.scale.z];
+            this.model.transform.scale = [x, y, z];
+    }
+
+    getScale() {
+        return this._scale;
     }
 
     printState() {
