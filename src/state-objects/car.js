@@ -1,15 +1,13 @@
 export default class Car {
     constructor() {
-        this.position = { x: 0, y: 0, z: 0 }; // 3D position
-        this.rotation = { x: 0, y: 0, z: 0 }; // Rotation in degrees
-        this.scale = { x: 1, y: 1, z: 1 }; // Scale
-        this.velocity = { x: 0, y: 0, z: 0 }; // Velocity for potential motion physics
-        this.history = []; // History of positions for tracking or undo functionality
+        this.position = { x: 0, y: 0, z: 0 };
+        this.rotation = { x: 0, y: 0, z: 0 };
+        this.scale = { x: 1, y: 1, z: 1 };
+        this.velocity = { x: 0, y: 0, z: 0 };
     }
 
     setPosition(x, y, z) {
         this.position = { x, y, z };
-        this.history.push({ ...this.position }); // Keep a history of positions
     }
 
     setRotation(x, y, z) {
@@ -20,14 +18,14 @@ export default class Car {
         this.scale = { x, y, z };
     }
 
-    update(deltaTime) {
-        // Example of a simple physics integration
-        this.position.x += this.velocity.x * deltaTime;
-        this.position.y += this.velocity.y * deltaTime;
-        this.position.z += this.velocity.z * deltaTime;
+    setVelocity(vx, vy, vz) {
+        this.velocity = { x: vx, y: vy, z: vz };
     }
 
-    getLastPosition() {
-        return this.history.length > 0 ? this.history[this.history.length - 1] : null;
+    printState() {
+        console.log(`Position: (${this.position.x}, ${this.position.y}, ${this.position.z})`);
+        console.log(`Velocity: (${this.velocity.x}, ${this.velocity.y}, ${this.velocity.z})`);
+        console.log(`Rotation: (${this.rotation.x}, ${this.rotation.y}, ${this.rotation.z})`);
+        console.log(`Scale: (${this.scale.x}, ${this.scale.y}, ${this.scale.z})`);
     }
 }

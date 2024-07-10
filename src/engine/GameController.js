@@ -3,67 +3,43 @@ import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
 import { degToRad } from "../math_utils.js";
 import { render } from "../render.js";
-import Car  from "../state-objects/car.js";
+import Car from "../state-objects/car.js";
 
 "use strict";
 
 export default class GameController {
     constructor() {
-        // Initialize the render engine and vector race model
         this.renderEngine = new RenderEngine(this);
         this.vectorRace = new VectorRace(this);
-
-        // Update method for the render engine; binds 'this' for context
         this.renderEngine.update(this.frameUpdate);
-
-        // Flag to control the rotation of the car
-        this.rotating = false;  
-
-        // Time variables for animation control
-        this.pt = 0; // Previous time
-        this.dt = 0; // Delta time
-
-        // Initialize car state management
+        this.rotating = false;
+        this.pt = 0;
+        this.dt = 0;
         this.car = new Car();
 
-        // Attach click event listener to the canvas to control car rotation
         let canvas = document.querySelector("#c");
-        canvas.addEventListener('click', this.clickUpdate);
-
-        console.log("GameController initialized");
+        if (!canvas.hasAttribute('data-listener-added')) {
+            canvas.addEventListener('click', this.handleCanvasClick.bind(this));
+            canvas.setAttribute('data-listener-added', 'true');
+        }
     }
 
     run() {
-        console.log("Running game controller");
         this.start();
         this.renderEngine.run();
     }
 
     start() {
-        console.log("GameController: start");
-
-        // Fetch and set up the car model from an .obj file
         fetch("/resources/models/race.obj")
             .then(response => response.text())
             .then(parseObjText)
             .then(obj => {
-                if (!obj) {
-                    console.error("Failed to load or parse the model");
-                    return;
-                }
                 render.setup(document.querySelector("#c")).then(() => {
-                    if (!render.makeModel("car", obj, render.program)) {
-                        console.error("Failed to create model");
-                        return;
-                    }
-
-                    // Set initial transformation for the car model
-                    this.car.setPosition(0, 0, 0);  // Use the Car class to manage position
+                    render.makeModel("car", obj, render.program);
+                    this.car.setPosition(0, 0, 0);
                     this.car.setRotation(0, 0, 0);
                     this.car.setScale(100, 100, 100);
                     this.updateCarTransform();
-
-                    console.log("Initial draw");
                     render.draw();
                 });
             })
@@ -76,24 +52,39 @@ export default class GameController {
             this.car.setRotation(0, rotationAngle, 0);
             this.updateCarTransform();
         }
-
         this.dt = time - this.pt;
         this.pt = time;
     }
 
-    clickUpdate = (event) => {
-        console.log("Canvas clicked, toggling rotation.");
-        this.rotating = !this.rotating;
-        if (!this.rotating) {
-            console.log("Car stopped rotating. Current State:", JSON.stringify(this.car));
-        }
+    handleCanvasClick(event) {
+        const maxX = event.target.width;
+        const maxY = event.target.height;
+        const newPos = {
+            x: Math.random() * maxX,
+            y: Math.random() * maxY,
+            z: 0  // Assuming Z-axis is not used in 2D space
+        };
+
+        const velocity = {
+            x: newPos.x - this.car.position.x,
+            y: newPos.y - this.car.position.y,
+            z: 0
+        };
+
+        this.car.setVelocity(velocity.x, velocity.y, velocity.z);
+        this.car.setPosition(newPos.x, newPos.y, newPos.z);
+        this.updateCarTransform();
+
+        console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
     }
 
     updateCarTransform() {
-        // Sync the WebGL model transformation with the Car class state
-        render.models.car.transform.translation = [this.car.position.x, this.car.position.y, this.car.position.z];
-        render.models.car.transform.rotation = [this.car.rotation.x, this.car.rotation.y, this.car.rotation.z];
-        render.models.car.transform.scale = [this.car.scale.x, this.car.scale.y, this.car.scale.z];
+        if (render.models.car) {
+            render.models.car.transform.translation = [this.car.position.x, this.car.position.y, this.car.position.z];
+            render.models.car.transform.rotation = [this.car.rotation.x, this.car.rotation.y, this.car.rotation.z];
+            render.models.car.transform.scale = [this.car.scale.x, this.car.scale.y, this.car.scale.z];
+            render.draw();
+        }
     }
 }
 
