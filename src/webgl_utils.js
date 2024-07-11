@@ -1,7 +1,4 @@
-// FIXME: Move WebGL code into RenderEngine and RenderObject
 "use strict";
-
-// todo figure out modules export import
 
 function parseObjText(text) {
   let lines = text.split("\n");

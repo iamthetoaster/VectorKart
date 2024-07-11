@@ -28,20 +28,19 @@ const vec3 = {
 const mat4 = {
   identity: function () {
     return [
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1,
     ];
   },
 
   translation: function (tx, ty, tz) {
     return [
-       1,  0,  0, 0,
-       0,  1,  0, 0,
-       0,  0,  1, 0,
-      tx, ty, tz, 1,
-
+        1,  0,  0, 0,
+        0,  1,  0, 0,
+        0,  0,  1, 0,
+        tx, ty, tz, 1,
     ];
   },
 

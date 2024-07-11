@@ -1,0 +1,8 @@
+[
+  {
+    "name": "car",
+    "obj": "models/race.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/fragment_shader.glsl"
+  }
+]

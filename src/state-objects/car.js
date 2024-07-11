@@ -1,16 +1,16 @@
-import { render } from "../render.js";
+//import { render } from "../render.js";
 
 export default class Car {
-    constructor() {
+    constructor(renderObject) {
+        this.renderObject = renderObject;
         this.position = { x: 0, y: 0, z: 0 };
         this.rotation = { x: 0, y: 0, z: 0 };
         this.scale = { x: 1, y: 1, z: 1 };
         this.velocity = { x: 0, y: 0, z: 0 };
         this.acceleration = { x: 0, y: 0, z: 0 };
-        this.statistics = {
-            turnCount: 0,
-            maxSpeed: 0,
-        }
+
+        // Player Stats
+        this.maxSpeed = 0;
     }
 
     setPosition(x, y, z) {
@@ -28,9 +28,9 @@ export default class Car {
     _setVelocity(x, y, z) {
         this.velocity = { x, y, z };
 
-        const speed = Math.sqrt((x * x) + (y * y) + (z * z));
-        if (speed > this.statistics.maxSpeed) {
-            this.statistics.maxSpeed = speed;
+        const speed = this.getSpeed();
+        if (speed > this.maxSpeed) {
+            this.maxSpeed = speed;
         }
     }
 
@@ -56,12 +56,9 @@ export default class Car {
 
     updateTransform() {
         // Update the WebGL transformation matrices based on the car's state
-        if (render.models.car) {
-            render.models.car.transform.translation = [this.position.x, this.position.y, this.position.z];
-            render.models.car.transform.rotation = [this.rotation.x, this.rotation.y, this.rotation.z];
-            render.models.car.transform.scale = [this.scale.x, this.scale.y, this.scale.z];
-            render.draw(); // Redraw the scene with updated transformations
-        }
+        this.renderObject.translation = [this.position.x, this.position.y, this.position.z];
+        this.renderObject.rotation = [this.rotation.x, this.rotation.y, this.rotation.z];
+        this.renderObject.scale = [this.scale.x, this.scale.y, this.scale.z];
     }
 
     printState() {
@@ -69,5 +66,14 @@ export default class Car {
         console.log(`Velocity: (${this.velocity.x}, ${this.velocity.y}, ${this.velocity.z})`);
         console.log(`Rotation: (${this.rotation.x}, ${this.rotation.y}, ${this.rotation.z})`);
         console.log(`Scale: (${this.scale.x}, ${this.scale.y}, ${this.scale.z})`);
+    }
+
+    getSpeed() {
+        const { x, y, z } = this.velocity;
+        return Math.sqrt((x * x) + (y * y) + (z * z));
+    }
+
+    getAngle() {
+        return this.rotation.y;
     }
 }
