@@ -61,41 +61,50 @@ export default class GameController {
 
     handleCanvasClick(event) {
         const rect = event.target.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-
-        const maxZ = event.target.width;  // width for Z-axis
-        const maxY = event.target.height; // height for Y-axis
-
-        // Position is now determined by mouse click
+        const mouseX = event.clientX - rect.left; // Get mouse X coordinate within the canvas
+        const mouseY = event.clientY - rect.top;  // Get mouse Y coordinate within the canvas
+    
+        const canvasCenterX = event.target.width / 2;
+        const canvasCenterY = event.target.height / 2;
+    
+        // Normalize the mouse coordinates to center the origin (0, 0) in the middle of the canvas
+        // Also inverts the Y to align with a more standard Cartesian plane where up is positive
         const newPos = {
-            x: 0, 
-            y: mouseY - maxY / 2,
-            z: mouseX - maxZ / 2
+            x: 0, // Assuming X-axis is not used in 2D space
+            y: -(mouseY - canvasCenterY), // Invert Y-axis
+            z: mouseX - canvasCenterX // Z uses the width for horizontal movement
         };
-
-        const velocity = {
-            x: 0,
-            y: newPos.y - this.car.position.y,
-            z: newPos.z - this.car.position.z
-        };
-
+    
+        // Compute the velocity as the difference divided by deltaTime
+        const now = performance.now();
+        const deltaTime = (now - this.pt) / 1000;
+        this.pt = now;
+    
+        if (deltaTime > 0) {
+            const velocity = {
+                x: 0, // X velocity is not used
+                y: (newPos.y - this.car.position.y) / deltaTime,
+                z: (newPos.z - this.car.position.z) / deltaTime
+            };
+    
+            this.car._setVelocity(velocity.x, velocity.y, velocity.z);
+        }
+    
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
-        this.car._setVelocity(velocity.x, velocity.y, velocity.z);
         this.updateCarTransform();
-
+    
         console.log(`Mouse clicked at position: (${mouseX}, ${mouseY})`);
-        console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${velocity.x}, ${velocity.y}, ${velocity.z})`);
+        console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.x}, ${this.car.velocity.y}, ${this.car.velocity.z})`);
     }
-
+    
     updateCarTransform() {
         if (render.models.car) {
             render.models.car.transform.translation = [this.car.position.x, this.car.position.y, this.car.position.z];
             render.models.car.transform.rotation = [this.car.rotation.x, this.car.rotation.y, this.car.rotation.z];
             render.models.car.transform.scale = [this.car.scale.x, this.car.scale.y, this.car.scale.z];
-            render.draw();
+            render.draw(); // Redraw the scene with updated transformations
         }
-    }
+    }    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
