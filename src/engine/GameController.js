@@ -2,64 +2,44 @@ import RenderEngine from "./RenderEngine.js";
 import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
 import { degToRad } from "../math_utils.js";
-import { render } from "../render.js";
 import Car from "../state-objects/Car.js";
-
 "use strict";
 
 export default class GameController {
     constructor() {
         // Initialize the core components of the game
         this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
-        this.vectorRace = new VectorRace(this); // Manages the state of the game
         this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
-        this.rotating = false; // Flag to control rotation state
-        this.pt = 0; // Previous time stamp
-        this.dt = 0; // Time difference between frames
-        this.car = new Car(); // The car object with position, velocity, etc.
+        this.renderEngine.init()
+            .then(() => {
+                this.vectorRace = new VectorRace(this); // Manages the state of the game
+                this.rotating = true; // Flag to control rotation state
+                this.pt = 0; // Previous time stamp
+                this.dt = 0; // Time difference between frames
+                this.car = new Car(this.renderEngine.instantiateRenderObject("car")); // The car object with position, velocity, etc.
+                this.car.setScale(100, 100, 100);
 
-        // Setup to prevent adding multiple listeners to the same canvas
-        let canvas = document.querySelector("#c");
-        if (!canvas.hasAttribute('data-listener-added')) {
-            canvas.addEventListener('click', this.handleCanvasClick.bind(this));
-            canvas.setAttribute('data-listener-added', 'true');
-        }
-    }
+                // Setup to prevent adding multiple listeners to the same canvas
+                let canvas = document.querySelector("#c");
+                if (!canvas.hasAttribute('data-listener-added')) {
+                    canvas.addEventListener('click', this.handleCanvasClick.bind(this));
+                    canvas.setAttribute('data-listener-added', 'true');
+                }
 
-    run() {
-        // Start the game logic and rendering process
-        this.start();
-        this.renderEngine.run();
+            });
     }
 
     start() {
-        // Load the car model and initialize the game components
-        fetch("/resources/models/race.obj")
-            .then(response => response.text())
-            .then(parseObjText)
-            .then(obj => {
-                render.setup(document.querySelector("#c")).then(() => {
-                    if (!render.makeModel("car", obj, render.program)) {
-                        console.error("Failed to create model");
-                        return;
-                    }
-                    // Set initial car properties and draw it on the canvas
-                    this.car.setPosition(0, 0, 0);
-                    this.car.setRotation(0, 0, 0);
-                    this.car.setScale(100, 100, 100);
-                    this.car.updateTransform();
-                    render.draw();
-                });
-            })
-            .catch(error => console.error("Error loading model:", error));
+
+
     }
 
     frameUpdate = (time) => {
         // Update the state of the game each frame
-        if (this.rotating && render.models.car) {
-            let rotationAngle = degToRad(100 * time % 360);
+        if (this.rotating) {
+            let rotationAngle = degToRad(10 * time % 360);
             this.car.setRotation(0, rotationAngle, 0);
-            this.updateCarTransform();
+            this.car.updateTransform();
         }
         // Update time variables for smooth animations
         this.dt = time - this.pt;
