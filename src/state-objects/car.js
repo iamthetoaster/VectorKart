@@ -7,6 +7,10 @@ export default class Car {
         this.rotation = { x: 0, y: 0, z: 0 };
         this.scale = { x: 1, y: 1, z: 1 };
         this.velocity = { x: 0, y: 0, z: 0 };
+        this.acceleration = { x: 0, y: 0, z: 0 };
+
+        // Player Stats
+        this.maxSpeed = 0;
     }
 
     setPosition(x, y, z) {
@@ -21,8 +25,29 @@ export default class Car {
         this.scale = { x, y, z };
     }
 
-    setVelocity(vx, vy, vz) {
-        this.velocity = { x: vx, y: vy, z: vz };
+    _setVelocity(x, y, z) {
+        this.velocity = { x, y, z };
+
+        const speed = this.getSpeed();
+        if (speed > this.maxSpeed) {
+            this.maxSpeed = speed;
+        }
+    }
+
+    setAcceleration(x, y, z) {
+        this.acceleration = { x, y, z };
+    }
+
+    getStepVelocity() {
+        return { x: this.velocity.x + this.acceleration.x,
+            y: this.velocity.y + this.acceleration.y,
+            z: this.velocity.z + this.acceleration.z,
+        };
+    }
+
+    stepVelocity() {
+        const newVelocity = this.getStepVelocity;
+        this._setVelocity(newVelocity.x, newVelocity.y, newVelocity.z);
     }
 
     updateTransform() {
@@ -37,5 +62,14 @@ export default class Car {
         console.log(`Velocity: (${this.velocity.x}, ${this.velocity.y}, ${this.velocity.z})`);
         console.log(`Rotation: (${this.rotation.x}, ${this.rotation.y}, ${this.rotation.z})`);
         console.log(`Scale: (${this.scale.x}, ${this.scale.y}, ${this.scale.z})`);
+    }
+
+    getSpeed() {
+        const { x, y, z } = this.velocity;
+        return Math.sqrt((x * x) + (y * y) + (z * z));
+    }
+
+    getAngle() {
+        return this.rotation.y;
     }
 }

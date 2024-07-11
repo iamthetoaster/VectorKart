@@ -1,4 +1,5 @@
 import RenderEngine from "./RenderEngine.js";
+import Dashboard from "./Dashboard.js";
 import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
 import { degToRad } from "../math_utils.js";
@@ -19,6 +20,9 @@ export default class GameController {
                 this.car = new Car(this.renderEngine.instantiateRenderObject("car")); // The car object with position, velocity, etc.
                 this.car.setScale(100, 100, 100);
 
+                this.dashboard = new Dashboard(document.getElementById("dashboard"),
+                                               [ this.car ]);
+
                 // Setup to prevent adding multiple listeners to the same canvas
                 let canvas = document.querySelector("#c");
                 if (!canvas.hasAttribute('data-listener-added')) {
@@ -31,7 +35,7 @@ export default class GameController {
 
     start() {
 
-
+        this.dashboard.attach();
     }
 
     frameUpdate = (time) => {
@@ -64,7 +68,6 @@ export default class GameController {
         };
 
         // Update the car's state and redraw
-        this.car.setVelocity(velocity.x, velocity.y, velocity.z);
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
         this.car.updateTransform();
 
