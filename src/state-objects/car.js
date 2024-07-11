@@ -45,9 +45,13 @@ export default class Car {
         };
     }
 
-    stepVelocity() {
+    step() {
         const newVelocity = this.getStepVelocity;
         this._setVelocity(newVelocity.x, newVelocity.y, newVelocity.z);
+        this.setPosition(this.position.x + this.velocity.x,
+            this.position.y + this.velocity.y,
+            this.position.z + this.velocity.z
+        );
     }
 
     updateTransform() {
