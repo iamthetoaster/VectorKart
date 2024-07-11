@@ -12,28 +12,26 @@ export default class GameController {
         this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
         this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
         this.renderEngine.init()
-            .then(() => {
-                this.vectorRace = new VectorRace(this); // Manages the state of the game
-                this.rotating = true; // Flag to control rotation state
-                this.pt = 0; // Previous time stamp
-                this.dt = 0; // Time difference between frames
-                this.car = new Car(this.renderEngine.instantiateRenderObject("car")); // The car object with position, velocity, etc.
-                this.car.setScale(100, 100, 100);
-
-                this.dashboard = new Dashboard(document.getElementById("dashboard"),
-                                               [ this.car ]);
-
-                // Setup to prevent adding multiple listeners to the same canvas
-                let canvas = document.querySelector("#c");
-                if (!canvas.hasAttribute('data-listener-added')) {
-                    canvas.addEventListener('click', this.handleCanvasClick.bind(this));
-                    canvas.setAttribute('data-listener-added', 'true');
-                }
-
-            });
+            .then(() => this.start());
     }
 
     start() {
+        this.vectorRace = new VectorRace(this); // Manages the state of the game
+        this.rotating = true; // Flag to control rotation state
+        this.pt = 0; // Previous time stamp
+        this.dt = 0; // Time difference between frames
+        this.car = new Car(this.renderEngine.instantiateRenderObject("car")); // The car object with position, velocity, etc.
+        this.car.setScale(100, 100, 100);
+
+        this.dashboard = new Dashboard(document.getElementById("dashboard"),
+                                       [ this.car ]);
+
+        // Setup to prevent adding multiple listeners to the same canvas
+        let canvas = document.querySelector("#c");
+        if (!canvas.hasAttribute('data-listener-added')) {
+            canvas.addEventListener('click', this.handleCanvasClick.bind(this));
+            canvas.setAttribute('data-listener-added', 'true');
+        }
 
         this.dashboard.attach();
     }
