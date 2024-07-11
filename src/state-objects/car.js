@@ -7,10 +7,9 @@ export default class Car {
         this.scale = { x: 1, y: 1, z: 1 };
         this.velocity = { x: 0, y: 0, z: 0 };
         this.acceleration = { x: 0, y: 0, z: 0 };
-        this.statistics = {
-            turnCount: 0,
-            maxSpeed: 0,
-        }
+
+        // Player Stats
+        this.maxSpeed = 0;
     }
 
     setPosition(x, y, z) {
@@ -28,9 +27,9 @@ export default class Car {
     _setVelocity(x, y, z) {
         this.velocity = { x, y, z };
 
-        const speed = Math.sqrt((x * x) + (y * y) + (z * z));
-        if (speed > this.statistics.maxSpeed) {
-            this.statistics.maxSpeed = speed;
+        const speed = this.getSpeed();
+        if (speed > this.maxSpeed) {
+            this.maxSpeed = speed;
         }
     }
 
@@ -65,5 +64,14 @@ export default class Car {
         console.log(`Velocity: (${this.velocity.x}, ${this.velocity.y}, ${this.velocity.z})`);
         console.log(`Rotation: (${this.rotation.x}, ${this.rotation.y}, ${this.rotation.z})`);
         console.log(`Scale: (${this.scale.x}, ${this.scale.y}, ${this.scale.z})`);
+    }
+
+    getSpeed() {
+        const { x, y, z } = this.velocity;
+        return Math.sqrt((x * x) + (y * y) + (z * z));
+    }
+
+    getAngle() {
+        return this.rotation.y;
     }
 }

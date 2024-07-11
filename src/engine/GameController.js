@@ -1,4 +1,5 @@
 import RenderEngine from "./RenderEngine.js";
+import Dashboard from "./Dashboard.js";
 import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
 import { degToRad } from "../math_utils.js";
@@ -17,6 +18,10 @@ export default class GameController {
         this.pt = 0; // Previous time stamp
         this.dt = 0; // Time difference between frames
         this.car = new Car(); // The car object with position, velocity, etc.
+
+        this.dashboard = new Dashboard(document.getElementById("dashboard"),
+            [ this.car ]);
+
 
         // Setup to prevent adding multiple listeners to the same canvas
         let canvas = document.querySelector("#c");
@@ -52,6 +57,8 @@ export default class GameController {
                 });
             })
             .catch(error => console.error("Error loading model:", error));
+
+        this.dashboard.attach();
     }
 
     frameUpdate = (time) => {

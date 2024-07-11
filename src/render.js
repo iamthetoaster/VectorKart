@@ -32,7 +32,7 @@ let render = {
     gl.useProgram(program);
 
     render.camera = {
-      position: [1000, 1000, 0],
+      position: [1, 1000, 0],
       target: [0, 0, 0],
     }
 
