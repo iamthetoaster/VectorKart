@@ -34,73 +34,44 @@ export default class GameController {
     }
 
     start() {
-        // Load the car model and initialize the game components
-        fetch("/resources/models/race.obj")
-            .then(response => response.text())
-            .then(parseObjText)
-            .then(obj => {
-                render.setup(document.querySelector("#c")).then(() => {
-                    if (!render.makeModel("car", obj, render.program)) {
-                        console.error("Failed to create model");
-                        return;
-                    }
-                    // Set initial car properties and draw it on the canvas
-                    this.car.setPosition(0, 0, 0);
-                    this.car.setRotation(0, 0, 0);
-                    this.car.setScale(100, 100, 100);
-                    this.car.updateTransform();
-                    render.draw();
-                });
-            })
-            .catch(error => console.error("Error loading model:", error));
+
+        this.dashboard.attach();
     }
 
     frameUpdate = (time) => {
         // Update the state of the game each frame
-        if (this.rotating && render.models.car) {
-            let rotationAngle = degToRad(100 * time % 360);
+        if (this.rotating) {
+            let rotationAngle = degToRad(10 * time % 360);
             this.car.setRotation(0, rotationAngle, 0);
             this.car.updateTransform();
         }
+        // Update time variables for smooth animations
         this.dt = time - this.pt;
         this.pt = time;
     }
 
     handleCanvasClick(event) {
-        const rect = event.target.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left; // Get mouse X coordinate within the canvas
-        const mouseY = event.clientY - rect.top;  // Get mouse Y coordinate within the canvas
-    
-        const canvasCenterX = event.target.width / 2;
-        const canvasCenterY = event.target.height / 2;
-    
-        // Normalize the mouse coordinates to center the origin (0, 0) in the middle of the canvas
-        // Also inverts the Y to align with a more standard Cartesian plane where up is positive
+        // Handle clicks on the canvas to move the car to random positions
+        const maxZ = event.target.width;
+        const maxY = event.target.height;
         const newPos = {
             x: 0, // Assuming X-axis is not used in 2D space
-            y: -(mouseY - canvasCenterY), // Invert Y-axis
-            z: mouseX - canvasCenterX // Z uses the width for horizontal movement
+            y: (Math.random() * maxY) - (maxY / 2), // vertical on screen
+            z: (Math.random() * maxZ) - (maxZ / 2) // horizontal on screen
         };
-    
-        // Compute the velocity as the difference divided by deltaTime
-        const now = performance.now();
-        const deltaTime = (now - this.pt) / 1000;
-        this.pt = now;
-    
-        if (deltaTime > 0) {
-            const velocity = {
-                x: 0, // X velocity is not used
-                y: (newPos.y - this.car.position.y) / deltaTime,
-                z: (newPos.z - this.car.position.z) / deltaTime
-            };
-    
-            this.car._setVelocity(velocity.x, velocity.y, velocity.z);
-        }
-    
+
+        // Compute the new velocity based on position change
+        const velocity = {
+            x: 0,
+            y: newPos.y - this.car.position.y,
+            z: newPos.z - this.car.position.z
+        };
+
+        // Update the car's state and redraw
         this.car.setPosition(newPos.x, newPos.y, newPos.z);
-        this.updateCarTransform();
-    
-        console.log(`Mouse clicked at position: (${mouseX}, ${mouseY})`);
-        console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.x}, ${this.car.velocity.y}, ${this.car.velocity.z})`);
+        this.car.updateTransform();
+
+        // Log the car's new position and velocity for debugging
+        console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
     }
 }
