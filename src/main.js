@@ -8,4 +8,4 @@ const game = new GameController();
 const canvas = document.getElementById(canvasId);
 canvas.addEventListener("click", game.clickUpdate);
 
-game.run();
+game.start();
