@@ -178,7 +178,7 @@ export default class RenderEngine {
     }
 
     draw = (time) => {
-        time *= 0.005; // convert to seconds
+        time *= 0.001; // convert to seconds
 
         this.runUpdate(time); // updates rendering logic/contents
 
