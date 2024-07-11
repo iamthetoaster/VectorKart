@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "description": "A turn-based game based on [Racetrack](https://en.wikipedia.org/wiki/Racetrack_(game)) and made with WebGL.",
   "main": "/src/main.js",
+  "engines": {
+    "npm": "~10.7.0",
+    "node": "~20.15.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/"
   },
   "repository": {
     "type": "git",
@@ -15,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/iamthetoaster/VectorKart/issues"
   },
-  "homepage": "https://github.com/iamthetoaster/VectorKart#readme"
+  "homepage": "https://github.com/iamthetoaster/VectorKart#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.6.0",
+    "eslint": "^9.6.0",
+    "globals": "^15.8.0"
+  }
 }
