@@ -4,7 +4,7 @@ function Map(x, y){
     const WALL = 1;
     const TRACK = 2;
 
-    this.map = [];    
+    this.map = [];
     this.x = x;
     this.y = y;
     for(let i = 0; i < x; i++){
@@ -13,22 +13,22 @@ function Map(x, y){
             this.map[i][j] = 0;
         }
     }
-    
+
     //map visualizer in th 4th quadrant
     this.visMap = function() {
         let s = ""; // a string to represent the array
         for(let yValues = 0; yValues < this.y; yValues++){
             s = "";
             for(let xValues = 0; xValues < this.x; xValues++){
-                
+
                 if(this.map[xValues][yValues] == UNASSIGNED){
                     s = s.concat("O" + "&nbsp" + "&nbsp" + "&nbsp"); //O represents an undefined value
                 }
-    
+
                 else if(this.map[xValues][yValues] == WALL){
                     s = s.concat("X" + "&nbsp" + "&nbsp" + "&nbsp");// X represents a wall
                 }
-    
+
                 else if(this.map[xValues][yValues] == TRACK){
                     s = s.concat("Q" + "&nbsp" + "&nbsp" + "&nbsp");// Q represents track space
                 }
@@ -37,10 +37,10 @@ function Map(x, y){
                     s = s.concat("?" + "&nbsp" + "&nbsp" + "&nbsp");// ? for mistakes lol
                 }
             }
-    
+
             document.write(s);
             document.write("<br>");
-            
+
         }
     };
 
@@ -77,8 +77,8 @@ function Map(x, y){
                     seenWall = true;
                     fillWithTrack = false;
                 }
-                
-                
+
+
             }
         }
     };*/
@@ -103,9 +103,9 @@ function Map(x, y){
 
     this.createDiamond = function(radius, xCenter, yCenter, type){
         this.map[xCenter][yCenter + radius] = type;
-        this.map[xCenter][yCenter - radius] = type; 
+        this.map[xCenter][yCenter - radius] = type;
         this.map[xCenter + radius][yCenter] = type;
-        this.map[xCenter - radius][yCenter] = type; 
+        this.map[xCenter - radius][yCenter] = type;
         this.diagonalDown(xCenter - radius, xCenter, yCenter, yCenter + radius, type);
         this.diagonalDown(xCenter, xCenter + radius, yCenter - radius, yCenter,type);
         this.diagonalUp(xCenter - radius, xCenter, yCenter, yCenter - radius, type);
@@ -136,7 +136,7 @@ function Map(x, y){
     this.Circle = function(innerRadius, outerRadius, xCenter, yCenter){
         this.createCircle(innerRadius, 360, xCenter, yCenter, WALL);
         this.createCircle(outerRadius, 360, xCenter, yCenter, WALL);
-        
+
         let fill = (outerRadius-1);
         while(fill > innerRadius){
             this.createCircle(fill, 360, xCenter, yCenter, TRACK);
@@ -150,7 +150,7 @@ function Map(x, y){
 
 
 }
-//main 
+//main
 
 
 let x = 71;

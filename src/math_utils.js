@@ -125,39 +125,39 @@ const mat4 = {
     let m31 = m[3 * 4 + 1];
     let m32 = m[3 * 4 + 2];
     let m33 = m[3 * 4 + 3];
-    let tmp_0  = m22 * m33;
-    let tmp_1  = m32 * m23;
-    let tmp_2  = m12 * m33;
-    let tmp_3  = m32 * m13;
-    let tmp_4  = m12 * m23;
-    let tmp_5  = m22 * m13;
-    let tmp_6  = m02 * m33;
-    let tmp_7  = m32 * m03;
-    let tmp_8  = m02 * m23;
-    let tmp_9  = m22 * m03;
-    let tmp_10 = m02 * m13;
-    let tmp_11 = m12 * m03;
-    let tmp_12 = m20 * m31;
-    let tmp_13 = m30 * m21;
-    let tmp_14 = m10 * m31;
-    let tmp_15 = m30 * m11;
-    let tmp_16 = m10 * m21;
-    let tmp_17 = m20 * m11;
-    let tmp_18 = m00 * m31;
-    let tmp_19 = m30 * m01;
-    let tmp_20 = m00 * m21;
-    let tmp_21 = m20 * m01;
-    let tmp_22 = m00 * m11;
-    let tmp_23 = m10 * m01;
+    let m22_m33  = m22 * m33;
+    let m32_m23  = m32 * m23;
+    let m12_m33  = m12 * m33;
+    let m32_m13  = m32 * m13;
+    let m12_m23  = m12 * m23;
+    let m22_m13  = m22 * m13;
+    let m02_m33  = m02 * m33;
+    let m32_m03  = m32 * m03;
+    let m02_m23  = m02 * m23;
+    let m22_m03  = m22 * m03;
+    let m02_m13 = m02 * m13;
+    let m12_m03 = m12 * m03;
+    let m20_m31 = m20 * m31;
+    let m30_m21 = m30 * m21;
+    let m10_m31 = m10 * m31;
+    let m30_m11 = m30 * m11;
+    let m10_m21 = m10 * m21;
+    let m20_m11 = m20 * m11;
+    let m00_m31 = m00 * m31;
+    let m30_m01 = m30 * m01;
+    let m00_m21 = m00 * m21;
+    let m20_m01 = m20 * m01;
+    let m00_m11 = m00 * m11;
+    let m10_m01 = m10 * m01;
 
-    let t0 = (tmp_0 * m11 + tmp_3 * m21 + tmp_4 * m31) -
-        (tmp_1 * m11 + tmp_2 * m21 + tmp_5 * m31);
-    let t1 = (tmp_1 * m01 + tmp_6 * m21 + tmp_9 * m31) -
-        (tmp_0 * m01 + tmp_7 * m21 + tmp_8 * m31);
-    let t2 = (tmp_2 * m01 + tmp_7 * m11 + tmp_10 * m31) -
-        (tmp_3 * m01 + tmp_6 * m11 + tmp_11 * m31);
-    let t3 = (tmp_5 * m01 + tmp_8 * m11 + tmp_11 * m21) -
-        (tmp_4 * m01 + tmp_9 * m11 + tmp_10 * m21);
+    let t0 = (m22_m33 * m11 + m32_m13 * m21 + m12_m23 * m31) -
+        (m32_m23 * m11 + m12_m33 * m21 + m22_m13 * m31);
+    let t1 = (m32_m23 * m01 + m02_m33 * m21 + m22_m03 * m31) -
+        (m22_m33 * m01 + m32_m03 * m21 + m02_m23 * m31);
+    let t2 = (m12_m33 * m01 + m32_m03 * m11 + m02_m13 * m31) -
+        (m32_m13 * m01 + m02_m33 * m11 + m12_m03 * m31);
+    let t3 = (m22_m13 * m01 + m02_m23 * m11 + m12_m03 * m21) -
+        (m12_m23 * m01 + m22_m03 * m11 + m02_m13 * m21);
 
     let d = 1.0 / (m00 * t0 + m10 * t1 + m20 * t2 + m30 * t3);
 
@@ -166,30 +166,30 @@ const mat4 = {
       d * t1,
       d * t2,
       d * t3,
-      d * ((tmp_1 * m10 + tmp_2 * m20 + tmp_5 * m30) -
-           (tmp_0 * m10 + tmp_3 * m20 + tmp_4 * m30)),
-      d * ((tmp_0 * m00 + tmp_7 * m20 + tmp_8 * m30) -
-           (tmp_1 * m00 + tmp_6 * m20 + tmp_9 * m30)),
-      d * ((tmp_3 * m00 + tmp_6 * m10 + tmp_11 * m30) -
-           (tmp_2 * m00 + tmp_7 * m10 + tmp_10 * m30)),
-      d * ((tmp_4 * m00 + tmp_9 * m10 + tmp_10 * m20) -
-           (tmp_5 * m00 + tmp_8 * m10 + tmp_11 * m20)),
-      d * ((tmp_12 * m13 + tmp_15 * m23 + tmp_16 * m33) -
-           (tmp_13 * m13 + tmp_14 * m23 + tmp_17 * m33)),
-      d * ((tmp_13 * m03 + tmp_18 * m23 + tmp_21 * m33) -
-           (tmp_12 * m03 + tmp_19 * m23 + tmp_20 * m33)),
-      d * ((tmp_14 * m03 + tmp_19 * m13 + tmp_22 * m33) -
-           (tmp_15 * m03 + tmp_18 * m13 + tmp_23 * m33)),
-      d * ((tmp_17 * m03 + tmp_20 * m13 + tmp_23 * m23) -
-           (tmp_16 * m03 + tmp_21 * m13 + tmp_22 * m23)),
-      d * ((tmp_14 * m22 + tmp_17 * m32 + tmp_13 * m12) -
-           (tmp_16 * m32 + tmp_12 * m12 + tmp_15 * m22)),
-      d * ((tmp_20 * m32 + tmp_12 * m02 + tmp_19 * m22) -
-           (tmp_18 * m22 + tmp_21 * m32 + tmp_13 * m02)),
-      d * ((tmp_18 * m12 + tmp_23 * m32 + tmp_15 * m02) -
-           (tmp_22 * m32 + tmp_14 * m02 + tmp_19 * m12)),
-      d * ((tmp_22 * m22 + tmp_16 * m02 + tmp_21 * m12) -
-           (tmp_20 * m12 + tmp_23 * m22 + tmp_17 * m02)),
+      d * ((m32_m23 * m10 + m12_m33 * m20 + m22_m13 * m30) -
+           (m22_m33 * m10 + m32_m13 * m20 + m12_m23 * m30)),
+      d * ((m22_m33 * m00 + m32_m03 * m20 + m02_m23 * m30) -
+           (m32_m23 * m00 + m02_m33 * m20 + m22_m03 * m30)),
+      d * ((m32_m13 * m00 + m02_m33 * m10 + m12_m03 * m30) -
+           (m12_m33 * m00 + m32_m03 * m10 + m02_m13 * m30)),
+      d * ((m12_m23 * m00 + m22_m03 * m10 + m02_m13 * m20) -
+           (m22_m13 * m00 + m02_m23 * m10 + m12_m03 * m20)),
+      d * ((m20_m31 * m13 + m30_m11 * m23 + m10_m21 * m33) -
+           (m30_m21 * m13 + m10_m31 * m23 + m20_m11 * m33)),
+      d * ((m30_m21 * m03 + m00_m31 * m23 + m20_m01 * m33) -
+           (m20_m31 * m03 + m30_m01 * m23 + m00_m21 * m33)),
+      d * ((m10_m31 * m03 + m30_m01 * m13 + m00_m11 * m33) -
+           (m30_m11 * m03 + m00_m31 * m13 + m10_m01 * m33)),
+      d * ((m20_m11 * m03 + m00_m21 * m13 + m10_m01 * m23) -
+           (m10_m21 * m03 + m20_m01 * m13 + m00_m11 * m23)),
+      d * ((m10_m31 * m22 + m20_m11 * m32 + m30_m21 * m12) -
+           (m10_m21 * m32 + m20_m31 * m12 + m30_m11 * m22)),
+      d * ((m00_m21 * m32 + m20_m31 * m02 + m30_m01 * m22) -
+           (m00_m31 * m22 + m20_m01 * m32 + m30_m21 * m02)),
+      d * ((m00_m31 * m12 + m10_m01 * m32 + m30_m11 * m02) -
+           (m00_m11 * m32 + m10_m31 * m02 + m30_m01 * m12)),
+      d * ((m00_m11 * m22 + m10_m21 * m02 + m20_m01 * m12) -
+           (m00_m21 * m12 + m10_m01 * m22 + m20_m11 * m02)),
     ];
   },
 
