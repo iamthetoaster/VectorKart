@@ -3,7 +3,7 @@ import Dashboard from "./Dashboard.js";
 import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
 import { degToRad } from "../math_utils.js";
-import Car from "../state-objects/Car.js";
+import Car from "../state-objects/car.js";//was Car.js
 "use strict";
 
 export default class GameController {
@@ -19,6 +19,9 @@ export default class GameController {
                 this.dt = 0; // Time difference between frames
                 this.car = new Car(this.renderEngine.instantiateRenderObject("car")); // The car object with position, velocity, etc.
                 this.car.setScale(100, 100, 100);
+
+                // Print initial position of the car
+                console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
 
                 this.dashboard = new Dashboard(document.getElementById("dashboard"),
                                                [ this.car ]);
@@ -51,27 +54,27 @@ export default class GameController {
     }
 
     handleCanvasClick(event) {
-        // Handle clicks on the canvas to move the car to random positions
-        const maxZ = event.target.width;
-        const maxY = event.target.height;
-        const newPos = {
-            x: 0, // Assuming X-axis is not used in 2D space
-            y: (Math.random() * maxY) - (maxY / 2), // vertical on screen
-            z: (Math.random() * maxZ) - (maxZ / 2) // horizontal on screen
-        };
-
-        // Compute the new velocity based on position change
-        const velocity = {
-            x: 0,
-            y: newPos.y - this.car.position.y,
-            z: newPos.z - this.car.position.z
-        };
-
-        // Update the car's state and redraw
-        this.car.setPosition(newPos.x, newPos.y, newPos.z);
+        const rect = event.target.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+    
+        // Get the actual canvas width and height
+        const canvasWidth = event.target.width;
+        const canvasHeight = event.target.height;
+    
+        // Convert to center-origin coordinates
+        // Canvas coordinates go from -width/2 to width/2 and -height/2 to height/2
+        const normalizedX = 0; // X is not used, assuming a 2D Y-Z plane
+        const normalizedY = -(mouseY - canvasHeight / 2); // Y needs to be inverted
+        const normalizedZ = mouseX - canvasWidth / 2; // Z is horizontal on screen
+    
+        // Update the car's position to where the user clicked
+        this.car.setPosition(normalizedX, normalizedY, normalizedZ);
         this.car.updateTransform();
-
-        // Log the car's new position and velocity for debugging
-        console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
-    }
+    
+        // Log the action for debugging
+        console.log(`Mouse clicked at raw position: (${mouseX}, ${mouseY})`);
+        console.log(`Normalized coordinates: (${normalizedX}, ${normalizedY}, ${normalizedZ})`);
+        console.log(`Car moved to (${normalizedX}, ${normalizedY}, ${normalizedZ})`);
+    }    
 }
