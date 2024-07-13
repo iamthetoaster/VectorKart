@@ -2,4 +2,4 @@
 
 test('Jest works', () => {
   expect(true).toBeTruthy();
-})
+});

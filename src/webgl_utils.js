@@ -1,50 +1,51 @@
-"use strict";
-
 function parseObjText(text) {
-  let lines = text.split("\n");
+  const lines = text.split('\n');
 
-  let verts = [[0,0,0,1]];
-  let vertNormals = [[0,0,0,0]];
-  let textureVerts = [[0,0,0]];
-  let triangles = [];
+  const verts = [[0, 0, 0, 1]];
+  const vertNormals = [[0, 0, 0, 0]];
+  const textureVerts = [[0, 0, 0]];
+  const triangles = [];
 
   for (const line of lines) {
-    let tokens = line.split(/\s+/);
+    const tokens = line.split(/\s+/);
     // console.log("Line:")
     // console.log(line);
     switch (tokens[0]) {
-      case "v": {
+      case 'v': { {
         // console.log("Vertex:");
-        let vec = [0,0,0,1];
+        const vec = [0, 0, 0, 1];
         for (const [index, value] of tokens.slice(1, vec.length).entries()) {
           vec[index] = Number(value);
         }
         // console.log(vec);
         verts.push(vec);
       } break;
-      case "vn": {
+      }
+      case 'vn': { {
         // console.log("Vertex Normal:");
-        let vec = [0,0,0,0];
+        const vec = [0, 0, 0, 0];
         for (const [index, value] of tokens.slice(1, vec.length).entries()) {
           vec[index] = Number(value);
         }
         // console.log(vec);
         vertNormals.push(vec);
       } break;
-      case "vt": {
+      }
+      case 'vt': { {
         // console.log("Vertex Texture");
-        let vec = [0,0,0];
+        const vec = [0, 0, 0];
         for (const [index, value] of tokens.slice(1, vec.length).entries()) {
           vec[index] = Number(value);
         }
         // console.log(vec);
         textureVerts.push(vec);
       } break;
-      case "f": {
+      }
+      case 'f': { {
         // console.log("Face:");
 
-        let faceVerts = tokens.slice(1).filter((token) => token.length > 0).map((token) => {
-          let indices = token.split("/").map(Number);
+        const faceVerts = tokens.slice(1).filter(token => token.length > 0).map((token) => {
+          const indices = token.split('/').map(Number);
           while (indices.length < 3) {
             indices.push(0);
           }
@@ -52,22 +53,22 @@ function parseObjText(text) {
             position: verts[indices[0]],
             uv: textureVerts[indices[1]],
             normal: vertNormals[indices[2]],
-          }
-        })
+          };
+        });
         // console.log(faceVerts);
         // Fan triangulation, sorry
         for (let index = 1; index < faceVerts.length - 1; index++) {
-          triangles.push(faceVerts[0]);
-          triangles.push(faceVerts[index]);
-          triangles.push(faceVerts[index + 1]);
+          triangles.push(faceVerts[0], faceVerts[index], faceVerts[index + 1]);
         }
       } break;
-      case "g": {
+      }
+      case 'g': { {
         // console.log(`Group ${tokens[1]}`);
         // verts = [[0,0,0,1]];
         // vertNormals = [[0,0,0,0]];
         // textureVerts = [[0,0,0]];
       } break;
+      }
       default:
         // console.log("Ignored");
     }
@@ -76,10 +77,10 @@ function parseObjText(text) {
 }
 
 function createShader(gl, type, source) {
-  let shader = gl.createShader(type);
+  const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (success) {
     return shader;
   }
@@ -89,27 +90,27 @@ function createShader(gl, type, source) {
 }
 
 function createProgram(gl, vertexShader, fragmentShader) {
-  let program = gl.createProgram();
+  const program = gl.createProgram();
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
   gl.attachShader(program, vertexShader);
   gl.linkProgram(program);
-  let success = gl.getProgramParameter(program, gl.LINK_STATUS);
+  const success = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (success) {
     return program;
   }
 
   console.log(gl.getProgramInfoLog(program));
   gl.deleteProgram(program);
-
 }
 
 function resizeCanvasToDisplaySize(canvas, multiplier) {
+  // eslint-disable-next-line unicorn/prefer-default-parameters
   multiplier = multiplier || 1;
-  const width  = canvas.clientWidth  * multiplier | 0;
-  const height = canvas.clientHeight * multiplier | 0;
-  if (canvas.width !== width ||  canvas.height !== height) {
-    canvas.width  = width;
+  const width = canvas.clientWidth * Math.trunc(multiplier);
+  const height = canvas.clientHeight * Math.trunc(multiplier);
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
     canvas.height = height;
     return true;
   }

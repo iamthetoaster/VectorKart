@@ -11,13 +11,15 @@ export default [
   unicorn.configs["flat/recommended"],
   pluginJest.configs["flat/recommended"],
   {
+    linterOptions: { reportUnusedDisableDirectives: "error" },
     languageOptions: { globals: globals.browser },
     rules: {
+      "prefer-const": "error",
+      "@stylistic/semi": ["error", "always"],
       "@stylistic/indent": ["error", 2],
       "@stylistic/quotes": ["error", "single"],
       "@stylistic/padded-blocks": ["error", "never"],
       "@stylistic/operator-linebreak": ["error", "after"],
-      "unicorn/filename-case": ["warn", {"case": "pascalCase"}],
       "unicorn/prevent-abbreviations": ["warn",
         {
           "allowList": {
@@ -28,4 +30,10 @@ export default [
       ]
     }
   },
+  {
+    files: ["src/engine/*", "src/state-objects/*"],
+    rules: {
+      "unicorn/filename-case": ["error", {"case": "pascalCase"}],
+    }
+  }
 ];
