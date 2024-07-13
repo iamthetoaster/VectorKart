@@ -1,6 +1,7 @@
 {
   "name": "vectorkart",
   "version": "0.1.0",
+  "type": "module",
   "description": "A turn-based game based on [Racetrack](https://en.wikipedia.org/wiki/Racetrack_(game)) and made with WebGL.",
   "main": "/src/main.js",
   "engines": {
@@ -8,8 +9,9 @@
     "node": "~20.15.0"
   },
   "scripts": {
-    "test": "jest",
-    "lint": "eslint src/"
+    "lint": "eslint src/**/*.js tests/*.test.js",
+    "lint-fix": "eslint --fix src/**/*.js tests/*.test.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,10 +23,17 @@
     "url": "https://github.com/iamthetoaster/VectorKart/issues"
   },
   "homepage": "https://github.com/iamthetoaster/VectorKart#readme",
+  "directories": {
+    "test": "tests"
+  },
   "devDependencies": {
-    "@eslint/js": "^9.6.0",
-    "eslint": "^9.6.0",
+    "@eslint/js": "^9.7.0",
+    "@stylistic/eslint-plugin-js": "^2.3.0",
+    "eslint": "^9.7.0",
+    "eslint-plugin-jest": "^28.6.0",
+    "eslint-plugin-unicorn": "^54.0.0",
     "globals": "^15.8.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }
