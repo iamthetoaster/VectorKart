@@ -11,7 +11,9 @@ export default [
     rules: {
       "@stylistic/js/indent": ["error", 2],
       "@stylistic/js/quotes": ["error", "single"],
-      "@stylistic/js/array-element-newline": ["error", "consistent"]
+      "@stylistic/js/padded-blocks": ["error", "never"],
+      "@stylistic/js/array-element-newline": ["warn", "consistent"],
+      "@stylistic/js/quote-props": ["warn", "as-needed"]
     }
   },
   pluginJs.configs.recommended,
