@@ -4,10 +4,7 @@ import Vector3 from './Vector3.js';
 export default class Car extends GameObject3D{
   constructor(renderObject) {
     super(renderObject);
-    // this.renderObject = renderObject;
-    // this.position = Vector3.ZERO;
-    // this.rotation = 0; // rotation about the y axis
-    // this.scale = Vector3.ZERO;
+    
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
 
