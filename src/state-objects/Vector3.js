@@ -1,8 +1,20 @@
 export default class Vector3 {
-  constructor(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  static isVector3Like = (object) => (
+    Object.hasOwn(object, 'x') &&
+    Object.hasOwn(object, 'y') &&
+    Object.hasOwn(object, 'z')
+  );
+
+  constructor(a, y, z) {
+    if (Vector3.isVector3Like(a)) {
+      this.x = a.x;
+      this.y = a.y;
+      this.z = a.z;
+    } else {
+      this.x = a;
+      this.y = y;
+      this.z = z;
+    }
   }
 
   static get ZERO() {
@@ -44,15 +56,19 @@ export default class Vector3 {
   }
 
   add(vector3) {
-    this.x += vector3.x;
-    this.y += vector3.y;
-    this.z += vector3.z;
+    return new Vector3(
+      this.x + vector3.x,
+      this.y + vector3.y,
+      this.z + vector3.z,
+    );
   }
 
   scalar_mult(scalar) {
-    this.x *= scalar;
-    this.y *= scalar;
-    this.z *= scalar;
+    return new Vector3(
+      this.x * scalar,
+      this.y * scalar,
+      this.z * scalar,
+    );
   }
 
   subtract(vector3) {
@@ -65,5 +81,9 @@ export default class Vector3 {
 
   toArray() {
     return [this.x, this.y, this.z];
+  }
+
+  toString() {
+    return `(${this.x}, ${this.y}, ${this.z})`;
   }
 }

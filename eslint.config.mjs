@@ -20,6 +20,8 @@ export default [
       "@stylistic/quotes": ["error", "single"],
       "@stylistic/padded-blocks": ["error", "never"],
       "@stylistic/operator-linebreak": ["error", "after"],
+      "@stylistic/arrow-parens": ["error", "always"],
+      "@stylistic/brace-style": ["error", "1tbs"],
       "unicorn/prevent-abbreviations": ["warn",
         {
           "allowList": {
