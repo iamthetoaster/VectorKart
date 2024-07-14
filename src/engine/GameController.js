@@ -40,7 +40,6 @@ export default class GameController {
     if (this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
       this.car.setRotation(0, rotationAngle, 0);
-      this.car.updateTransform();
     }
     // Update time variables for smooth animations
     this.dt = time - this.pt;
@@ -66,7 +65,6 @@ export default class GameController {
 
     // Update the car's state and redraw
     this.car.setPosition(newPos.x, newPos.y, newPos.z);
-    this.car.updateTransform();
 
     // Log the car's new position and velocity for debugging
     console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
