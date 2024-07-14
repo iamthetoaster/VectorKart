@@ -2,8 +2,7 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import { degToRad } from '../math_utils.js';
-import Car from '../state-objects/Car.js';
-'use strict';
+import Car from '../state-objects/car.js';
 
 export default class GameController {
   constructor() {
