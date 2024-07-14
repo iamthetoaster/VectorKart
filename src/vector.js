@@ -38,7 +38,7 @@ class vector {
             return;
         }
         //get previous velocity, 
-        var velocity = this.prev.velocity + this.velocity
+        return this.prev.velocity + this.velocity
 
     }
     render() {
