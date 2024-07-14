@@ -38,7 +38,7 @@ export default class GameController {
     // Update the state of the game each frame
     if (this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
-      this.car.rotation.setComponents(0, rotationAngle, 0);
+      this.car.rotation = rotationAngle;
       this.car.updateTransform();
     }
     // Update time variables for smooth animations

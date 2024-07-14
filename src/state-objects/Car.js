@@ -4,7 +4,7 @@ export default class Car {
   constructor(renderObject) {
     this.renderObject = renderObject;
     this.position = Vector3.ZERO;
-    this.rotation = Vector3.ZERO;
+    this.rotation = 0; // rotation about the y axis
     this.scale = Vector3.ZERO;
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
@@ -48,14 +48,14 @@ export default class Car {
   updateTransform() {
     // Update the WebGL transformation matrices based on the car's state
     this.renderObject.translation = this.position.toArray();
-    this.renderObject.rotation = this.rotation.toArray();
+    this.renderObject.rotation = [0, this.rotation, 0];
     this.renderObject.scale = this.scale.toArray();
   }
 
   printState() {
     console.log(`Position: (${this.position.toArray().join(', ')})`);
     console.log(`Velocity: (${this.velocity.toArray().join(', ')}`);
-    console.log(`Rotation: ${this.rotation.toArray().join(', ')}`);
+    console.log(`Rotation: ${this.rotation}`);
     console.log(`Scale: (${this.scale.toArray().join(', ')})`);
   }
 }
