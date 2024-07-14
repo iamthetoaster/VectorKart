@@ -1,24 +1,40 @@
+import Vector3 from './Vector3.js';
+
 export default class GameObject3D {
   constructor(renderObject) {
     this.renderObject = renderObject;
 
-    this.position = { x: 0, y: 0, z: 0 };
-    this.rotation = { x: 0, y: 0, z: 0 };
-    this.scale = { x: 1, y: 1, z: 1 };
+    this._position = Vector3.ZERO;
+    this._rotation = Vector3.ZERO;
+    this._scale = new Vector3(1, 1, 1);
   }
 
-  setPosition(x, y, z) {
-    this.position = { x, y, z };
+  // getters
+  get position() {
+    return this._position;
+  }
+
+  get rotation() {
+    return this._rotation;
+  }
+
+  get scale() {
+    return this._scale;
+  }
+
+  // setters
+  set position(newPos) { 
+    this._position = newPos;
     this.renderObject.translation = [this.position.x, this.position.y, this.position.z];
   }
 
-  setRotation(x, y, z) {
-    this.rotation = { x, y, z };
-    this.renderObject.rotation = [this.rotation.x, this.rotation.y, this.rotation.z];
+  set rotation(newAngle) {
+    this._rotation = newAngle;
+    this.renderObject.rotation = [0, newAngle, 0];
   }
 
-  setScale(x, y, z) {
-    this.scale = { x, y, z };
+  set scale(newScale) {
+    this._scale = newScale;
     this.renderObject.scale = [this.scale.x, this.scale.y, this.scale.z];
   }
 }
