@@ -1,11 +1,10 @@
+import GameObject3D from './GameObject3D.js';
 import Vector3 from './Vector3.js';
 
-export default class Car {
+export default class Car extends GameObject3D{
   constructor(renderObject) {
-    this.renderObject = renderObject;
-    this.position = Vector3.ZERO;
-    this.rotation = 0; // rotation about the y axis
-    this.scale = Vector3.ZERO;
+    super(renderObject);
+    
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
 
@@ -43,13 +42,6 @@ export default class Car {
     if (speed > this.maxSpeed) {
       this.maxSpeed = speed;
     }
-  }
-
-  updateTransform() {
-    // Update the WebGL transformation matrices based on the car's state
-    this.renderObject.translation = this.position.toArray();
-    this.renderObject.rotation = [0, this.rotation, 0];
-    this.renderObject.scale = this.scale.toArray();
   }
 
   printState() {

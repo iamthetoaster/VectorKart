@@ -3,6 +3,7 @@ import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import { degToRad } from '../math_utils.js';
 import Car from '../state-objects/Car.js';
+import Vector3 from '../state-objects/Vector3.js';
 
 export default class GameController {
   constructor() {
@@ -39,7 +40,6 @@ export default class GameController {
     if (this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
       this.car.rotation = rotationAngle;
-      this.car.updateTransform();
     }
     // Update time variables for smooth animations
     this.dt = time - this.pt;
@@ -50,24 +50,15 @@ export default class GameController {
     // Handle clicks on the canvas to move the car to random positions
     const maxZ = event.target.width;
     const maxY = event.target.height;
-    const newPos = {
-      x: 0, // Assuming X-axis is not used in 2D space
-      y: (Math.random() * maxY) - (maxY / 2), // vertical on screen
-      z: (Math.random() * maxZ) - (maxZ / 2), // horizontal on screen
-    };
+    const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
 
-    // Compute the new velocity based on position change
-    const velocity = {
-      x: 0,
-      y: newPos.y - this.car.position.y,
-      z: newPos.z - this.car.position.z,
-    };
+    // compute new velocity based on position change
+    const newVelocity = new Vector3(0, newPos.y - this.car.position.y, newPos.z - this.car.position.z);
 
     // Update the car's state and redraw
-    this.car.position.setComponents(newPos.x, newPos.y, newPos.z);
-    this.car.updateTransform();
+    this.car.position = newPos;
 
     // Log the car's new position and velocity for debugging
-    console.log(`Car moved to (${newPos.x}, ${newPos.y}) with velocity (${velocity.x}, ${velocity.y})`);
+    console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${newVelocity.x}, ${newVelocity.y})`);
   }
 }
