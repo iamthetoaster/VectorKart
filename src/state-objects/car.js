@@ -14,14 +14,7 @@ export default class Car extends GameObject3D {
 
   _setVelocity(x, y, z) {
     this.velocity = { x, y, z };
-  _setVelocity(x, y, z) {
-    this.velocity = { x, y, z };
 
-    const speed = this.getSpeed();
-    if (speed > this.maxSpeed) {
-      this.maxSpeed = speed;
-    }
-  }
     const speed = this.getSpeed();
     if (speed > this.maxSpeed) {
       this.maxSpeed = speed;
