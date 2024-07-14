@@ -1,4 +1,3 @@
-//import { render } from "../render.js";
 import GameObject3D from "./GameObject3D.js"
 
 export default class Car extends GameObject3D {
