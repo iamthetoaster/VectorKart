@@ -6,31 +6,31 @@ export default class Vector3 {
   }
 
   static get ZERO() {
-    return Vector3(0, 0, 0);
+    return new Vector3(0, 0, 0);
   }
 
   static get RIGHT() {
-    return Vector3(1, 0, 0);
+    return new Vector3(1, 0, 0);
   }
 
   static get LEFT() {
-    return Vector3.RIGHT.scalar_mult(-1);
+    return new Vector3.RIGHT.scalar_mult(-1);
   }
 
   static get DOWN() {
-    return Vector3(0, 0, 1);
+    return new Vector3(0, 0, 1);
   }
 
   static get UP() {
-    return Vector3.DOWN.scalar_mult(-1);
+    return new Vector3.DOWN.scalar_mult(-1);
   }
 
   static get BACK() {
-    return Vector3(0, 1, 0);
+    return new Vector3(0, 1, 0);
   }
 
   static get FORWARD() {
-    return Vector3.BACK.scalar_mult(-1);
+    return new Vector3.BACK.scalar_mult(-1);
   }
 
   getMagnitude() {

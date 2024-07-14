@@ -1,10 +1,10 @@
-import Vector3 from 'Vector3.js';
+import Vector3 from './Vector3.js';
 
 export default class Car {
   constructor(renderObject) {
     this.renderObject = renderObject;
     this.position = Vector3.ZERO;
-    this.rotation = 0; // Rotation about the vector
+    this.rotation = Vector3.ZERO;
     this.scale = Vector3.ZERO;
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
@@ -55,7 +55,7 @@ export default class Car {
   printState() {
     console.log(`Position: (${this.position.toArray().join(', ')})`);
     console.log(`Velocity: (${this.velocity.toArray().join(', ')}`);
-    console.log(`Rotation: ${this.rotation}`);
+    console.log(`Rotation: ${this.rotation.toArray().join(', ')}`);
     console.log(`Scale: (${this.scale.toArray().join(', ')})`);
   }
 }

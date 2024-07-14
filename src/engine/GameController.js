@@ -2,7 +2,7 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import { degToRad } from '../math_utils.js';
-import Car from '../state-objects/car.js';
+import Car from '../state-objects/Car.js';
 
 export default class GameController {
   constructor() {
@@ -19,7 +19,7 @@ export default class GameController {
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
     this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
-    this.car.setScale(100, 100, 100);
+    this.car.scale.setComponents(100, 100, 100);
 
     this.dashboard = new Dashboard(document.querySelector('#dashboard'),
       [this.car]);
@@ -38,7 +38,7 @@ export default class GameController {
     // Update the state of the game each frame
     if (this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
-      this.car.setRotation(0, rotationAngle, 0);
+      this.car.rotation.setComponents(0, rotationAngle, 0);
       this.car.updateTransform();
     }
     // Update time variables for smooth animations
@@ -64,7 +64,7 @@ export default class GameController {
     };
 
     // Update the car's state and redraw
-    this.car.setPosition(newPos.x, newPos.y, newPos.z);
+    this.car.position.setComponents(newPos.x, newPos.y, newPos.z);
     this.car.updateTransform();
 
     // Log the car's new position and velocity for debugging

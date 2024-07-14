@@ -31,7 +31,7 @@ class Dashboard {
       };
 
       statistics.speed.textContent = `Speed: ${this.cars[index].getSpeed()} m/s`;
-      statistics.angle.textContent = `Angle: ${this.cars[index].getAngle()} deg`;
+      statistics.angle.textContent = `Angle: ${this.cars[index].rotation.y} deg`;
       statistics.maxSpeed.textContent = `Max Speed: ${this.cars[index].maxSpeed} m/s`;
     }
   }
