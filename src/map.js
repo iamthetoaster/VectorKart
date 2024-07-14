@@ -1,93 +1,164 @@
-function genMap(x, y){
-    let map = [];
-    
-    for(let i = 0; i < y; i++){
-        map[i] = [];
-        for(let j = 0; j < x; j++){
-            map[i][j] = 0;
+function Map(x, y) {
+  const UNASSIGNED = 0;
+  const WALL = 1;
+  const TRACK = 2;
+
+  this.map = [];
+  this.x = x;
+  this.y = y;
+  for (let index = 0; index < x; index++) {
+    this.map[index] = [];
+    for (let index_ = 0; index_ < y; index_++) {
+      this.map[index][index_] = 0;
+    }
+  }
+
+  // map visualizer in th 4th quadrant
+  this.visMap = function () {
+    let s = ''; // a string to represent the array
+    for (let yValues = 0; yValues < this.y; yValues++) {
+      s = '';
+      for (let xValues = 0; xValues < this.x; xValues++) {
+        if (this.map[xValues][yValues] == UNASSIGNED) {
+          s = [...s, 'O' + '&nbsp' + '&nbsp' + '&nbsp']; // O represents an undefined value
+        } else if (this.map[xValues][yValues] == WALL) {
+          s = [...s, 'X' + '&nbsp' + '&nbsp' + '&nbsp'];// X represents a wall
+        } else if (this.map[xValues][yValues] == TRACK) {
+          s = [...s, 'Q' + '&nbsp' + '&nbsp' + '&nbsp'];// Q represents track space
+        } else {
+          s = [...s, '?' + '&nbsp' + '&nbsp' + '&nbsp'];// ? for mistakes lol
         }
+      }
+
+      document.write(s);
+      document.write('<br>');
     }
-    return map;
-}
+  };
 
-
-//console.log(map);
-
-//horizontal track editor
-function hLine(map, x1, x2, y1){
-    while(x1 <= x2){
-        map[y1][x1] = 1;
-        x1++;
+  // horizontal track editor
+  this.hLine = function (xStart, xEnd, yLevel, type) {
+    while (xStart <= xEnd) {
+      this.map[xStart][yLevel] = type;
+      xStart++;
     }
-}
+  };
 
-//vertical track editor
-function vLine(map, y1, y2, x1){
-    while(y1<=y2){
-        map[y1][x1] = 1;
-        y1++;
+  // vertical track editor
+  this.vLine = function (yStart, yEnd, xLevel, type) {
+    while (yStart <= yEnd) {
+      this.map[xLevel][yStart] = type;
+      yStart++;
     }
-}
+  };
 
+  // fills in between WALLS with TRACK
+  /*
+    this.fill = function(){
+        let seenWall = false;
+        let fillWithTrack = false;
+        for(let xValues = 0; xValues<this.x; xValues++){
+            fillWithTrack = false;
+            seentrack = false;
+            for(let yValues = 0; yValues<this.y; yValues++){
+                if(fillWithTrack == true && seenWall == true && this.map[xValues][yValues] == UNASSIGNED){
+                    this.map[xValues][yValues] = TRACK;
+                }
 
-function fill(map, x, y){
-    let f = 0;
-    for(let i = 0; i<y; i++){
-        for(let j = 0; j<x; j++){
-            if(f == 1 && map[i][j] == 0){
-                map[i][j] = 2;
-            }
-            if(f == 0 && map[i][j] == 1){
-                f = 1;
-            }
+                if(this.map[xValues][yValues] == WALL){
+                    seenWall = true;
+                    fillWithTrack = false;
+                }
 
-            else if(f == 1 && map[i][j] == 1){
-                f = 0;
-            }
-            
-        }
-    }
-}
-
-//map visualizer in the 4th quadrant
-function visMap(map, x , y){
-    let s = "";
-    for(let i = y-1; i >= 0; i--){
-        s = "";
-        for(let j = 0; j < x; j++){
-            if(map[i][j] == 0){
-                s = s.concat("O" + "&nbsp" + "&nbsp" + "&nbsp");
-            }
-
-            else if(map[i][j] == 1){
-                s = s.concat("X" + "&nbsp" + "&nbsp" + "&nbsp");
-            }
-
-            else{
-                s = s.concat("Q" + "&nbsp" + "&nbsp" + "&nbsp");
             }
         }
+    }; */
 
-        document.write(s);
-        document.write("<br>");
-        
+  // create negative diagonal line
+  this.diagonalDown = function (xStart, xEnd, yStart, yEnd, type) {
+    while (xStart < xEnd && yStart < yEnd) {
+      this.map[xStart][yStart] = type;
+      xStart++;
+      yStart++;
     }
+  };
+
+  // create positive diagonal line
+  this.diagonalUp = function (xStart, xEnd, yStart, yEnd, type) {
+    while (xStart < xEnd && yStart > yEnd) {
+      this.map[xStart][yStart] = type;
+      xStart++;
+      yStart--;
+    }
+  };
+
+  this.createDiamond = function (radius, xCenter, yCenter, type) {
+    this.map[xCenter][yCenter + radius] = type;
+    this.map[xCenter][yCenter - radius] = type;
+    this.map[xCenter + radius][yCenter] = type;
+    this.map[xCenter - radius][yCenter] = type;
+    this.diagonalDown(xCenter - radius, xCenter, yCenter, yCenter + radius, type);
+    this.diagonalDown(xCenter, xCenter + radius, yCenter - radius, yCenter, type);
+    this.diagonalUp(xCenter - radius, xCenter, yCenter, yCenter - radius, type);
+    this.diagonalUp(xCenter, xCenter + radius, yCenter + radius, yCenter, type);
+  };
+
+  this.Diamond = function (innerRadius, outerRadius, xCenter, yCenter) {
+    this.createDiamond(outerRadius, xCenter, yCenter, WALL);
+    this.createDiamond(innerRadius, xCenter, yCenter, WALL);
+
+    let fill = (outerRadius - 1);
+    while (fill > innerRadius) {
+      this.createDiamond(fill, xCenter, yCenter, TRACK);
+      fill--;
+    }
+  };
+
+  this.createCircle = function (radius, angle, xCenter, yCenter, type) {
+    const PI = 3.141_592_653;
+    for (let degree = 0; degree < angle; degree++) {
+      const xShift = Math.round(radius * Math.cos(degree * PI / 180));
+      const yShift = Math.round(radius * Math.sin(degree * PI / 180));
+
+      this.map[xCenter + xShift][yCenter + yShift] = type;
+    }
+  };
+
+  this.Circle = function (innerRadius, outerRadius, xCenter, yCenter) {
+    this.createCircle(innerRadius, 360, xCenter, yCenter, WALL);
+    this.createCircle(outerRadius, 360, xCenter, yCenter, WALL);
+
+    let fill = (outerRadius - 1);
+    while (fill > innerRadius) {
+      this.createCircle(fill, 360, xCenter, yCenter, TRACK);
+      fill--;
+    }
+  };
+
+  this.createBean = function (radius, xCenter, yCenter) {
+    this.createCircle(radius, 180, xCenter, yCenter);
+  };
 }
+// main
 
-//main 
-let x = 24;
-let y = 10;
-let map = genMap(x, y);
+const x = 71;
+const y = 71;
+const nemo = new Map(x, y); // nemo cuz why not
 
-hLine(map, 4, 19, 3);
-hLine(map, 4, 19, 6);
-vLine(map, 3, 6, 19);
-vLine(map, 3, 6, 4);
+// Rectangle
+/*
+nemo.hLine(4, 19, 3);
+nemo.hLine(4, 19, 6);
+nemo.vLine(3, 6, 4);
+nemo.vLine(3, 6, 19);
 
-hLine(map, 0, 23, 0);
-hLine(map, 0, 23, 9);
-vLine(map, 0, 9, 0);
-vLine(map, 0, 9, 23);
+nemo.hLine(0, 23, 0);
+nemo.hLine(0, 23, 9);
+nemo.vLine(0, 9, 0);
+nemo.vLine(0, 9, 23);
 
-fill(map, x, y);
-visMap(map, x, y);
+*/
+
+// nemo.Diamond(20, 32, 35, 35);
+nemo.Circle(26, 32, 35, 35);
+
+nemo.visMap();
