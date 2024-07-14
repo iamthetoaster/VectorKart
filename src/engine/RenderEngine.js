@@ -27,7 +27,7 @@ export default class RenderEngine {
 
     // LOADING PREFABS
     const prefabs = await fetch('/src/prefabs.json')
-      .then(response => response.json());
+      .then((response) => response.json());
 
     for (const prefab of prefabs) {
       if (prefab.name in this.prefabs) {
@@ -38,7 +38,7 @@ export default class RenderEngine {
       const obj = (prefab.obj in this.objs) ?
         this.objs[prefab.obj] : // if this has already been fetched, go with that
         await fetch(`/resources/${prefab.obj}`) // Otherwise, fetch it,
-          .then(response => response.text())
+          .then((response) => response.text())
           .then((text) => {
             const obj = parseObjText(text); // Parse it,
             this.objs[prefab.obj] = obj; // Cache it,
@@ -48,7 +48,7 @@ export default class RenderEngine {
       const vertexShader = (prefab.vertexShader in this.vertexShaders) ?
         this.vertexShaders[prefab.vertexShader] : // if already fetched, use that
         await fetch(`/resources/${prefab.vertexShader}`) // otherwise fetch it,
-          .then(response => response.text())
+          .then((response) => response.text())
           .then((source) => {
             const shader = createShader(gl, gl.VERTEX_SHADER, source); // compile it
             this.vertexShaders[prefab.vertexShader] = shader; // cache it
@@ -58,7 +58,7 @@ export default class RenderEngine {
       const fragmentShader = (prefab.fragmentShader in this.fragmentShaders) ?
         this.fragmentShaders[prefab.fragmentShader] : // same as above
         await fetch(`/resources/${prefab.fragmentShader}`)
-          .then(response => response.text())
+          .then((response) => response.text())
           .then((source) => {
             const shader = createShader(gl, gl.FRAGMENT_SHADER, source);
             this.fragmentShaders[prefab.fragmentShader] = shader;
@@ -70,8 +70,7 @@ export default class RenderEngine {
       let program;
       if (programName in this.programs) {
         program = this.programs[programName];
-      }
-      else {
+      } else {
         program = createProgram(gl, vertexShader, fragmentShader);
         this.programs[programName] = program;
       }

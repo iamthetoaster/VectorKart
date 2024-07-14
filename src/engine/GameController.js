@@ -20,7 +20,7 @@ export default class GameController {
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
     this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
-    this.car.scale.setComponents(100, 100, 100);
+    this.car.scale = new Vector3(100, 100, 100);
 
     this.dashboard = new Dashboard(document.querySelector('#dashboard'),
       [this.car]);

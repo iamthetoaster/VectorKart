@@ -21,17 +21,11 @@ function Map(x, y) {
       for (let xValues = 0; xValues < this.x; xValues++) {
         if (this.map[xValues][yValues] == UNASSIGNED) {
           s = [...s, 'O' + '&nbsp' + '&nbsp' + '&nbsp']; // O represents an undefined value
-        }
-
-        else if (this.map[xValues][yValues] == WALL) {
+        } else if (this.map[xValues][yValues] == WALL) {
           s = [...s, 'X' + '&nbsp' + '&nbsp' + '&nbsp'];// X represents a wall
-        }
-
-        else if (this.map[xValues][yValues] == TRACK) {
+        } else if (this.map[xValues][yValues] == TRACK) {
           s = [...s, 'Q' + '&nbsp' + '&nbsp' + '&nbsp'];// Q represents track space
-        }
-
-        else {
+        } else {
           s = [...s, '?' + '&nbsp' + '&nbsp' + '&nbsp'];// ? for mistakes lol
         }
       }
