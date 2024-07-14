@@ -2,7 +2,7 @@ import RenderEngine from "./RenderEngine.js";
 import Dashboard from "./Dashboard.js";
 import VectorRace from "../state-objects/VectorRace.js";
 import { parseObjText, createShader, createProgram } from "../webgl_utils.js";
-import { degToRad } from "../math_utils.js";
+import { mat4, degToRad } from "../math_utils.js";
 import Car from "../state-objects/car.js";//was Car.js
 "use strict";
 

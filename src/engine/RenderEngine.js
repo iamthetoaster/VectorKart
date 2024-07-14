@@ -159,7 +159,7 @@ export default class RenderEngine {
 
         // Camera setup
         this.camera = {
-            position: [1000, 1000, 0],//was 1000, 1000, 0
+            position: [1000, 1000, 0],
             target: [0,0,0]
         }
 
