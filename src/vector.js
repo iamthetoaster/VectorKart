@@ -1,5 +1,5 @@
 class vector {
-    constructor(a_x=0,a_y=0,color=[1,1,1,1],turn,prev=null) {
+    constructor(a_x=0,a_y=0,color=[1,1,1,1],turn,prev=null, scale, translation, rotation, tri_pos_x=0, tri_pos_y=0) {
         //assume
         
         this.color = color;
@@ -11,12 +11,14 @@ class vector {
         this.b_y = a_y;
         this.time = turn;
         this.dist = dist
-
+        this.matrix = new Matrix4()
         this.dist = this.get_distance()
         this.velocity = dist / turn
         this.prev = prev
         this.acc = this.get_accelleration()
         this.verts = this.get_triangle()
+        this.tri_height = this.verts[7]
+        this.base_tri_pos = [tri_pos_x, tri_pos_y]
     }
     //what will my vector need 
     get_distance() {
@@ -42,8 +44,8 @@ class vector {
     get_triangle() { 
         //get specs for rendering triangle. Might not want to render it in here though.
         var old_vel = this.prev.velocity; 
-        point1 = new Vector3([0,acc,0])
-        point2 = new Vector3([0,0,0])
+        point1 = new Vector3([this.base_tri_pos[0],acc,0])
+        point2 = new Vector3([this.base_tri_pos[0],this.base_tri_pos[1],0])
          //get specs for rendering triangle. Might not want to render it in here though.
          var old_vel = this.prev.velocity; 
          var numerator = Math.pow(old_vel, 2) + Math.pow(this.acc, 2) - Math.pow(this.velocity, 2)
@@ -62,10 +64,16 @@ class vector {
         //acceleration 0 0
         //trigonometry for the rest
         return [
-            0,0,0,
-            0,acc,0,
+            this.base_tri_pos[0],acc,0,
+            this.base_tri_pos[0],this.base_tri_pos[1],0,
             x,height,0
         ]
+    }
+    scale(x, y) {
+        this.matrix.scale(x, y, 1)
+    }
+    rotation(angle, x, y) {
+        this.matrix.rotate(angle, x, y, 0)
     }
     render() {
         //velocity triangle for gabe
@@ -80,20 +88,18 @@ class vector {
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     // Write date into the buffer object
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.verts), gl.DYNAMIC_DRAW);
-    // var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-    // if (a_Position < 0) {
-    //   console.log('Failed to get the storage location of a_Position');
-    //   return -1;
-    // }
-    // Assign the buffer object to a_Position variable
-    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+    var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    if (a_Position < 0) {
+      console.log('Failed to get the storage location of a_Position');
+      return -1;
+    }
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
   
-    // Enable the assignment to a_Position variable
-    gl.enableVertexAttribArray(a_Position);
+    gl.enableVertexAttribArray(positionAttributeLocation);
     
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); might not be necessary
     }
     
 }
