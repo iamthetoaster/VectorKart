@@ -22,6 +22,9 @@ export default class GameController {
     this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
     this.car.scale = new Vector3(100, 100, 100);
 
+    // Log the initial position of the car when the game starts
+    console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
+
     this.dashboard = new Dashboard(document.querySelector('#dashboard'),
       [this.car]);
 
@@ -37,7 +40,7 @@ export default class GameController {
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
-    if (this.rotating) {
+    if (this.car && this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
       this.car.rotation = rotationAngle;
     }
@@ -47,18 +50,32 @@ export default class GameController {
   };
 
   handleCanvasClick(event) {
-    // Handle clicks on the canvas to move the car to random positions
+    const rect = event.target.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Log the mouse position
+    console.log(`Mouse clicked at (${mouseX}, ${mouseY})`);
+
+    // Calculate the target position based on the mouse click
     const maxZ = event.target.width;
     const maxY = event.target.height;
-    const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
+    const targetPos = new Vector3(0, (-event.clientY) + (maxY / 2), (-event.clientX) + (maxZ / 2));
 
-    // compute new velocity based on position change
-    const newVelocity = new Vector3(0, newPos.y - this.car.position.y, newPos.z - this.car.position.z);
+    this.car.acceleration = targetPos.subtract(this.car.position).normalize().scalar_mult(100);
 
-    // Update the car's state and redraw
+    // Call step() to update velocity based on current acceleration
+    this.car.step();
+
+    // Calculate new position by adding new velocity to current position
+    const newPos = this.car.position.add(this.car.velocity);
+
+    // Update car position
     this.car.position = newPos;
 
     // Log the car's new position and velocity for debugging
-    console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${newVelocity.x}, ${newVelocity.y})`);
+    console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
   }
+
+
 }
