@@ -204,7 +204,7 @@ export default class RenderEngine {
     // FIXME: Remove if not using
     // const viewMatrix = mat4.inverse(cameraMatrix);
 
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;//was gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 1;
     const zFar = 2000;
     const fov = 0.5;
