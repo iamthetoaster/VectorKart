@@ -64,10 +64,12 @@ export default class GameController {
 
     // Calculate the desired velocity towards the target position
     // This could be direct or involve some function to modulate speed
-    const desiredVelocity = targetPos.subtract(this.car.position).normalize().scalar_mult(100); // Example scalar to control speed
+    // const desiredVelocity = targetPos.subtract(this.car.position).normalize().scalar_mult(100); // Example scalar to control speed
 
     // Set acceleration as the difference between current and desired velocity
-    this.car.acceleration = desiredVelocity.subtract(this.car.velocity);
+    // this.car.acceleration = desiredVelocity.subtract(this.car.velocity);
+
+    this.car.acceleration = targetPos.subtract(this.car.position).normalize().scalar_mult(100);
 
     // Call step() to update velocity based on current acceleration
     this.car.step();
