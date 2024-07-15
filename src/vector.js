@@ -16,6 +16,7 @@ class vector {
         this.velocity = dist / turn
         this.prev = prev
         this.acc = this.get_accelleration()
+        this.verts = this.get_triangle()
     }
     //what will my vector need 
     get_distance() {
@@ -37,13 +38,21 @@ class vector {
         // console.log(v1_mag, v2_mag, Vector3.dot(v1, v2))
         return Math.acos((Vector3.dot(v1, v2) / (v1_mag * v2_mag)))
     }
-    
-    get_triangle() { //get specs for rendering triangle. Might not want to render it in here though.
+
+    get_triangle() { 
+        //get specs for rendering triangle. Might not want to render it in here though.
         var old_vel = this.prev.velocity; 
-        var numerator = Math.pow(this.acc, 2) + Math.pow(old_vel, 2) - Math.pow(this.velocity, 2)
-        var denominator = 2 * old_vel * this.velocity 
-        var p3 = Math.acos(numerator / denominator)
-        va
+        point1 = new Vector3([0,acc,0])
+        point2 = new Vector3([0,0,0])
+         //get specs for rendering triangle. Might not want to render it in here though.
+         var old_vel = this.prev.velocity; 
+         var numerator = Math.pow(old_vel, 2) + Math.pow(this.acc, 2) - Math.pow(this.velocity, 2)
+         var denominator = 2 * old_vel * this.acc
+         var p3 = Math.acos(numerator / denominator)
+         var area = .5 * this.acc * this.old_vel * Math.sin(p3)
+         var height = (2 * area) / this.old_vel
+         var x =  Math.sqrt((Math.pow(old_vel, 2) - Math.pow(height, 2))) 
+
         //like old_vel 
         //rotate the vector with matrix
         //like old
@@ -52,10 +61,39 @@ class vector {
         //0 0 0
         //acceleration 0 0
         //trigonometry for the rest
+        return [
+            0,0,0,
+            0,acc,0,
+            x,height,0
+        ]
     }
     render() {
         //velocity triangle for gabe
         //webgl stuff, may need to get some variables from the constructor when it's called in main
+        var vertexBuffer = gl.createBuffer();
+    if (!vertexBuffer) {
+      console.log('Failed to create the buffer object');
+      return -1;
+    }
+  
+    // Bind the buffer object to target
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    // Write date into the buffer object
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.verts), gl.DYNAMIC_DRAW);
+    // var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    // if (a_Position < 0) {
+    //   console.log('Failed to get the storage location of a_Position');
+    //   return -1;
+    // }
+    // Assign the buffer object to a_Position variable
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+  
+    // Enable the assignment to a_Position variable
+    gl.enableVertexAttribArray(a_Position);
+    
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     }
     
 }
