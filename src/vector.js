@@ -31,11 +31,22 @@ class vector {
         return this.prev.velocity + this.velocity
 
     }
+    angleBetween(v1, v2){
+        v1_mag = v1.magnitude()
+        v2_mag = v2.magnitude()
+        // console.log(v1_mag, v2_mag, Vector3.dot(v1, v2))
+        return Math.acos((Vector3.dot(v1, v2) / (v1_mag * v2_mag)))
+    }
+    
     get_triangle() { //get specs for rendering triangle. Might not want to render it in here though.
         var old_vel = this.prev.velocity; 
         var numerator = Math.pow(this.acc, 2) + Math.pow(old_vel, 2) - Math.pow(this.velocity, 2)
         var denominator = 2 * old_vel * this.velocity 
         var p3 = Math.acos(numerator / denominator)
+        va
+        //like old_vel 
+        //rotate the vector with matrix
+        //like old
 
         //alright coordinates
         //0 0 0
