@@ -49,21 +49,21 @@ function Map(x, y){
         }
     };
 
-    //horizontal track editor
-    this.hLine = function(xStart, xEnd, yLevel, type){
-        while(xStart <= xEnd){
-            this.map[xStart][yLevel] = type;
-            xStart++;
-        }
-    };
+  // horizontal track editor
+  this.hLine = function (xStart, xEnd, yLevel, type) {
+    while (xStart <= xEnd) {
+      this.map[xStart][yLevel] = type;
+      xStart++;
+    }
+  };
 
-    //vertical track editor
-    this.vLine = function(yStart, yEnd, xLevel,type){
-        while(yStart <= yEnd){
-            this.map[xLevel][yStart] = type;
-            yStart++;
-        }
-    };
+  // vertical track editor
+  this.vLine = function (yStart, yEnd, xLevel, type) {
+    while (yStart <= yEnd) {
+      this.map[xLevel][yStart] = type;
+      yStart++;
+    }
+  };
 
     //fills in between WALLS with TRACK
     this.fill = function(){
@@ -137,34 +137,34 @@ function Map(x, y){
         }
     };
 
-    //create negative diagonal line
-    this.diagonalDown = function(xStart, xEnd, yStart, yEnd, type){
-        while(xStart < xEnd && yStart < yEnd){
-            this.map[xStart][yStart] = type;
-            xStart++;
-            yStart++;
-        }
-    };
-
-    //create positive diagonal line
-    this.diagonalUp = function(xStart, xEnd, yStart, yEnd, type){
-        while(xStart < xEnd && yStart > yEnd){
-            this.map[xStart][yStart] = type;
-            xStart++;
-            yStart--;
-        }
+  // create negative diagonal line
+  this.diagonalDown = function (xStart, xEnd, yStart, yEnd, type) {
+    while (xStart < xEnd && yStart < yEnd) {
+      this.map[xStart][yStart] = type;
+      xStart++;
+      yStart++;
     }
+  };
 
-    this.createDiamond = function(radius, xCenter, yCenter, type){
-        this.map[xCenter][yCenter + radius] = type;
-        this.map[xCenter][yCenter - radius] = type; 
-        this.map[xCenter + radius][yCenter] = type;
-        this.map[xCenter - radius][yCenter] = type; 
-        this.diagonalDown(xCenter - radius, xCenter, yCenter, yCenter + radius, type);
-        this.diagonalDown(xCenter, xCenter + radius, yCenter - radius, yCenter,type);
-        this.diagonalUp(xCenter - radius, xCenter, yCenter, yCenter - radius, type);
-        this.diagonalUp(xCenter, xCenter + radius, yCenter + radius, yCenter, type);
-    };
+  // create positive diagonal line
+  this.diagonalUp = function (xStart, xEnd, yStart, yEnd, type) {
+    while (xStart < xEnd && yStart > yEnd) {
+      this.map[xStart][yStart] = type;
+      xStart++;
+      yStart--;
+    }
+  };
+
+  this.createDiamond = function (radius, xCenter, yCenter, type) {
+    this.map[xCenter][yCenter + radius] = type;
+    this.map[xCenter][yCenter - radius] = type;
+    this.map[xCenter + radius][yCenter] = type;
+    this.map[xCenter - radius][yCenter] = type;
+    this.diagonalDown(xCenter - radius, xCenter, yCenter, yCenter + radius, type);
+    this.diagonalDown(xCenter, xCenter + radius, yCenter - radius, yCenter, type);
+    this.diagonalUp(xCenter - radius, xCenter, yCenter, yCenter - radius, type);
+    this.diagonalUp(xCenter, xCenter + radius, yCenter + radius, yCenter, type);
+  };
 
     this.Diamond = function (innerRadius, outerRadius, xCenter, yCenter){
         this.createDiamond(outerRadius, xCenter, yCenter, WALL);
@@ -253,7 +253,7 @@ let x = 71;
 let y = 71;
 let nemo = new Map(x,y); //nemo cuz why not
 
-//Rectangle
+// Rectangle
 /*
 nemo.hLine(4, 19, 3);
 nemo.hLine(4, 19, 6);
@@ -264,8 +264,6 @@ nemo.hLine(0, 23, 0);
 nemo.hLine(0, 23, 9);
 nemo.vLine(0, 9, 0);
 nemo.vLine(0, 9, 23);
-
-
 
 */
 

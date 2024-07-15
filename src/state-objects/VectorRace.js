@@ -1,14 +1,10 @@
-import GameController from "../engine/GameController.js"
-
-"use strict"
-
 export default class VectorRace {
-    // holds game state
-    // state machine
+  // holds game state
+  // state machine
 
-    constructor(game) {
-        // initialize game state, state machine
+  constructor(game) {
+    // initialize game state, state machine
 
-        this.game = game;
-    }
+    this.game = game;
+  }
 }

@@ -1,9 +1,10 @@
-import GameController from "./engine/GameController.js";
+import GameController from './engine/GameController.js';
 
-"use strict";
+'use strict';
 
-const canvasId = "c";
+const canvasIdSelect = '#c';
 const game = new GameController();
 
-const canvas = document.getElementById(canvasId);
-canvas.addEventListener("click", game.clickUpdate);
+// TODO: Move this into GameController and remove main.js
+const canvas = document.querySelector(canvasIdSelect);
+canvas.addEventListener('click', game.clickUpdate);
