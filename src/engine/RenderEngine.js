@@ -226,4 +226,28 @@ export default class RenderEngine {
     this.prefabs[prefab].instanceAttributes.push(result);
     return result;
   }
+
+  worldPosition(canvasX, canvasY) {
+    canvasX = canvasX * 2 - this.gl.canvas.clientWidth;
+    canvasY = this.gl.canvas.clientHeight - canvasY * 2;
+
+    const projectionMatrix = this.viewProjectionMatrix;
+    const inv = mat4.inverse(projectionMatrix);
+
+    const p1 = [...this.camera.position, 1];
+
+    const angleX = 0;
+    const angleY = 0;
+
+    const p2 = mat4.apply(inv, [canvasX, canvasY, 1, 1]);
+
+    const y1 = p1[1];
+    const y2 = p2[1];
+
+    const z = -y1 / (y2 - y1);
+
+    const p = mat4.apply(inv, [canvasX * z, canvasY * z, z, 1]);
+
+    return [p[0], 0, p[2]];
+  }
 }

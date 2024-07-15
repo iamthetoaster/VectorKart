@@ -292,6 +292,37 @@ const mat4 = {
       b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33,
     ];
   },
+
+  apply: function(m, v) {
+    const m00 = m[0 * 4 + 0];
+    const m01 = m[0 * 4 + 1];
+    const m02 = m[0 * 4 + 2];
+    const m03 = m[0 * 4 + 3];
+    const m10 = m[1 * 4 + 0];
+    const m11 = m[1 * 4 + 1];
+    const m12 = m[1 * 4 + 2];
+    const m13 = m[1 * 4 + 3];
+    const m20 = m[2 * 4 + 0];
+    const m21 = m[2 * 4 + 1];
+    const m22 = m[2 * 4 + 2];
+    const m23 = m[2 * 4 + 3];
+    const m30 = m[3 * 4 + 0];
+    const m31 = m[3 * 4 + 1];
+    const m32 = m[3 * 4 + 2];
+    const m33 = m[3 * 4 + 3];
+
+    const v0 = v[0];
+    const v1 = v[1];
+    const v2 = v[2];
+    const v3 = v[3];
+
+    return [
+      v0 * m00 + v1 * m10 + v2 * m20 + v3 * m30,
+      v0 * m01 + v1 * m11 + v2 * m21 + v3 * m31,
+      v0 * m02 + v1 * m12 + v2 * m22 + v3 * m32,
+      v0 * m03 + v1 * m13 + v2 * m23 + v3 * m33,
+    ];
+  },
 };
 
 function radToDeg(r) {

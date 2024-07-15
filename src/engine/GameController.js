@@ -48,9 +48,16 @@ export default class GameController {
 
   handleCanvasClick(event) {
     // Handle clicks on the canvas to move the car to random positions
+
     const maxZ = event.target.width;
     const maxY = event.target.height;
-    const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
+
+    console.log(`Canvas X: ${event.clientX} Canvas Y: ${event.clientY}`);
+    const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    console.log(`Game X: ${gameWorldPosition[0]} Game Y: ${gameWorldPosition[1]} Game Z: ${gameWorldPosition[2]} `);
+
+    // const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
+    const newPos = new Vector3(gameWorldPosition[0], gameWorldPosition[1], gameWorldPosition[2]);
 
     // compute new velocity based on position change
     const newVelocity = new Vector3(0, newPos.y - this.car.position.y, newPos.z - this.car.position.z);
