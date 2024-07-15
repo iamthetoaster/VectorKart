@@ -9,6 +9,6 @@ canvas {
 #car {
     width: 100px;
     height: auto;
-    position: absolute; 
+    position: absolute;
     transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
 }
