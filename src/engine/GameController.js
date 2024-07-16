@@ -19,8 +19,11 @@ export default class GameController {
     this.rotating = true; // Flag to control rotation state
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
+    this.renderEngine.addPrefab('map', [[0, 1], [1, 0]], 'shaders/vertex_shader.glsl', 'shaders/fragment_shader.glsl');
+    const map = this.renderEngine.instantiateRenderObject('map');
+    map.scale = [100, 100, 100];
     this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
-    this.car.scale = new Vector3(100, 100, 100);
+    this.car.scale = new Vector3(50, 50, 50);
 
     // Log the initial position of the car when the game starts
     console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
