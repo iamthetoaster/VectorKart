@@ -36,7 +36,7 @@ export default class RenderEngine {
 
     // Camera setup
     this.camera = {
-      position: [1000, 1000, 0],
+      position: [0, 1000, 1],
       target: [0, 0, 0],
     };
 
@@ -224,11 +224,15 @@ export default class RenderEngine {
     // FIXME: Remove if not using
     // const viewMatrix = mat4.inverse(cameraMatrix);
 
-    const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight; // was gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 1;
-    const zFar = 2000;
-    const fov = 0.5;
-    this.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+    // const fov = 1;
+    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    // const zNear = 1;
+    const zFar = 4000;
+    const width = gl.canvas.clientWidth;
+    const height = gl.canvas.clientHeight;
+    // this.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+    this.viewProjectionMatrix = mat4.multiply(mat4.projection(width, height, zFar), mat4.inverse(cameraMatrix));
+
     for (const name of Object.keys(this.prefabs)) {
       this.prefabs[name].draw();
     }
@@ -241,9 +245,28 @@ export default class RenderEngine {
     const result = {
       translation: [0, 0, 0],
       rotation: [0, degToRad(25), 0],
-      scale: [100, 100, 100],
+      scale: [1, 1, 1],
     };
     this.prefabs[prefab].instanceAttributes.push(result);
     return result;
+  }
+  worldPosition(canvasX, canvasY) {
+    canvasX = (canvasX * 2 - this.gl.canvas.clientWidth) / this.gl.canvas.clientWidth;
+    canvasY = (this.gl.canvas.clientHeight - canvasY * 2) / this.gl.canvas.clientHeight;
+
+    const projectionMatrix = this.viewProjectionMatrix;
+    const inv = mat4.inverse(projectionMatrix);
+
+    const p1 = mat4.apply(inv, [canvasX, canvasY, 0, 1]);
+    const p2 = mat4.apply(inv, [canvasX, canvasY, 1, 1]);
+
+    const y1 = p1[1];
+    const y2 = p2[1];
+
+    const z = -y1 / (y2 - y1);
+
+    const p = mat4.apply(inv, [canvasX, canvasY, z, 1]);
+
+    return [p[0], 0, p[2]];
   }
 }

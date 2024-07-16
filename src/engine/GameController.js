@@ -53,17 +53,15 @@ export default class GameController {
   };
 
   handleCanvasClick(event) {
-    const rect = event.target.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
+    // Handle clicks on the canvas to move the car
 
-    // Log the mouse position
-    console.log(`Mouse clicked at (${mouseX}, ${mouseY})`);
+    // console.log(`Canvas X: ${event.clientX} Canvas Y: ${event.clientY}`);
+    const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    // console.log(`Game X: ${gameWorldPosition[0]} Game Y: ${gameWorldPosition[1]} Game Z: ${gameWorldPosition[2]} `);
 
-    // Calculate the target position based on the mouse click
-    const maxZ = event.target.width;
-    const maxY = event.target.height;
-    const targetPos = new Vector3(0, (-event.clientY) + (maxY / 2), (-event.clientX) + (maxZ / 2));
+    // const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
+    const targetPos = new Vector3(gameWorldPosition[0], gameWorldPosition[1], gameWorldPosition[2]);
+    // const rect = event.target.getBoundingClientRect();
 
     this.car.acceleration = targetPos.subtract(this.car.position).normalize().scalar_mult(100);
 
@@ -79,6 +77,4 @@ export default class GameController {
     // Log the car's new position and velocity for debugging
     console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
   }
-
-
 }
