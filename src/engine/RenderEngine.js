@@ -1,5 +1,6 @@
-import { resizeCanvasToDisplaySize, parseObjText, createShader, createProgram } from '../webgl_utils.js';
+import { resizeCanvasToDisplaySize, createShader, createProgram } from '../webgl_utils.js';
 import { mat4, degToRad } from '../math_utils.js';
+import { parseObjText, mapModel } from '../models.js';
 
 'use strict';
 
@@ -30,12 +31,35 @@ export default class RenderEngine {
       .then((response) => response.json());
 
     for (const prefab of prefabs) {
-      if (prefab.name in this.prefabs) {
-        console.log('Error, duplicate prefab name');
-        return;
-      }
+      await this.addPrefab(prefab.name, prefab.obj, prefab.vertexShader, prefab.fragmentShader);
+    }
 
-      const obj = (prefab.obj in this.objs) ?
+    // Camera setup
+    this.camera = {
+      position: [0, 1000, 1],
+      target: [0, 0, 0],
+    };
+
+    this.draw();
+  }
+
+  async addPrefab(name, obj, vertexShader, fragmentShader) {
+    const prefab = {
+      name: name,
+      obj: obj,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+    };
+
+    const gl = this.gl;
+
+    if (prefab.name in this.prefabs) {
+      console.log('Error, duplicate prefab name');
+      return;
+    }
+
+    if (typeof obj === 'string' || obj instanceof String) {
+      obj = (prefab.obj in this.objs) ?
         this.objs[prefab.obj] : // if this has already been fetched, go with that
         await fetch(`/resources/${prefab.obj}`) // Otherwise, fetch it,
           .then((response) => response.text())
@@ -44,126 +68,122 @@ export default class RenderEngine {
             this.objs[prefab.obj] = obj; // Cache it,
             return obj; // and use the newly fetched obj
           });
-
-      const vertexShader = (prefab.vertexShader in this.vertexShaders) ?
-        this.vertexShaders[prefab.vertexShader] : // if already fetched, use that
-        await fetch(`/resources/${prefab.vertexShader}`) // otherwise fetch it,
-          .then((response) => response.text())
-          .then((source) => {
-            const shader = createShader(gl, gl.VERTEX_SHADER, source); // compile it
-            this.vertexShaders[prefab.vertexShader] = shader; // cache it
-            return shader; // and use it
-          });
-
-      const fragmentShader = (prefab.fragmentShader in this.fragmentShaders) ?
-        this.fragmentShaders[prefab.fragmentShader] : // same as above
-        await fetch(`/resources/${prefab.fragmentShader}`)
-          .then((response) => response.text())
-          .then((source) => {
-            const shader = createShader(gl, gl.FRAGMENT_SHADER, source);
-            this.fragmentShaders[prefab.fragmentShader] = shader;
-            return shader;
-          });
-
-      const programName = `${prefab.vertexShader} => ${prefab.fragmentShader}`;
-      // building program from shaders
-      let program;
-      if (programName in this.programs) {
-        program = this.programs[programName];
-      } else {
-        program = createProgram(gl, vertexShader, fragmentShader);
-        this.programs[programName] = program;
-      }
-
-      // TODO tidy this up
-
-      // find location of items for given program
-      const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-      const normalAttributeLocation = gl.getAttribLocation(program, 'a_normal');
-
-      const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
-
-      const count = obj.length;
-
-      // vertex attribute object
-      const vao = gl.createVertexArray();
-      gl.bindVertexArray(vao);
-
-      // converting model data to useful format
-      const positions = obj.flatMap((vert) => {
-        return vert.position;
-      });
-
-      // creating buffer for position and binding it
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-      // Loading data into buffer
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-      gl.enableVertexAttribArray(positionAttributeLocation);
-      const size = 4;
-      const type = gl.FLOAT;
-      const normalize = false;
-      const stride = 0;
-      const offset = 0;
-      gl.vertexAttribPointer(
-        positionAttributeLocation, size, type, normalize, stride, offset);
-
-      // ditto for normals
-      const normals = obj.flatMap((vert) => {
-        return vert.normal;
-      });
-
-      const normalBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
-
-      gl.enableVertexAttribArray(normalAttributeLocation);
-      gl.vertexAttribPointer(normalAttributeLocation, 4, gl.FLOAT, false, 0, 0);
-
-      this.prefabs[prefab.name] = {
-        renderEngine: this,
-        program: program,
-        vao: vao,
-        vertexCount: count,
-        matrixLocation: matrixLocation,
-
-        instanceAttributes: [],
-
-        draw: function () {
-          gl.useProgram(this.program);
-
-          gl.bindVertexArray(this.vao);
-
-          for (const attributes of this.instanceAttributes) {
-            const translation = attributes.translation;
-            const rotation = attributes.rotation;
-            const scale = attributes.scale;
-
-            // generating transformMatrix from transform data
-            let transformMatrix = this.renderEngine.viewProjectionMatrix;
-            transformMatrix = mat4.translate(transformMatrix, translation[0], translation[1], translation[2]);
-            transformMatrix = mat4.xRotate(transformMatrix, rotation[0]);
-            transformMatrix = mat4.yRotate(transformMatrix, rotation[1]);
-            transformMatrix = mat4.zRotate(transformMatrix, rotation[2]);
-            transformMatrix = mat4.scale(transformMatrix, scale[0], scale[1], scale[2]);
-
-            gl.uniformMatrix4fv(this.matrixLocation, false, transformMatrix);
-            gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount);
-          }
-        },
-      };
+    } else {
+      obj = (obj.toString() in this.objs) ?
+        this.objs[obj.toString()] :
+        this.objs[obj.toString()] = mapModel(obj);
     }
 
-    // Camera setup
-    this.camera = {
-      position: [1000, 1000, 0],
-      target: [0, 0, 0],
-    };
+    vertexShader = (prefab.vertexShader in this.vertexShaders) ?
+      this.vertexShaders[prefab.vertexShader] : // if already fetched, use that
+      await fetch(`/resources/${prefab.vertexShader}`) // otherwise fetch it,
+        .then((response) => response.text())
+        .then((source) => {
+          const shader = createShader(gl, gl.VERTEX_SHADER, source); // compile it
+          this.vertexShaders[prefab.vertexShader] = shader; // cache it
+          return shader; // and use it
+        });
 
-    this.draw();
+    fragmentShader = (prefab.fragmentShader in this.fragmentShaders) ?
+      this.fragmentShaders[prefab.fragmentShader] : // same as above
+      await fetch(`/resources/${prefab.fragmentShader}`)
+        .then((response) => response.text())
+        .then((source) => {
+          const shader = createShader(gl, gl.FRAGMENT_SHADER, source);
+          this.fragmentShaders[prefab.fragmentShader] = shader;
+          return shader;
+        });
+
+    const programName = `${prefab.vertexShader} => ${prefab.fragmentShader}`;
+    // building program from shaders
+    let program;
+    if (programName in this.programs) {
+      program = this.programs[programName];
+    } else {
+      program = createProgram(gl, vertexShader, fragmentShader);
+      this.programs[programName] = program;
+    }
+
+    // TODO tidy this up
+
+    // find location of items for given program
+    const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+    const normalAttributeLocation = gl.getAttribLocation(program, 'a_normal');
+
+    const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
+
+    const count = obj.length;
+
+    // vertex attribute object
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+
+    // converting model data to useful format
+    const positions = obj.flatMap((vert) => {
+      return vert.position;
+    });
+
+    // creating buffer for position and binding it
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    // Loading data into buffer
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    const size = 4;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.vertexAttribPointer(
+      positionAttributeLocation, size, type, normalize, stride, offset);
+
+    // ditto for normals
+    const normals = obj.flatMap((vert) => {
+      return vert.normal;
+    });
+
+    const normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(normalAttributeLocation);
+    gl.vertexAttribPointer(normalAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+
+    this.prefabs[prefab.name] = {
+      renderEngine: this,
+      program: program,
+      vao: vao,
+      vertexCount: count,
+      matrixLocation: matrixLocation,
+
+      instanceAttributes: [],
+
+      draw: function () {
+        gl.useProgram(this.program);
+
+        gl.bindVertexArray(this.vao);
+
+        for (const attributes of this.instanceAttributes) {
+          const translation = attributes.translation;
+          const rotation = attributes.rotation;
+          const scale = attributes.scale;
+
+          // generating transformMatrix from transform data
+          let transformMatrix = this.renderEngine.viewProjectionMatrix;
+          transformMatrix = mat4.translate(transformMatrix, translation[0], translation[1], translation[2]);
+          transformMatrix = mat4.xRotate(transformMatrix, rotation[0]);
+          transformMatrix = mat4.yRotate(transformMatrix, rotation[1]);
+          transformMatrix = mat4.zRotate(transformMatrix, rotation[2]);
+          transformMatrix = mat4.scale(transformMatrix, scale[0], scale[1], scale[2]);
+
+          gl.uniformMatrix4fv(this.matrixLocation, false, transformMatrix);
+          gl.drawArrays(gl.TRIANGLES, 0, this.vertexCount);
+        }
+      },
+    };
   }
 
   // sets runUpdate callback (for frame updating)
@@ -204,11 +224,15 @@ export default class RenderEngine {
     // FIXME: Remove if not using
     // const viewMatrix = mat4.inverse(cameraMatrix);
 
-    const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;//was gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 1;
-    const zFar = 2000;
-    const fov = 0.5;
-    this.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+    // const fov = 1;
+    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    // const zNear = 1;
+    const zFar = 4000;
+    const width = gl.canvas.clientWidth;
+    const height = gl.canvas.clientHeight;
+    // this.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
+    this.viewProjectionMatrix = mat4.multiply(mat4.projection(width, height, zFar), mat4.inverse(cameraMatrix));
+
     for (const name of Object.keys(this.prefabs)) {
       this.prefabs[name].draw();
     }
@@ -221,9 +245,28 @@ export default class RenderEngine {
     const result = {
       translation: [0, 0, 0],
       rotation: [0, degToRad(25), 0],
-      scale: [100, 100, 100],
+      scale: [1, 1, 1],
     };
     this.prefabs[prefab].instanceAttributes.push(result);
     return result;
+  }
+  worldPosition(canvasX, canvasY) {
+    canvasX = (canvasX * 2 - this.gl.canvas.clientWidth) / this.gl.canvas.clientWidth;
+    canvasY = (this.gl.canvas.clientHeight - canvasY * 2) / this.gl.canvas.clientHeight;
+
+    const projectionMatrix = this.viewProjectionMatrix;
+    const inv = mat4.inverse(projectionMatrix);
+
+    const p1 = mat4.apply(inv, [canvasX, canvasY, 0, 1]);
+    const p2 = mat4.apply(inv, [canvasX, canvasY, 1, 1]);
+
+    const y1 = p1[1];
+    const y2 = p2[1];
+
+    const z = -y1 / (y2 - y1);
+
+    const p = mat4.apply(inv, [canvasX, canvasY, z, 1]);
+
+    return [p[0], 0, p[2]];
   }
 }
