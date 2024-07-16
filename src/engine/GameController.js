@@ -36,6 +36,9 @@ export default class GameController {
     }
 
     this.dashboard.attach();
+
+    // Add a mouse movement listener to the document body or map container
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this));
   }
 
   frameUpdate = (time) => {
@@ -77,5 +80,11 @@ export default class GameController {
     console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
   }
 
-
+  handleMouseMove(event) {
+    // Get the element under the mouse cursor
+    let elem = document.elementFromPoint(event.clientX, event.clientY);
+    if (elem && elem.className.includes('map-start')) {
+      console.log('Mouse crossed the finish line at D!');
+    }
+  }
 }
