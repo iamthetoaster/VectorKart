@@ -47,10 +47,10 @@ export default class GameController {
   };
 
   handleCanvasClick(event) {
-    // Handle clicks on the canvas to move the car to random positions
+    // Handle clicks on the canvas to move the car
 
-    const maxZ = event.target.width;
-    const maxY = event.target.height;
+    // const maxZ = event.target.width;
+    // const maxY = event.target.height;
 
     console.log(`Canvas X: ${event.clientX} Canvas Y: ${event.clientY}`);
     const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);

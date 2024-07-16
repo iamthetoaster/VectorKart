@@ -159,7 +159,7 @@ export default class RenderEngine {
 
     // Camera setup
     this.camera = {
-      position: [1000, 1000, 1],
+      position: [0, 1000, 1],
       target: [0, 0, 0],
     };
 
@@ -204,13 +204,12 @@ export default class RenderEngine {
     // FIXME: Remove if not using
     // const viewMatrix = mat4.inverse(cameraMatrix);
 
-    const fov = 1;
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 1;
+    // const fov = 1;
+    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    // const zNear = 1;
     const zFar = 4000;
     const width = gl.canvas.clientWidth;
     const height = gl.canvas.clientHeight;
-    console.log(`CanvasHeight ${height}`);
     // this.viewProjectionMatrix = mat4.multiply(mat4.perspective(fov, aspect, zNear, zFar), mat4.inverse(cameraMatrix));
     this.viewProjectionMatrix = mat4.multiply(mat4.projection(width, height, zFar), mat4.inverse(cameraMatrix));
     for (const name of Object.keys(this.prefabs)) {

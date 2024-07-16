@@ -188,17 +188,6 @@ const mat4 = {
     ];
   },
 
-  orthographicPerspective: function (height, aspect, near, far) {
-    const rangeInv = 1 / (near - far);
-
-    return [
-      1 / (height * aspect), 0, 0, 0,
-      0, 1 / height, 0, 0,
-      0, 0, (near + far) * rangeInv, -1,
-      0, 0, near * far * rangeInv * 2, 1,
-    ];
-  },
-
   perspective: function (fieldOfViewInRadians, aspect, near, far) {
     const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
     const rangeInv = 1 / (near - far);
