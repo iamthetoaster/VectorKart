@@ -75,8 +75,8 @@ export default class GameController {
     const car = this.cars[this.turn];
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
-    // Call move() to update velocity and position based on current acceleration
-    car.move();
+    // Call step() to update velocity and position based on current acceleration
+    car.step();
 
     this.turn = this.turn + 1;
     if (this.turn >= this.players) {

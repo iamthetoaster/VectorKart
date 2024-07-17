@@ -32,21 +32,13 @@ export default class Car extends GameObject3D {
     const next = this.getNextVelocity();
     this._velocity.setComponents(next.x, next.y, next.z);
 
+    // Update car position
+    this.position = this.position.add(this.velocity);
+
     const speed = this.getSpeed();
     if (speed > this.maxSpeed) {
       this.maxSpeed = speed;
     }
-  }
-
-  move() {
-    // call step() to update velocity
-    this.step();
-
-    // Calculate new position by adding new velocity to current position
-    const newPos = this.position.add(this.velocity);
-
-    // Update car position
-    this.position = newPos;
   }
 
   printState() {
