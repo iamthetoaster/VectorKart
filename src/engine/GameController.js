@@ -10,6 +10,7 @@ export default class GameController {
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
+    //this.renderEngine.update(this.checkFinishLine);
     this.renderEngine.init()
       .then(() => this.start());
   }
@@ -44,7 +45,7 @@ export default class GameController {
     this.dashboard.attach();
 
     // Add a mouse movement listener to the document body or map container
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    //document.addEventListener('mousemove', this.handleMouseMove.bind(this));
   }
 
   frameUpdate = (time) => {
@@ -56,6 +57,9 @@ export default class GameController {
     // Update time variables for smooth animations
     this.dt = time - this.pt;
     this.pt = time;
+    //this.checkFinishLine();
+    // Debugging the car's position before checking the finish line
+    //console.log('Frame Update - Car position:', this.car.position);
   };
 
   handleCanvasClick(event) {
@@ -82,14 +86,42 @@ export default class GameController {
 
     // Log the car's new position and velocity for debugging
     console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
+
+    // Check if the car has crossed the finish line
+    this.checkFinishLine();
   }
 
-  handleMouseMove(event) {
-    // Transform the mouse coordinates to game world coordinates
-    const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+  // handleMouseMove(event) {
+  //   // Transform the mouse coordinates to game world coordinates
+  //   const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
   
-    // Assuming finish line tiles are at specific game world coordinates
-    // Example finish line coordinates (x, y), adjust according to your game setup
+  //   // Assuming finish line tiles are at specific game world coordinates
+  //   // Example finish line coordinates (x, y), adjust according to your game setup
+  //   const finishLineTiles = [
+  //     { x: 0, y: 0 }, // example coordinates of finish line tile
+  //     { x: 1, y: 0 },
+  //     { x: 2, y: 0 },
+  //     { x: 3, y: 0 },
+  //     { x: 4, y: 0 },
+  //     { x: 5, y: 0 },
+  //     { x: -5, y: 0 },
+  //     { x: -4, y: 0 },
+  //     { x: -3, y: 0 },
+  //     { x: -2, y: 0 },
+  //     { x: -1, y: 0 }
+  //   ];
+  
+  //   // Check if the mouse is over any of the finish line tiles
+  //   finishLineTiles.forEach(tile => {
+  //     if (Math.floor(gameWorldPosition[0]) === tile.x && Math.floor(gameWorldPosition[1]) === tile.y) {
+  //       console.log('Mouse crossed the finish line at tile ' + JSON.stringify(tile));
+  //     }
+  //   });
+  // }
+
+  checkFinishLine() {
+    //console.log('Checking finish line...');
+    //console.log('Car position:', this.car.position); // Check car's position
     const finishLineTiles = [
       { x: 0, y: 0 }, // example coordinates of finish line tile
       { x: 1, y: 0 },
@@ -103,13 +135,12 @@ export default class GameController {
       { x: -2, y: 0 },
       { x: -1, y: 0 }
     ];
-  
-    // Check if the mouse is over any of the finish line tiles
+
     finishLineTiles.forEach(tile => {
-      if (Math.floor(gameWorldPosition[0]) === tile.x && Math.floor(gameWorldPosition[1]) === tile.y) {
-        console.log('Mouse crossed the finish line at tile ' + JSON.stringify(tile));
+      if (Math.floor(this.car.position.x) === tile.x && Math.floor(this.car.position.y) === tile.y) {
+        console.log('Car crossed the finish line at tile ' + JSON.stringify(tile));
       }
     });
-  }  
+  }
   
 }
