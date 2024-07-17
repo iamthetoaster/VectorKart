@@ -48,7 +48,7 @@ export default class GameController {
   frameUpdate = (time) => {
     // Update the state of the game each frame
 
-    let car = this.cars[this.turn];
+    const car = this.cars[this.turn];
     if (car && this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
       car.rotation = rotationAngle;
@@ -67,14 +67,14 @@ export default class GameController {
     const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
     // apply acceleration to car
-    let car = this.cars[this.turn];
+    const car = this.cars[this.turn];
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
     // Call move() to update velocity and position based on current acceleration
     car.move();
 
     this.turn = this.turn + 1;
-    if (this.turn >= players) {
+    if (this.turn >= this.players) {
       this.turn = 0;
     }
 
