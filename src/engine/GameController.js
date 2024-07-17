@@ -24,6 +24,7 @@ export default class GameController {
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
 
+    // instantiate map
     this.renderEngine.addPrefab('map', [[0, 1], [1, 0]], 'shaders/vertex_shader.glsl', 'shaders/fragment_shader.glsl');
     const map = this.renderEngine.instantiateRenderObject('map');
     map.scale = [100, 100, 100];
