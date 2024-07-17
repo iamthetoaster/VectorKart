@@ -29,7 +29,7 @@ export default class GameController {
     this.dt = 0; // Time difference between frames
 
     // instantiate map
-    this.map = new MapObject(this.renderEngine, 'Circle', 100, 100);
+    this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
 
     // instantiate car for each player
     for (let i = 0; i < this.players; i++) {
