@@ -31,14 +31,14 @@ export default class GameController {
 
     // instantiate car for each player
     for (let i = 0; i < this.players; i++) {
-      this.cars.push(new Car(this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(0, 0, i*50 - 250), this.renderEngine.instantiateRenderObject('car')));
     }
 
     // Log the initial position of the car when the game starts
     // console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
 
-    this.dashboard = new Dashboard(document.querySelector('#dashboard'),
-      [this.cars[0]]);
+    this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
+    this.dashboard.attach();
 
     // Setup to prevent adding multiple listeners to the same canvas
     const canvas = document.querySelector('#c');
@@ -47,17 +47,31 @@ export default class GameController {
       canvas.dataset.listenerAdded = 'true';
     }
 
-    this.dashboard.attach();
+    // reset button callback
+    const resetButton = document.getElementById("reset-button");
+    if (resetButton) {
+      resetButton.addEventListener("click", this.resetGame);
+    }
+  }
+
+  resetGame = () => {
+    // reset position and velocity of cars
+    for(let i = 0; i < this.players; i++) {
+      let car = this.cars[i];
+      car.reset();
+    }
   }
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
 
-    const car = this.cars[this.turn];
-    if (car && this.rotating) {
-      const rotationAngle = degToRad(10 * time % 360);
-      car.rotation = rotationAngle;
-    }
+    // **saving this code for the mems :(
+    // const car = this.cars[this.turn];
+    // if (car && this.rotating) {
+    //   const rotationAngle = degToRad(10 * time % 360);
+    //   car.rotation = rotationAngle;
+    // }
+
     // Update time variables for smooth animations
     this.dt = time - this.pt;
     this.pt = time;
