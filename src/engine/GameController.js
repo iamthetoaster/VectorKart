@@ -7,6 +7,10 @@ import Vector3 from '../state-objects/Vector3.js';
 
 export default class GameController {
   constructor() {
+    this.players = 2;
+    this.turn = 0;
+    this.cars = [];
+
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
@@ -22,20 +26,22 @@ export default class GameController {
     this.rotating = true; // Flag to control rotation state
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
+
+    // instantiate map
     this.renderEngine.addPrefab('map', [[0, 1], [1, 0]], 'shaders/vertex_shader.glsl', 'shaders/fragment_shader.glsl');
     const map = this.renderEngine.instantiateRenderObject('map');
-    map.scale = [100, 100, 100];//was 100, 100, 100
-    this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
-    this.car.scale = new Vector3(50, 50, 50);
+    map.scale = [100, 100, 100];
 
-    // Set initial position of the car to (-500, 0, 0)
-    this.car.position = new Vector3(-500, 0, 0);
+    // instantiate car for each player
+    for (let i = 0; i < this.players; i++) {
+      this.cars.push(new Car(new Vector3(-500, 0, (i * 50) - 250), this.renderEngine.instantiateRenderObject('car')));
+    }
 
     // Log the initial position of the car when the game starts
-    console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
+    //console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
 
-    this.dashboard = new Dashboard(document.querySelector('#dashboard'),
-      [this.car]);
+    this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
+    this.dashboard.attach();
 
     // Setup to prevent adding multiple listeners to the same canvas
     const canvas = document.querySelector('#c');
@@ -44,18 +50,31 @@ export default class GameController {
       canvas.dataset.listenerAdded = 'true';
     }
 
-    this.dashboard.attach();
-
-    // Add a mouse movement listener to the document body or map container
-    //document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    // reset button callback
+    const resetButton = document.querySelector('#reset-button');
+    if (resetButton) {
+      resetButton.addEventListener('click', this.resetGame);
+    }
   }
+
+  resetGame = () => {
+    // reset position and velocity of cars
+    for (let i = 0; i < this.players; i++) {
+      const car = this.cars[i];
+      car.reset();
+    }
+  };
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
-    if (this.car && this.rotating) {
-      const rotationAngle = degToRad(10 * time % 360);
-      this.car.rotation = rotationAngle;
-    }
+
+    // **saving this code for the mems :(
+    // const car = this.cars[this.turn];
+    // if (car && this.rotating) {
+    //   const rotationAngle = degToRad(10 * time % 360);
+    //   car.rotation = rotationAngle;
+    // }
+
     // Update time variables for smooth animations
     this.dt = time - this.pt;
     this.pt = time;
@@ -66,56 +85,54 @@ export default class GameController {
 
   handleCanvasClick(event) {
     // Handle clicks on the canvas to move the car
-
-    // console.log(`Canvas X: ${event.clientX} Canvas Y: ${event.clientY}`);
-    const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
-    // console.log(`Game X: ${gameWorldPosition[0]} Game Y: ${gameWorldPosition[1]} Game Z: ${gameWorldPosition[2]} `);
-
-    // const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
-    const targetPos = new Vector3(gameWorldPosition[0], gameWorldPosition[1], gameWorldPosition[2]);
-    // const rect = event.target.getBoundingClientRect();
-
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+  
+    // Get the current car based on turn
+    const car = this.cars[this.turn];
+  
     // Store the previous position before updating the car's current position
-    const previousPosition = new Vector3(this.car.position.x, this.car.position.y, this.car.position.z);
-
-    this.car.acceleration = targetPos.subtract(this.car.position).normalize().scalar_mult(100);
-
-    // Call step() to update velocity based on current acceleration
-    this.car.step();
-
-    // Calculate new position by adding new velocity to current position
-    const newPos = this.car.position.add(this.car.velocity);
-
-    // Update car position
-    this.car.position = newPos;
-
-    // Log the car's new position and velocity for debugging
-    console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
-
-
+    const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
+  
+    // set targetPos to the location of the user click
+    const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+  
+    // apply acceleration to car
+    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+  
+    // Call step() to update velocity and position based on current acceleration
+    car.step();
+  
+    // Log the car's new position for debugging
+    console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+  
     // Now pass previousPosition and newPos to check if the car has crossed the finish line
-    this.checkFinishLine(previousPosition, newPos);
+    this.checkFinishLine(previousPosition, car.position);
+  
+    // Update turn for the next car
+    this.turn = (this.turn + 1) % this.players;
   }
+  
 
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
-      { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 },
-      { x: -5, y: 0 }, { x: -4, y: 0 }, { x: -3, y: 0 }, { x: -2, y: 0 }, { x: -1, y: 0 }
+      { x: -99, y: 0 }, { x: -98, y: 0 }, { x: -97, y: 0 }, { x: -96, y: 0 }, { x: -95, y: 0 }, {x: -94, y: 0}, {x: -93, y: 0}
     ];
-
+  
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.RIGHT; // Defines the correct direction to cross the finish line
-
+  
+    let crossed = false; // flag to ensure only one crossing is logged per click event
     finishLineTiles.forEach(tile => {
       if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
           const dotProduct = movementVector.dot(forwardDirection);
-          if (dotProduct > 0) { // Makes sure the car is moving in the right direction
+          if (dotProduct > 0 && !crossed) { // Makes sure the car is moving in the right direction and hasn't been logged
               console.log('Car correctly crossed the finish line at tile');
+              crossed = true; // Set flag to true after logging once
           }
       }
     });
   }
-
+  
   isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
     // Check if the x-coordinates of the previous and current positions straddle the tile's x-coordinate
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
