@@ -40,6 +40,7 @@ export default class Car extends GameObject3D {
     // Update car position
     this.position = this.position.add(this.velocity);
 
+    // update rotation based on velocity
     this.rotation = Math.atan2(this._velocity.x, this._velocity.z);
 
     const speed = this.getSpeed();
@@ -48,6 +49,7 @@ export default class Car extends GameObject3D {
     }
   }
 
+  // resets car state
   reset() {
     this._velocity = new Vector3(0, 0, 0);
     this.acceleration = new Vector3(0, 0, 0);
