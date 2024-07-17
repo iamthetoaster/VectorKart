@@ -2,13 +2,18 @@ import GameObject3D from './GameObject3D.js';
 import Vector3 from './Vector3.js';
 
 export default class Car extends GameObject3D {
-  constructor(renderObject) {
+  constructor(position, renderObject) {
     super(renderObject);
+
+    this.startPosition = position;
+    this.position = this.startPosition;
 
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
 
     this.scale = new Vector3(25, 25, 25);
+
+    this.rotation = -Math.PI / 2;
 
     // Player Stats
     this.maxSpeed = 0;
@@ -39,6 +44,13 @@ export default class Car extends GameObject3D {
     if (speed > this.maxSpeed) {
       this.maxSpeed = speed;
     }
+  }
+
+  reset() {
+    this._velocity = new Vector3(0, 0, 0);
+    this.acceleration = new Vector3(0, 0, 0);
+    this.position = this.startPosition;
+    // this.rotation = 0;
   }
 
   printState() {
