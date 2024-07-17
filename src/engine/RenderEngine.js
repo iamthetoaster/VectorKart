@@ -250,6 +250,7 @@ export default class RenderEngine {
     this.prefabs[prefab].instanceAttributes.push(result);
     return result;
   }
+  
   worldPosition(canvasX, canvasY) {
     canvasX = (canvasX * 2 - this.gl.canvas.clientWidth) / this.gl.canvas.clientWidth;
     canvasY = (this.gl.canvas.clientHeight - canvasY * 2) / this.gl.canvas.clientHeight;
