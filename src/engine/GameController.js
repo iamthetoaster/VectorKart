@@ -7,6 +7,10 @@ import Vector3 from '../state-objects/Vector3.js';
 
 export default class GameController {
   constructor() {
+    this.players = 2;
+    this.turn = 0;
+    this.cars = [];
+
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
@@ -19,14 +23,17 @@ export default class GameController {
     this.rotating = true; // Flag to control rotation state
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
-    this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
-    this.car.scale = new Vector3(100, 100, 100);
+    // this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
+
+    for (let i = 0; i < this.players; i++) {
+      this.cars.push(new Car(this.renderEngine.instantiateRenderObject('car')));
+    }
 
     // Log the initial position of the car when the game starts
-    console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
+    // console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
 
     this.dashboard = new Dashboard(document.querySelector('#dashboard'),
-      [this.car]);
+      [this.cars[0]]);
 
     // Setup to prevent adding multiple listeners to the same canvas
     const canvas = document.querySelector('#c');
@@ -40,9 +47,11 @@ export default class GameController {
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
-    if (this.car && this.rotating) {
+
+    let car = this.cars[this.turn];
+    if (car && this.rotating) {
       const rotationAngle = degToRad(10 * time % 360);
-      this.car.rotation = rotationAngle;
+      car.rotation = rotationAngle;
     }
     // Update time variables for smooth animations
     this.dt = time - this.pt;
@@ -60,18 +69,25 @@ export default class GameController {
     const targetPos = new Vector3(gameWorldPosition[0], gameWorldPosition[1], gameWorldPosition[2]);
     // const rect = event.target.getBoundingClientRect();
 
-    this.car.acceleration = targetPos.subtract(this.car.position).normalize().scalar_mult(100);
+    let car = this.cars[this.turn];
+
+    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
     // Call step() to update velocity based on current acceleration
-    this.car.step();
+    car.step();
 
     // Calculate new position by adding new velocity to current position
-    const newPos = this.car.position.add(this.car.velocity);
+    const newPos = car.position.add(car.velocity);
 
     // Update car position
-    this.car.position = newPos;
+    car.position = newPos;
+
+    this.turn = this.turn + 1;
+    if (this.turn >= this.cars.length) {
+      this.turn = 0;
+    }
 
     // Log the car's new position and velocity for debugging
-    console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
+    // console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
   }
 }

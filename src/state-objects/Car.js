@@ -8,6 +8,8 @@ export default class Car extends GameObject3D {
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
 
+    this.scale = new Vector3(25, 25, 25);
+
     // Player Stats
     this.maxSpeed = 0;
   }
