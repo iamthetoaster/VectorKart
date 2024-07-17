@@ -28,8 +28,8 @@ export default class GameController {
     this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
     this.car.scale = new Vector3(50, 50, 50);
 
-    // Set initial position of the car to (-200, 0, 0)
-    this.car.position = new Vector3(-200, 0, 0);
+    // Set initial position of the car to (-500, 0, 0)
+    this.car.position = new Vector3(-500, 0, 0);
 
     // Log the initial position of the car when the game starts
     console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
