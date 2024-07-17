@@ -14,7 +14,7 @@ export default class GameController {
     this.renderEngine.init()
       .then(() => this.start());
     
-    this.finishLineCrossed = false;  // Flag to track if finish line has been crossed
+    //this.finishLineCrossed = false;  // Flag to track if finish line has been crossed
   }
 
   start() {
@@ -104,7 +104,7 @@ export default class GameController {
     ];
 
     const movementVector = currentPosition.subtract(previousPosition).normalize();
-    const forwardDirection = Vector3.RIGHT; // This defines the correct direction to cross the finish line
+    const forwardDirection = Vector3.RIGHT; // Defines the correct direction to cross the finish line
 
     finishLineTiles.forEach(tile => {
       if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
