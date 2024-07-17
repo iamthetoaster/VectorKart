@@ -31,7 +31,7 @@ export default class GameController {
 
     // instantiate car for each player
     for (let i = 0; i < this.players; i++) {
-      this.cars.push(new Car(new Vector3(0, 0, i*50 - 250), this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(0, 0, (i * 50) - 250), this.renderEngine.instantiateRenderObject('car')));
     }
 
     // Log the initial position of the car when the game starts
@@ -48,19 +48,19 @@ export default class GameController {
     }
 
     // reset button callback
-    const resetButton = document.getElementById("reset-button");
+    const resetButton = document.querySelector('#reset-button');
     if (resetButton) {
-      resetButton.addEventListener("click", this.resetGame);
+      resetButton.addEventListener('click', this.resetGame);
     }
   }
 
   resetGame = () => {
     // reset position and velocity of cars
-    for(let i = 0; i < this.players; i++) {
-      let car = this.cars[i];
+    for (let i = 0; i < this.players; i++) {
+      const car = this.cars[i];
       car.reset();
     }
-  }
+  };
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
