@@ -103,15 +103,21 @@ export default class GameController {
       { x: -5, y: 0 }, { x: -4, y: 0 }, { x: -3, y: 0 }, { x: -2, y: 0 }, { x: -1, y: 0 }
     ];
 
+    const movementVector = currentPosition.subtract(previousPosition).normalize();
+    const forwardDirection = Vector3.RIGHT; // This defines the correct direction to cross the finish line
+
     finishLineTiles.forEach(tile => {
       if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
-        //console.log('Car crossed the finish line at tile ' + JSON.stringify(tile));
-        console.log('Car crossed the finish line');
+          const dotProduct = movementVector.dot(forwardDirection);
+          if (dotProduct > 0) { // Makes sure the car is moving in the right direction
+              console.log('Car correctly crossed the finish line at tile');
+          }
       }
     });
   }
 
   isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
+    // Check if the x-coordinates of the previous and current positions straddle the tile's x-coordinate
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
            (previousPosition.x >= tileX && currentPosition.x <= tileX);
   }
