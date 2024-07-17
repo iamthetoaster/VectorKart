@@ -89,7 +89,7 @@ export default class GameController {
 
     // apply acceleration to car
     const car = this.cars[this.turn];
-    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(10);
 
     // Call step() to update velocity and position based on current acceleration
     car.step();

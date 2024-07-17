@@ -28,7 +28,7 @@ export default class MapObject extends GameObject3D {
 
         this.scale = new Vector3(10, 10, 10);
         this.rotation = 0;
-        this.position = new Vector3(0, 0, 0);
+        this.position = new Vector3(-500, 0, -500);
     }
 
 
