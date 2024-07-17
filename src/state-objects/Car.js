@@ -8,6 +8,8 @@ export default class Car extends GameObject3D {
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
 
+    this.scale = new Vector3(25, 25, 25);
+
     // Player Stats
     this.maxSpeed = 0;
   }
@@ -25,11 +27,13 @@ export default class Car extends GameObject3D {
     return this._velocity.add(this.acceleration);
   }
 
+  // update velocity
   step() {
     const next = this.getNextVelocity();
     this._velocity.setComponents(next.x, next.y, next.z);
 
-    this._position = this._position.add(this._velocity);
+    // Update car position
+    this.position = this.position.add(this.velocity);
 
     const speed = this.getSpeed();
     if (speed > this.maxSpeed) {
