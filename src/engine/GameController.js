@@ -66,13 +66,10 @@ export default class GameController {
   handleCanvasClick(event) {
     // Handle clicks on the canvas to move the car
 
-    // console.log(`Canvas X: ${event.clientX} Canvas Y: ${event.clientY}`);
-    const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
-    // console.log(`Game X: ${gameWorldPosition[0]} Game Y: ${gameWorldPosition[1]} Game Z: ${gameWorldPosition[2]} `);
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
 
-    // const newPos = new Vector3(0, (Math.random() * maxY) - (maxY / 2), (Math.random() * maxZ) - (maxZ / 2));
-    const targetPos = new Vector3(gameWorldPosition[0], gameWorldPosition[1], gameWorldPosition[2]);
-    // const rect = event.target.getBoundingClientRect();
+    // set targetPos to the location of the user click
+    const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
     // apply acceleration to car
     let car = this.cars[this.turn];
@@ -82,7 +79,7 @@ export default class GameController {
     car.move();
 
     this.turn = this.turn + 1;
-    if (this.turn >= this.cars.length) {
+    if (this.turn >= players) {
       this.turn = 0;
     }
 
