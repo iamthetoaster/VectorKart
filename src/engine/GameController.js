@@ -21,9 +21,12 @@ export default class GameController {
     this.dt = 0; // Time difference between frames
     this.renderEngine.addPrefab('map', [[0, 1], [1, 0]], 'shaders/vertex_shader.glsl', 'shaders/fragment_shader.glsl');
     const map = this.renderEngine.instantiateRenderObject('map');
-    map.scale = [100, 100, 100];
+    map.scale = [100, 100, 100];//was 100, 100, 100
     this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
     this.car.scale = new Vector3(50, 50, 50);
+
+    // Set initial position of the car to (-200, 0, 0)
+    this.car.position = new Vector3(-200, 0, 0);
 
     // Log the initial position of the car when the game starts
     console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
@@ -82,10 +85,31 @@ export default class GameController {
   }
 
   handleMouseMove(event) {
-    // Get the element under the mouse cursor
-    let elem = document.elementFromPoint(event.clientX, event.clientY);
-    if (elem && elem.className.includes('map-start')) {
-      console.log('Mouse crossed the finish line at D!');
-    }
-  }
+    // Transform the mouse coordinates to game world coordinates
+    const gameWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+  
+    // Assuming finish line tiles are at specific game world coordinates
+    // Example finish line coordinates (x, y), adjust according to your game setup
+    const finishLineTiles = [
+      { x: 0, y: 0 }, // example coordinates of finish line tile
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+      { x: 3, y: 0 },
+      { x: 4, y: 0 },
+      { x: 5, y: 0 },
+      { x: -5, y: 0 },
+      { x: -4, y: 0 },
+      { x: -3, y: 0 },
+      { x: -2, y: 0 },
+      { x: -1, y: 0 }
+    ];
+  
+    // Check if the mouse is over any of the finish line tiles
+    finishLineTiles.forEach(tile => {
+      if (Math.floor(gameWorldPosition[0]) === tile.x && Math.floor(gameWorldPosition[1]) === tile.y) {
+        console.log('Mouse crossed the finish line at tile ' + JSON.stringify(tile));
+      }
+    });
+  }  
+  
 }
