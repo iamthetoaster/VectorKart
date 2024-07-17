@@ -23,8 +23,8 @@ export default class GameController {
     this.rotating = true; // Flag to control rotation state
     this.pt = 0; // Previous time stamp
     this.dt = 0; // Time difference between frames
-    // this.car = new Car(this.renderEngine.instantiateRenderObject('car')); // The car object with position, velocity, etc.
 
+    // instantiate car for each player
     for (let i = 0; i < this.players; i++) {
       this.cars.push(new Car(this.renderEngine.instantiateRenderObject('car')));
     }
@@ -69,18 +69,12 @@ export default class GameController {
     const targetPos = new Vector3(gameWorldPosition[0], gameWorldPosition[1], gameWorldPosition[2]);
     // const rect = event.target.getBoundingClientRect();
 
+    // apply acceleration to car
     let car = this.cars[this.turn];
-
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
-    // Call step() to update velocity based on current acceleration
-    car.step();
-
-    // Calculate new position by adding new velocity to current position
-    const newPos = car.position.add(car.velocity);
-
-    // Update car position
-    car.position = newPos;
+    // Call move() to update velocity and position based on current acceleration
+    car.move();
 
     this.turn = this.turn + 1;
     if (this.turn >= this.cars.length) {
