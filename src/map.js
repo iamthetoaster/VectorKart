@@ -168,7 +168,6 @@ export function Map(x, y) {
   };
 
   this.upperCircle = function (radius, angle, xCenter, yCenter, type) {
-   
     for (let degree = 360; degree > angle; degree--) {
       const xShift = Math.round(radius * Math.cos(degree * PI / 180));
       const yShift = Math.round(radius * Math.sin(degree * PI / 180));
@@ -206,7 +205,7 @@ export function Map(x, y) {
 
   /*
   this.randomGen = function(maxRadius, xCenter, yCenter){
-    
+
     let radius;
     let minRadius = maxRadius / 2;
     for (let degree = 0; degree < 360; degree+=45) {
@@ -219,7 +218,6 @@ export function Map(x, y) {
     }
     this.map[xCenter][yCenter] = START;
   };
-
 
   this.createMexico = function (radius, xCenter, yCenter, type) {
     this.diagonalDown(20, 45, 25, 50, type);
@@ -244,9 +242,9 @@ export function Map(x, y) {
 
 // main
 
-//const x = 71;
-//const y = 71;
-//const nemo = new Map(x, y); // nemo cuz why not
+// const x = 71;
+// const y = 71;
+// const nemo = new Map(x, y); // nemo cuz why not
 
 // Rectangle
 /*
@@ -263,8 +261,8 @@ nemo.vLine(0, 9, 23);
 */
 
 // nemo.Diamond(26, 32, 35, 35);
-//nemo.Circle(26, 32, 35, 35);
+// nemo.Circle(26, 32, 35, 35);
 // nemo.Bean(26, 32, 35, 35);
 
-//nemo.randomGen(35, 35, 35);
-//nemo.visMap();
+// nemo.randomGen(35, 35, 35);
+// nemo.visMap();
