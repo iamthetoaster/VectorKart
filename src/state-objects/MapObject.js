@@ -32,9 +32,9 @@ export default class MapObject extends GameObject3D {
         this.height = height;
         this.mapArray = this.map.map;
 
-        this.scale = new Vector3(10, 10, 10);
+        this.scale = new Vector3(9, 9, 9);
         this.rotation = 0;
-        this.position = new Vector3(-500, 0, -500);
+        this.position = new Vector3(-455, 0, -455);
     }
 
 
