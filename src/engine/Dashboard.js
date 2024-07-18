@@ -5,12 +5,19 @@ class Dashboard {
     this.parent = parentNode;
     this.cars = cars;
     this.carDashes = [];
+    this.winner = 0;
+
+    this.announcer = Dashboard.makeElement('h1', undefined, 'announcer');
+    this.announcer.textContent = 'Ready, Set, GO!!!';
 
     for (let index = 0; index < cars.length; index++) {
       const carDash = Dashboard.makeElement('div', 'car-dash',
-        `player-${index + 1}-dashboard`);
-      const title = Dashboard.addField(carDash, 'car-dash-title', 'span');
+        `player-${index + 1}-dash`);
+
+      const title = Dashboard.makeElement('h2', 'car-dash-title');
       title.textContent = `Player ${index + 1}`;
+      carDash.append(title);
+
       Dashboard.addField(carDash, 'lap');
       Dashboard.addField(carDash, 'speed');
       Dashboard.addField(carDash, 'angle');
@@ -21,6 +28,7 @@ class Dashboard {
   }
 
   attach() {
+    this.parent.append(this.announcer);
     for (const carDash of this.carDashes) {
       this.parent.append(carDash);
     }
@@ -39,15 +47,14 @@ class Dashboard {
         maxSpeed: carDash.querySelector('.max-speed'),
       };
 
-      const lap = car.lap || 1;
-      const speed = car.getSpeed().toFixed(2);
-      const angle = car.getRotationDeg().toFixed(0);
-      const maxSpeed = car.maxSpeed.toFixed(2);
+      dash.lap.textContent = `Lap ${car.lap || 1}/${LAP_TOTAL}`;
+      dash.speed.textContent = `Speed: ${car.getSpeed().toFixed(2)} m/s`;
+      dash.angle.textContent = `Angle: ${car.getRotationDeg().toFixed(0)} deg`;
+      dash.maxSpeed.textContent = `Max Speed: ${car.maxSpeed.toFixed(2)} m/s`;
+    }
 
-      dash.lap.textContent = `Lap ${lap}/${LAP_TOTAL}`;
-      dash.speed.textContent = `Speed: ${speed} m/s`;
-      dash.angle.textContent = `Angle: ${angle} deg`;
-      dash.maxSpeed.textContent = `Max Speed: ${maxSpeed} m/s`;
+    if (this.winner > 0) {
+      this.announcer.textContent = `Player ${this.winner} wins!`;
     }
   }
 
@@ -63,8 +70,8 @@ class Dashboard {
     return element;
   }
 
-  static addField(dash, className, id, overrideType = 'p') {
-    const field = Dashboard.makeElement(overrideType, className, id);
+  static addField(dash, className, id) {
+    const field = Dashboard.makeElement('p', className, id);
     dash.append(field);
 
     return field;

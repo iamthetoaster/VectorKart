@@ -17,6 +17,7 @@ export default class Car extends GameObject3D {
 
     // Player Stats
     this.lap = 0;
+    this.turnsTaken = 0;
     this.maxSpeed = 0;
   }
 
@@ -48,6 +49,8 @@ export default class Car extends GameObject3D {
     // update rotation based on velocity
     this.rotation = Math.atan2(this._velocity.x, this._velocity.z);
 
+    // Update player stats
+    this.turnsTaken++;
     const speed = this.getSpeed();
     if (speed > this.maxSpeed) {
       this.maxSpeed = speed;
