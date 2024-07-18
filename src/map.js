@@ -3,6 +3,7 @@ function Map(x, y) {
   const WALL = 1;
   const TRACK = 2;
   const START = 3;
+  const PI = 3.141_592_653;
 
   this.map = [];
   this.x = x;
@@ -167,7 +168,7 @@ function Map(x, y) {
   };
 
   this.upperCircle = function (radius, angle, xCenter, yCenter, type) {
-    const PI = 3.141_592_653;
+   
     for (let degree = 360; degree > angle; degree--) {
       const xShift = Math.round(radius * Math.cos(degree * PI / 180));
       const yShift = Math.round(radius * Math.sin(degree * PI / 180));
@@ -202,7 +203,24 @@ function Map(x, y) {
     this.fill();
     this.vLine(yCenter + Math.round(outerRadius / 4) + 1, yCenter + Math.round(innerRadius / 2) - 1, xCenter, START);
   };
-/*
+
+  /*
+  this.randomGen = function(maxRadius, xCenter, yCenter){
+    
+    let radius;
+    let minRadius = maxRadius / 2;
+    for (let degree = 0; degree < 360; degree+=45) {
+      radius = Math.floor(Math.random() * (maxRadius - minRadius + 1) + minRadius);
+      console.log(radius);
+      const xShift = Math.round(radius * Math.cos(degree * PI / 180));
+      const yShift = Math.round(radius * Math.sin(degree * PI / 180));
+
+      this.createCircle(1, 360, xShift + xCenter, yShift + yCenter, WALL);
+    }
+    this.map[xCenter][yCenter] = START;
+  };
+
+
   this.createMexico = function (radius, xCenter, yCenter, type) {
     this.diagonalDown(20, 45, 25, 50, type);
     this.hLine(15, 20, 25, type);
@@ -245,7 +263,8 @@ nemo.vLine(0, 9, 23);
 */
 
 // nemo.Diamond(26, 32, 35, 35);
-nemo.Circle(26, 32, 35, 35);
+//nemo.Circle(26, 32, 35, 35);
 // nemo.Bean(26, 32, 35, 35);
 
+nemo.randomGen(35, 35, 35);
 nemo.visMap();
