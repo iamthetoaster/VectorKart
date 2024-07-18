@@ -1,4 +1,4 @@
-function Map(x, y) {
+export function Map(x, y) {
   const UNASSIGNED = 0;
   const WALL = 1;
   const TRACK = 2;
@@ -244,9 +244,9 @@ function Map(x, y) {
 
 // main
 
-const x = 71;
-const y = 71;
-const nemo = new Map(x, y); // nemo cuz why not
+//const x = 71;
+//const y = 71;
+//const nemo = new Map(x, y); // nemo cuz why not
 
 // Rectangle
 /*
@@ -266,5 +266,5 @@ nemo.vLine(0, 9, 23);
 //nemo.Circle(26, 32, 35, 35);
 // nemo.Bean(26, 32, 35, 35);
 
-nemo.randomGen(35, 35, 35);
-nemo.visMap();
+//nemo.randomGen(35, 35, 35);
+//nemo.visMap();

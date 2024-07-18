@@ -14,8 +14,11 @@ export default class GameController {
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
+    //this.renderEngine.update(this.checkFinishLine);
     this.renderEngine.init()
       .then(() => this.start());
+    
+    //this.finishLineCrossed = false;  // Flag to track if finish line has been crossed
   }
 
   start() {
@@ -31,11 +34,11 @@ export default class GameController {
 
     // instantiate car for each player
     for (let i = 0; i < this.players; i++) {
-      this.cars.push(new Car(new Vector3(0, 0, (i * 50) - 250), this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(-500, 0, (i * 50) - 250), this.renderEngine.instantiateRenderObject('car')));
     }
 
     // Log the initial position of the car when the game starts
-    // console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
+    //console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
 
     this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
     this.dashboard.attach();
@@ -75,29 +78,66 @@ export default class GameController {
     // Update time variables for smooth animations
     this.dt = time - this.pt;
     this.pt = time;
+    //this.checkFinishLine();
+    // Debugging the car's position before checking the finish line
+    //console.log('Frame Update - Car position:', this.car.position);
   };
 
   handleCanvasClick(event) {
     // Handle clicks on the canvas to move the car
-
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
-
+  
+    // Get the current car based on turn
+    const car = this.cars[this.turn];
+  
+    // Store the previous position before updating the car's current position
+    const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
+  
     // set targetPos to the location of the user click
     const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
-
+  
     // apply acceleration to car
-    const car = this.cars[this.turn];
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
-
+  
     // Call step() to update velocity and position based on current acceleration
     car.step();
-
-    this.turn = this.turn + 1;
-    if (this.turn >= this.players) {
-      this.turn = 0;
-    }
-
-    // Log the car's new position and velocity for debugging
-    // console.log(`Car moved to (${newPos.x}, ${newPos.y}, ${newPos.z}) with velocity (${this.car.velocity.y}, ${this.car.velocity.z})`);
+  
+    // Log the car's new position for debugging
+    console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+  
+    // Now pass previousPosition and newPos to check if the car has crossed the finish line
+    this.checkFinishLine(previousPosition, car.position);
+  
+    // Update turn for the next car
+    this.turn = (this.turn + 1) % this.players;
   }
+  
+
+  checkFinishLine(previousPosition, currentPosition) {
+    const finishLineTiles = [
+      { x: -99, y: 0 }, { x: -98, y: 0 }, { x: -97, y: 0 }, { x: -96, y: 0 }, { x: -95, y: 0 }, {x: -94, y: 0}, {x: -93, y: 0}
+    ];
+  
+    const movementVector = currentPosition.subtract(previousPosition).normalize();
+    const forwardDirection = Vector3.RIGHT; // Defines the correct direction to cross the finish line
+  
+    let crossed = false; // flag to ensure only one crossing is logged per click event
+    finishLineTiles.forEach(tile => {
+      if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
+          const dotProduct = movementVector.dot(forwardDirection);
+          if (dotProduct > 0 && !crossed) { // Makes sure the car is moving in the right direction and hasn't been logged
+              console.log('Car correctly crossed the finish line at tile');
+              crossed = true; // Set flag to true after logging once
+          }
+      }
+    });
+  }
+  
+  isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
+    // Check if the x-coordinates of the previous and current positions straddle the tile's x-coordinate
+    return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
+           (previousPosition.x >= tileX && currentPosition.x <= tileX);
+  }
+
+
 }
