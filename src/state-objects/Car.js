@@ -16,11 +16,17 @@ export default class Car extends GameObject3D {
     this.rotation = -Math.PI / 2;
 
     // Player Stats
+    this.lap = 0;
+    this.turnsTaken = 0;
     this.maxSpeed = 0;
   }
 
   get velocity() {
     return new Vector3(this._velocity);
+  }
+
+  getRotationDeg() {
+    return (this.rotation / Math.PI) * 180;
   }
 
   getSpeed() {
@@ -40,17 +46,23 @@ export default class Car extends GameObject3D {
     // Update car position
     this.position = this.position.add(this.velocity);
 
+    // update rotation based on velocity
+    this.rotation = Math.atan2(this._velocity.x, this._velocity.z);
+
+    // Update player stats
+    this.turnsTaken++;
     const speed = this.getSpeed();
     if (speed > this.maxSpeed) {
       this.maxSpeed = speed;
     }
   }
 
+  // resets car state
   reset() {
     this._velocity = new Vector3(0, 0, 0);
     this.acceleration = new Vector3(0, 0, 0);
     this.position = this.startPosition;
-    // this.rotation = 0;
+    this.rotation = -Math.PI / 2;
   }
 
   printState() {

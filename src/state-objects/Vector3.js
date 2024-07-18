@@ -89,6 +89,10 @@ export default class Vector3 {
     return new Vector3(this.x / mag, this.y / mag, this.z / mag);
   }
 
+  dot(vector3) {
+    return this.x * vector3.x + this.y * vector3.y + this.z * vector3.z;
+  }
+
   toArray() {
     return [this.x, this.y, this.z];
   }
