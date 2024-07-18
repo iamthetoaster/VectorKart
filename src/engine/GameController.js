@@ -33,7 +33,7 @@ export default class GameController {
 
     // instantiate car for each player
     for (let i = 0; i < this.players; i++) {
-      this.cars.push(new Car(new Vector3(0, 0, (i * 50) - 250), this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(0, 0, (i * 50) - 315), this.renderEngine.instantiateRenderObject('car')));
     }
 
     // Log the initial position of the car when the game starts

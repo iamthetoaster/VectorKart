@@ -10,7 +10,13 @@ export default class MapObject extends GameObject3D {
                 map.Circle(25, 40, width / 2, height / 2);
                 break;
 
-            
+            case 'Diamond':
+                map.Diamond(25, 40, width / 2, height / 2);
+                break;
+
+            case 'Bean':
+                map.Bean(25, 40, width / 2, height / 2);
+                break;
         }
         
         const prefab = name + '-map';
