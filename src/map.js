@@ -264,5 +264,4 @@ nemo.vLine(0, 9, 23);
 // nemo.Circle(26, 32, 35, 35);
 // nemo.Bean(26, 32, 35, 35);
 
-// nemo.randomGen(35, 35, 35);
 // nemo.visMap();
