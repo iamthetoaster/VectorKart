@@ -16,11 +16,16 @@ export default class Car extends GameObject3D {
     this.rotation = -Math.PI / 2;
 
     // Player Stats
+    this.lap = 0;
     this.maxSpeed = 0;
   }
 
   get velocity() {
     return new Vector3(this._velocity);
+  }
+
+  getRotationDeg() {
+    return (this.rotation / Math.PI) * 180;
   }
 
   getSpeed() {
