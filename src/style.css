@@ -37,3 +37,11 @@ canvas {
   grid-column: auto / span 3;
   grid-row: 2;
 }
+
+#winMessage {
+  color: rgb(255, 4, 4);
+  font-size: 24px;
+  text-align: center;
+  margin-top: 20px;
+}
+
