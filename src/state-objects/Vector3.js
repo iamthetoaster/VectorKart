@@ -26,7 +26,8 @@ export default class Vector3 {
   }
 
   static get LEFT() {
-    return new Vector3.RIGHT.scalar_mult(-1);
+    //return new Vector3.RIGHT.scalar_mult(-1);
+    return Vector3.RIGHT.scalar_mult(-1);
   }
 
   static get DOWN() {

@@ -17,29 +17,23 @@ export default class GameController {
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
-    // this.renderEngine.update(this.checkFinishLine);
-    this.renderEngine.init()
-      .then(() => this.start());
-
-    // this.finishLineCrossed = false;  // Flag to track if finish line has been crossed
+    this.renderEngine.init().then(() => this.start());
+    
+    // Bind event handlers
+    this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
   }
 
   start() {
     this.vectorRace = new VectorRace(this); // Manages the state of the game
     this.rotating = true; // Flag to control rotation state
-    this.pt = 0; // Previous time stamp
-    this.dt = 0; // Time difference between frames
 
     // instantiate map
     this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
 
     // instantiate car for each player
     for (let index = 0; index < this.players; index++) {
-      this.cars.push(new Car(new Vector3(0, 0, (index * 50) - 315), this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
     }
-
-    // Log the initial position of the car when the game starts
-    // console.log(`Initial car position: (${this.car.position.x}, ${this.car.position.y}, ${this.car.position.z})`);
 
     this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
     this.dashboard.attach();
@@ -47,7 +41,7 @@ export default class GameController {
     // Setup to prevent adding multiple listeners to the same canvas
     const canvas = document.querySelector('#c');
     if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
-      canvas.addEventListener('click', this.handleCanvasClick.bind(this));
+      canvas.addEventListener('click', this.boundHandleCanvasClick);
       canvas.dataset.listenerAdded = 'true';
     }
 
@@ -59,12 +53,18 @@ export default class GameController {
   }
 
   resetGame = () => {
-    // reset position and velocity of cars
-    for (let index = 0; index < this.players; index++) {
-      const car = this.cars[index];
-      car.reset();
-    }
+    this.cars.forEach(car => car.reset());
+    this.gameOver = false;
+    document.querySelector('#winMessage').innerText = '';
+
+    const canvas = document.querySelector('#c');
+    canvas.removeEventListener('click', this.boundHandleCanvasClick);
+    canvas.addEventListener('click', this.boundHandleCanvasClick);
+
+    this.turn = 0;
+    console.log("Game has been reset, turn set to 0.");
   };
+
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
@@ -77,14 +77,17 @@ export default class GameController {
     // }
 
     // Update time variables for smooth animations
+    if (!this.pt) this.pt = time;
     this.dt = time - this.pt;
     this.pt = time;
-    // this.checkFinishLine();
-    // Debugging the car's position before checking the finish line
-    // console.log('Frame Update - Car position:', this.car.position);
   };
 
   handleCanvasClick(event) {
+    // Exit if the game is over
+    if (this.gameOver) return; 
+
+    //console.log("Handling click for turn:", this.turn); // Debug which car is moving
+    
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
 
@@ -106,38 +109,41 @@ export default class GameController {
     this.dashboard.update();
 
     // Log the car's new position for debugging
-    console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+    //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
     // Now pass previousPosition and newPos to check if the car has crossed the finish line
-    this.checkFinishLine(previousPosition, car.position);
+    //this.checkFinishLine(previousPosition, car.position);
+    if (this.checkFinishLine(previousPosition, car.position)) {
+      this.gameOver = true;
+      document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
+      const canvas = document.querySelector('#c');
+      canvas.removeEventListener('click', this.boundHandleCanvasClick);
+    }
 
-    // Update turn for the next car
+    // Move to the next turn, cycling back to the first car if necessary
     this.turn = (this.turn + 1) % this.players;
   }
 
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
-      { x: -99, y: 0 }, { x: -98, y: 0 }, { x: -97, y: 0 }, { x: -96, y: 0 }, { x: -95, y: 0 }, { x: -94, y: 0 }, { x: -93, y: 0 },
+      { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }
     ];
-
     const movementVector = currentPosition.subtract(previousPosition).normalize();
-    const forwardDirection = Vector3.RIGHT; // Defines the correct direction to cross the finish line
+    const forwardDirection = Vector3.LEFT;
 
-    let crossed = false; // flag to ensure only one crossing is logged per click event
     for (const tile of finishLineTiles) {
       if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
         const dotProduct = movementVector.dot(forwardDirection);
-        if (dotProduct > 0 && !crossed) { // Makes sure the car is moving in the right direction and hasn't been logged
-          console.log('Car correctly crossed the finish line at tile');
-          crossed = true; // Set flag to true after logging once
+        if (dotProduct > 0) { // Correct direction
+          return true;
         }
       }
     }
+    return false;
   }
 
   isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
-    // Check if the x-coordinates of the previous and current positions straddle the tile's x-coordinate
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
-      (previousPosition.x >= tileX && currentPosition.x <= tileX);
+           (previousPosition.x >= tileX && currentPosition.x <= tileX);
   }
 }
