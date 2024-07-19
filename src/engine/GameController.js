@@ -78,10 +78,7 @@ export default class GameController {
     this.dt = time - this.pt;
     this.pt = time;
 
-    for (let i = 0; i < this.players; i++) {
-      if (this.cars[i])
-        this.cars[i].animate(this.dt);
-    }
+    this.cars.forEach(car => car.animate(this.dt));
   };
 
   handleCanvasClick(event) {
