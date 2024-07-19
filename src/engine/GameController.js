@@ -12,8 +12,11 @@ export default class GameController {
     this.turn = 0;
     this.cars = [];
 
-    this.mapWidth = 200;
-    this.mapHeight = 200;
+    this.mapWidth = 150;
+    this.mapHeight = 150;
+
+    this.worldWidth = 750;
+    this.worldHeight = 750;
 
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
@@ -92,9 +95,8 @@ export default class GameController {
     //console.log("Handling click for turn:", this.turn); // Debug which car is moving
     
     // Handle clicks on the canvas to move the car
-    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
-    console.log("world mouse(x, y): " + mouseWorldPosition);
-
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX - 8, event.clientY - 8);
+    // console.log("world mouse(x, y): " + mouseWorldPosition);
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -119,14 +121,14 @@ export default class GameController {
     this.dashboard.update();
 
     // calculate car map positions
-    const carMapPosX = ((car.position.x + (this.map.width * this.map.scale.x / 2)) / 4.5) + 12.5;
-    const carMapPosY = ((car.position.z + (this.map.height * this.map.scale.z / 2)) / 4.5) - 12.5;
+    const carMapPosX = (car.position.x + (this.worldWidth / 2)) / this.map.scale.x;
+    const carMapPosY = (car.position.z + (this.worldWidth / 2)) / this.map.scale.z;
 
-    const collisionRadius = 3;
+    const collisionRadius = 2;
 
     // make sure car is in map
     if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
-      if (!mapCollides(this.map.map, carMapPosX, carMapPosY, collisionRadius)) { // check for car-map collisions with radius
+      if (!mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
         console.log("collision");
       }
     } else {
@@ -138,12 +140,12 @@ export default class GameController {
 
     // Now pass previousPosition and newPos to check if the car has crossed the finish line
     //this.checkFinishLine(previousPosition, car.position);
-    if (this.checkFinishLine(previousPosition, car.position)) {
-      this.gameOver = true;
-      document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
-      const canvas = document.querySelector('#c');
-      canvas.removeEventListener('click', this.boundHandleCanvasClick);
-    }
+    // if (this.checkFinishLine(previousPosition, car.position)) {
+    //   this.gameOver = true;
+    //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
+    //   const canvas = document.querySelector('#c');
+    //   canvas.removeEventListener('click', this.boundHandleCanvasClick);
+    // }
 
     // Move to the next turn, cycling back to the first car if necessary
     this.turn = (this.turn + 1) % this.players;
