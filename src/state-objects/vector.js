@@ -1,7 +1,7 @@
-class vector {
-  constructor(turn,base_pox_x, base_pos_y,prev,target,color=[1,1,1,1]) {
+export default class vector  extends GameObject3D {
+  constructor(turn,prev,target,color=[1,1,1,1]) {
       //assume
-      
+      super(renderObject);
       this.color = color;
       //coordinates for point b
       this.b_x; //b_x and b_y will be determined by user input, so they can just be made the same as point a by default
@@ -16,8 +16,7 @@ class vector {
       this.acc = this.get_accelleration()
       this.verts = this.get_triangle()
       this.tri_height = this.verts[7]
-      this.base_tri_pos = [base_pox_x, base_pos_y]
-      this.base_pos = [base_pos_x, base_pos_y] //gabe's base pos
+      this.base_pos =[prev.x, prev.y] //gabe's base pos
 
   }
   //what will my vector need 
@@ -44,8 +43,8 @@ class vector {
   get_triangle() { 
       //get specs for rendering triangle. Might not want to render it in here though.
       var old_vel = this.prev.velocity; 
-      point1 = new Vector3([this.base_tri_pos[0],acc,0])
-      point2 = new Vector3([this.base_tri_pos[0],this.base_tri_pos[1],0])
+      point1 = new Vector3([this.base_pos[0],acc,0])
+      point2 = new Vector3([this.base_pos[0],this.base_pos[1],0])
        //get specs for rendering triangle. Might not want to render it in here though.
        var old_vel = this.prev.velocity; 
        var numerator = Math.pow(old_vel, 2) + Math.pow(this.acc, 2) - Math.pow(this.velocity, 2)
@@ -64,8 +63,8 @@ class vector {
       //acceleration 0 0
       //trigonometry for the rest
       return [
-          this.base_tri_pos[0],acc,0,
-          this.base_tri_pos[0],this.base_tri_pos[1],0,
+          this.base_pos[0],acc,0,
+          this.base_pos[0],this.base_pos[1],0,
           x,height,0
       ]
   }
