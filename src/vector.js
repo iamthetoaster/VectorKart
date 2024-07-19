@@ -1,5 +1,5 @@
 class vector {
-    constructor(a_x=0,a_y=0,color=[1,1,1,1],turn,prev=null, scale, translation, rotation, tri_pos_x=0, tri_pos_y=0) {
+    constructor(a_x=0,a_y=0,color=[1,1,1,1],turn,prev=null, scale, translation, rotation, tri_pos_x=0, tri_pos_y=0, base_pox_x, base_pos_y) {
         //assume
         
         this.color = color;
@@ -19,6 +19,7 @@ class vector {
         this.verts = this.get_triangle()
         this.tri_height = this.verts[7]
         this.base_tri_pos = [tri_pos_x, tri_pos_y]
+        this.base_pos = [base_pos_x, base_pos_y]
     }
     //what will my vector need 
     get_distance() {
