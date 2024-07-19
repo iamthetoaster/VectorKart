@@ -105,7 +105,7 @@ export default class GameController {
     if (this.checkFinishLine(previousPosition, car.position)) {
       this.gameOver = true;
       const winMessage = document.querySelector('#winMessage');
-      winMessage.innerText = "Car correctly crossed the finish line! Game Over.";
+      winMessage.innerText = "CAR CROSSED THE FINISH LINE!";
       winMessage.style.display = 'block';  // Show the message when the finish line is crossed
       const canvas = document.querySelector('#c');
       canvas.removeEventListener('click', this.boundHandleCanvasClick);

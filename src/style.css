@@ -38,21 +38,14 @@ canvas {
   grid-row: 2;
 }
 
-/* #winMessage {
-  color: rgb(255, 4, 4);
-  font-size: 24px;
-  text-align: center;
-  margin-top: 20px;
-} */
-
 #winMessage {
   position: absolute;
-  right: 10px;   /* Adjust based on your layout */
+  right: 100px;   /* Adjust based on your layout */
   top: 50%;      /* Center vertically, adjust as needed */
   transform: translateY(-50%);
   background-color: white; /* Ensure visibility */
   padding: 10px;
-  border: 1px solid black; /* Make it visible */
+  border: 2px solid red; /* Make it visible */
   z-index: 1000; /* Make sure it's above other elements */
   display: none; /* Hide the message box initially */
 }
