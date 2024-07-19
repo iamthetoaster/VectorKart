@@ -7,7 +7,7 @@ export default class MapObject extends GameObject3D {
         const map = new Map(width, height);
         switch (name) {
             case 'Circle':
-                map.Circle(25, 40, width / 2, height / 2);
+                map.Circle(40, 80, width / 2, height / 2);
                 break;
 
             case 'Diamond':
@@ -32,7 +32,7 @@ export default class MapObject extends GameObject3D {
         this.height = height;
         this.mapArray = this.map.map;
 
-        this.scale = new Vector3(9, 9, 9);
+        this.scale = new Vector3(4.5, 4.5, 4.5);
         this.rotation = 0;
         this.position = new Vector3(-455, 0, -455);
     }
