@@ -1,25 +1,24 @@
 class vector {
-    constructor(a_x=0,a_y=0,color=[1,1,1,1],turn,prev=null, scale, translation, rotation, tri_pos_x=0, tri_pos_y=0, base_pox_x, base_pos_y) {
+    constructor(turn,base_pox_x, base_pos_y,prev,target,color=[1,1,1,1]) {
         //assume
         
         this.color = color;
-        //coordinates for point a 
-        this.a_x = a_x; 
-        this.a_y = a_y;
         //coordinates for point b
-        this.b_x = a_x; //b_x and b_y will be determined by user input, so they can just be made the same as point a by default
-        this.b_y = a_y;
+        this.b_x; //b_x and b_y will be determined by user input, so they can just be made the same as point a by default
+        this.b_y;
         this.time = turn;
         this.dist = dist
         this.matrix = new Matrix4()
         this.dist = this.get_distance()
         this.velocity = dist / turn
         this.prev = prev
+        this.target = target
         this.acc = this.get_accelleration()
         this.verts = this.get_triangle()
         this.tri_height = this.verts[7]
-        this.base_tri_pos = [tri_pos_x, tri_pos_y]
-        this.base_pos = [base_pos_x, base_pos_y]
+        this.base_tri_pos = [base_pox_x, base_pos_y]
+        this.base_pos = [base_pos_x, base_pos_y] //gabe's base pos
+
     }
     //what will my vector need 
     get_distance() {
