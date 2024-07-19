@@ -9,6 +9,7 @@ export default class Car extends GameObject3D {
     this.position = this.startPosition;
     this.nextPos = this.position;
     this.atPos = true;
+    this.atRotation = true;
 
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
@@ -61,11 +62,9 @@ export default class Car extends GameObject3D {
   }
 
   animate(dt) {
-    if (this.atPos) {
-      return;
-    }
+    if (this.atPos) return;
 
-    if (this.position.subtract(this.nextPos).getMagnitude() >= 0.1) {
+    if (this.position.subtract(this.nextPos).getMagnitude() >= this.velocity.getMagnitude() * dt) {
       this.position = this.position.add(this.nextPos.subtract(this.position)
         .normalize().scalar_mult(this.velocity.getMagnitude())
         .scalar_mult(dt));
