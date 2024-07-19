@@ -67,8 +67,8 @@ export default class Car extends GameObject3D {
 
     if (this.position.subtract(this.nextPos).getMagnitude() >= 0.1) {
       this.position = this.position.add(this.nextPos.subtract(this.position)
-                                        .normalize().scalar_mult(this.velocity.getMagnitude())
-                                        .scalar_mult(dt));
+        .normalize().scalar_mult(this.velocity.getMagnitude())
+        .scalar_mult(dt));
     } else {
       this.atPos = true;
       this.position = this.nextPos;
