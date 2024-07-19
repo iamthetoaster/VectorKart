@@ -105,7 +105,7 @@ export default class GameController {
     if (this.checkFinishLine(previousPosition, car.position)) {
       this.gameOver = true;
       const winMessage = document.querySelector('#winMessage');
-      winMessage.innerText = "CAR CROSSED THE FINISH LINE!";
+      winMessage.innerText = `Player ${this.turn + 1} has crossed the finish line first! Game Over.`;
       winMessage.style.display = 'block';  // Show the message when the finish line is crossed
       const canvas = document.querySelector('#c');
       canvas.removeEventListener('click', this.boundHandleCanvasClick);
@@ -119,6 +119,7 @@ export default class GameController {
     const finishLineTiles = [
       { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }, { x: 7, y: 0 }, { x: 8, y: 0 }, { x: 9, y: 0 },
       { x: 9, y: 0}, { x: 10, y: 0}, { x: 11, y: 0}, { x: 12, y: 0}, { x: 13, y: 0}, { x: 14, y: 0}, { x: 15, y: 0}, { x: 16, y: 0}, { x: 17, y: 0}, { x: 18, y: 0},
+      { x: 19, y: 0}, { x: 20, y: 0}, { x: 21, y: 0}, { x: 22, y: 0}, { x: 23, y: 0}, { x: 24, y: 0}, { x: 25, y: 0}, { x: 26, y: 0}, { x: 27, y: 0},
     ];
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.LEFT;
