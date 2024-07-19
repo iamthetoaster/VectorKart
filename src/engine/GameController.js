@@ -35,7 +35,7 @@ export default class GameController {
 
     // instantiate car for each player
     for (let index = 0; index < this.players; index++) {
-      this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 315), this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
     }
 
     // Log the initial position of the car when the game starts
@@ -79,9 +79,6 @@ export default class GameController {
     // Update time variables for smooth animations
     this.dt = time - this.pt;
     this.pt = time;
-    // this.checkFinishLine();
-    // Debugging the car's position before checking the finish line
-    // console.log('Frame Update - Car position:', this.car.position);
   };
 
   handleCanvasClick(event) {
@@ -116,14 +113,14 @@ export default class GameController {
 
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
-      { x: -99, y: 0 }, { x: -98, y: 0 }, { x: -97, y: 0 }, { x: -96, y: 0 }, { x: -95, y: 0 }, { x: -94, y: 0 }, { x: -93, y: 0 },
+      { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }
     ];
 
     const movementVector = currentPosition.subtract(previousPosition).normalize();
-    const forwardDirection = Vector3.RIGHT; // Defines the correct direction to cross the finish line
+    const forwardDirection = Vector3.LEFT; // Correct direction if cars should move from right to left
 
     let crossed = false; // flag to ensure only one crossing is logged per click event
-    for (const tile of finishLineTiles) {
+    finishLineTiles.forEach(tile => {
       if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
         const dotProduct = movementVector.dot(forwardDirection);
         if (dotProduct > 0 && !crossed) { // Makes sure the car is moving in the right direction and hasn't been logged
@@ -131,8 +128,9 @@ export default class GameController {
           crossed = true; // Set flag to true after logging once
         }
       }
-    }
+    });
   }
+
 
   isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
     // Check if the x-coordinates of the previous and current positions straddle the tile's x-coordinate
