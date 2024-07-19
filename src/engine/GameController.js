@@ -101,6 +101,14 @@ export default class GameController {
     const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
     //onstructor(turn,base_pox_x, base_pos_y,prev=null,color=[1,1,1,1]) 
     let vec = vector(this.turn, previousPosition,targetPos)
+<<<<<<< Updated upstream
+=======
+    vec.render()
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     // apply acceleration to car
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
