@@ -4,15 +4,16 @@ import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
 import MapObject from '../state-objects/MapObject.js'
 import Vector3 from '../state-objects/Vector3.js';
+import { mapCollides } from '../mapCollision.js';
 
 export default class GameController {
   constructor() {
-    this.players = 2;
+    this.players = 1;
     this.turn = 0;
     this.cars = [];
 
-    this.mapWidth = 100;
-    this.mapHeight = 100;
+    this.mapWidth = 200;
+    this.mapHeight = 200;
 
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
@@ -92,6 +93,8 @@ export default class GameController {
     
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    console.log("world mouse(x, y): " + mouseWorldPosition);
+
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -115,6 +118,21 @@ export default class GameController {
     car.step();
     this.dashboard.update();
 
+    // calculate car map positions
+    const carMapPosX = ((car.position.x + (this.map.width * this.map.scale.x / 2)) / 4.5) + 12.5;
+    const carMapPosY = ((car.position.z + (this.map.height * this.map.scale.z / 2)) / 4.5) - 12.5;
+
+    const collisionRadius = 3;
+
+    // make sure car is in map
+    if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
+      if (!mapCollides(this.map.map, carMapPosX, carMapPosY, collisionRadius)) { // check for car-map collisions with radius
+        console.log("collision");
+      }
+    } else {
+      console.log("car out of map");
+    }
+
     // Log the car's new position for debugging
     //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
@@ -133,13 +151,13 @@ export default class GameController {
 
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
-      { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }
+      { y: 0, x: 0 }, { y: 1, x: 0 }, { y: 2, x: 0 }, { y: 3, x: 0 }, { y: 4, x: 0 }, { y: 5, x: 0 }, { y: 6, x: 0 }
     ];
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.LEFT;
 
     for (const tile of finishLineTiles) {
-      if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
+      if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x, tile.y)) {
         const dotProduct = movementVector.dot(forwardDirection);
         if (dotProduct > 0) { // Correct direction
           return true;
@@ -149,8 +167,10 @@ export default class GameController {
     return false;
   }
 
-  isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
+  isLineCrossFinishTile(previousPosition, currentPosition, tileX, tileY) {
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
-           (previousPosition.x >= tileX && currentPosition.x <= tileX);
+           (previousPosition.x >= tileX && currentPosition.x <= tileX) || 
+           (previousPosition.y <= tileY && currentPosition.y >= tileY) ||
+           (previousPosition.y >= tileY && currentPosition.y <= tileY);
   }
 }

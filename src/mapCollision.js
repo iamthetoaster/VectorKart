@@ -9,7 +9,7 @@ const testMap = [
 function mapCollides(map, x, y, radius) {
   for (let checkY = Math.floor(y - radius); checkY <= Math.floor(y + radius); checkY++) {
     for (let checkX = Math.floor(x - radius); checkX <= Math.floor(x + radius); checkX++) {
-      console.log(`${checkX}, ${checkY}`);
+      // console.log(`${checkX}, ${checkY}`);
       const blockType = map[checkY][checkX];
       switch (blockType) {
         case 1: { {
