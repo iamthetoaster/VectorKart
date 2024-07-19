@@ -1,37 +1,31 @@
 class vector {
-    constructor(turn,base_pox_x, base_pos_y,prev,target,color=[1,1,1,1]) {
+    constructor(turn,prev,target,color=[1,1,1,1],prev_vec=null) {
         //assume
         
         this.color = color;
         //coordinates for point b
-        this.b_x; //b_x and b_y will be determined by user input, so they can just be made the same as point a by default
-        this.b_y;
         this.time = turn;
-        this.dist = dist
         this.matrix = new Matrix4()
         this.dist = this.get_distance()
-        this.velocity = dist / turn
-        this.prev = prev
-        this.target = target
+        this.velocity = this.dist / this.time;
+        this.prev = prev;
+        this.target = target;
         this.acc = this.get_accelleration()
         this.verts = this.get_triangle()
         this.tri_height = this.verts[7]
-        this.base_tri_pos = [base_pox_x, base_pos_y]
-        this.base_pos = [base_pos_x, base_pos_y] //gabe's base pos
+        this.base_tri_pos = [this.prev.x, this.prev.y]
+        this.base_pos = [this.prev.x, this.prev.y]//gabe's base pos
 
     }
     //what will my vector need 
     get_distance() {
-        let x_len = this.b_x - this.a_x;
+        let x_len = this.target.x - this.prev.x;
         
-        let y_len = this.b_y - this.a_y;
+        let y_len = this.target.y - this.prev.y;
         let z_sqrd = Math.pow(x_len, 2) + Math.pow(y_len, 2);
         return Math.sqrt(z_sqrd);
-        if (this.prev == null) {
-            return;
-        }
         //get previous velocity, 
-        return this.prev.velocity + this.velocity
+        return this.velocity
 
     }
     angleBetween(v1, v2){
