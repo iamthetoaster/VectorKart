@@ -7,7 +7,7 @@ import Vector3 from '../state-objects/Vector3.js';
 
 export default class GameController {
   constructor() {
-    this.players = 2;
+    this.players = 1;
     this.turn = 0;
     this.cars = [];
 
@@ -18,7 +18,7 @@ export default class GameController {
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
     this.renderEngine.init().then(() => this.start());
-    
+
     // Bind event handlers
     this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
   }
@@ -80,47 +80,54 @@ export default class GameController {
     if (!this.pt) this.pt = time;
     this.dt = time - this.pt;
     this.pt = time;
+
+    for (let i = 0; i < this.players; i++) {
+      if (this.cars[i])
+        this.cars[i].animate(this.dt);
+    }
   };
 
   handleCanvasClick(event) {
     // Exit if the game is over
-    if (this.gameOver) return; 
+    if (this.gameOver) return;
 
     //console.log("Handling click for turn:", this.turn); // Debug which car is moving
-    
+
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
 
-    // Store the previous position before updating the car's current position
-    const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
+    if (car.atPos) {
+      // Store the previous position before updating the car's current position
+      const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
 
-    // set targetPos to the location of the user click
-    const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+      // set targetPos to the location of the user click
+      const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
-    // apply acceleration to car
-    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+      // apply acceleration to car
+      car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
-    // Call step() to update velocity and position based on current acceleration
-    car.step();
-    this.dashboard.update();
+      // Call step() to update velocity and position based on current acceleration
+      car.step();
+      this.dashboard.update();
 
-    // Log the car's new position for debugging
-    //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+      // Log the car's new position for debugging
+      //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
-    // Now pass previousPosition and newPos to check if the car has crossed the finish line
-    //this.checkFinishLine(previousPosition, car.position);
-    if (this.checkFinishLine(previousPosition, car.position)) {
-      this.gameOver = true;
-      document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
-      const canvas = document.querySelector('#c');
-      canvas.removeEventListener('click', this.boundHandleCanvasClick);
+      // Now pass previousPosition and newPos to check if the car has crossed the finish line
+      //this.checkFinishLine(previousPosition, car.position);
+      // if (this.checkFinishLine(previousPosition, car.nextPos)) {
+      //   this.gameOver = true;
+      //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
+      //   const canvas = document.querySelector('#c');
+      //   canvas.removeEventListener('click', this.boundHandleCanvasClick);
+      // }
+
+      // Move to the next turn, cycling back to the first car if necessary
+      this.turn = (this.turn + 1) % this.players;
     }
-
-    // Move to the next turn, cycling back to the first car if necessary
-    this.turn = (this.turn + 1) % this.players;
   }
 
   checkFinishLine(previousPosition, currentPosition) {
@@ -143,6 +150,6 @@ export default class GameController {
 
   isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
-           (previousPosition.x >= tileX && currentPosition.x <= tileX);
+      (previousPosition.x >= tileX && currentPosition.x <= tileX);
   }
 }
