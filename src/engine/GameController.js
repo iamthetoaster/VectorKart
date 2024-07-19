@@ -2,6 +2,7 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
+import MapObject from '../state-objects/MapObject.js'
 import Vector3 from '../state-objects/Vector3.js';
 
 export default class GameController {
@@ -9,6 +10,9 @@ export default class GameController {
     this.players = 2;
     this.turn = 0;
     this.cars = [];
+
+    this.mapWidth = 100;
+    this.mapHeight = 100;
 
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
@@ -27,13 +31,11 @@ export default class GameController {
     this.dt = 0; // Time difference between frames
 
     // instantiate map
-    this.renderEngine.addPrefab('map', [[0, 1], [1, 0]], 'shaders/vertex_shader.glsl', 'shaders/fragment_shader.glsl');
-    const map = this.renderEngine.instantiateRenderObject('map');
-    map.scale = [100, 100, 100];
+    this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
 
     // instantiate car for each player
     for (let index = 0; index < this.players; index++) {
-      this.cars.push(new Car(new Vector3(-500, 0, (index * 50) - 250), this.renderEngine.instantiateRenderObject('car')));
+      this.cars.push(new Car(new Vector3(0, 0, (index * 50) - 315), this.renderEngine.instantiateRenderObject('car')));
     }
 
     // Log the initial position of the car when the game starts
