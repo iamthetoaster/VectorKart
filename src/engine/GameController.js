@@ -67,26 +67,33 @@ export default class GameController {
 
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
     const car = this.cars[this.turn];
-    const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+    //const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]); 
 
-    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
-    car.step();
+    car.position = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+
+    //car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+    //car.step();
+
     this.dashboard.update();
-    
-    // Log the car's new position for debugging
-    console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+
+    // Log the player's new position for debugging
+    console.log(`Turn: Player ${this.turn + 1}, Position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
     if (this.isInFinishLine(car.position)) {
+      console.log(`Player ${this.turn + 1} in finish line bounds.`);
       if (!this.finishLineCrossed[this.turn]) {
         this.finishLineCrossed[this.turn] = true;
-        if (this.finishLineCrossed.every(Boolean)) { // Check if all have crossed initially
+        //console.log(`Player ${this.turn + 1} crossed the finish line initially.`);
+        if (this.finishLineCrossed.every(Boolean)) {
           this.raceStarted = true;
+          console.log("Race has officially started!");
         }
       } else if (this.raceStarted) {
         this.gameOver = true;
         const winMessage = document.querySelector('#winMessage');
         winMessage.innerText = `Player ${this.turn + 1} has won the race!`;
         winMessage.style.display = 'block';
+        //console.log(`Player ${this.turn + 1} has won the race! Game Over.`);
         const canvas = document.querySelector('#c');
         canvas.removeEventListener('click', this.boundHandleCanvasClick);
       }
@@ -96,6 +103,12 @@ export default class GameController {
   }
 
   isInFinishLine(position) {
-    return position.x >= 0 && position.x <= 15 && position.y >= -0.5 && position.y <= 0.5;
+    const inXBounds = position.x >= -150 && position.x <= 45;
+    const inZBounds = position.z >= -370 && position.z <= -210;
+    console.log(`Checking finish line: Position X=${position.x}, Z=${position.z}`);
+    console.log(`In X bounds: ${inXBounds}, In Z bounds: ${inZBounds}`);
+
+    return inXBounds && inZBounds;
   }
+
 }
