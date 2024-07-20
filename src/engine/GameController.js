@@ -115,7 +115,6 @@ export default class GameController {
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
     console.log("world mouse(x, y): " + mouseWorldPosition);
 
-
     // Get the current car based on turn
     const car = this.cars[this.turn];
 
@@ -136,9 +135,7 @@ export default class GameController {
     const carMapPosX = (car.position.x + 367) / this.map.scale.x;
     const carMapPosY = (car.position.z + 367) / this.map.scale.z;
 
-    console.log("car map pos " + carMapPosX + " " + carMapPosY);
-
-    const collisionRadius = 3;
+    const collisionRadius = 4;
 
     // make sure car is in map
     if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
