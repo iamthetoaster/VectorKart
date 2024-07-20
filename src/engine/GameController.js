@@ -26,7 +26,6 @@ export default class GameController {
 
   start() {
     this.vectorRace = new VectorRace(this); // Manages the state of the game
-    this.rotating = true; // Flag to control rotation state
 
     // instantiate map
     this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
@@ -48,22 +47,20 @@ export default class GameController {
 
     // reset button callback
     const resetButton = document.querySelector('#reset-button');
-    if (resetButton) {
-      resetButton.addEventListener('click', this.resetGame);
-    }
+    resetButton.addEventListener('click', this.resetGame);
   }
 
   resetGame = () => {
     this.cars.forEach(car => car.reset());
     this.gameOver = false;
-    document.querySelector('#winMessage').textContent = '';
+
+    document.querySelector('#winMessage').style.display = 'none';  // Hide the win message on reset
+    document.querySelector('#winMessage').innerText = '';
 
     const canvas = document.querySelector('#c');
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
-
     this.turn = 0;
-    console.log('Game has been reset, turn set to 0.');
   };
 
   frameUpdate = (time) => {
@@ -86,8 +83,6 @@ export default class GameController {
     // Exit if the game is over
     if (this.gameOver) return;
 
-    //console.log("Handling click for turn:", this.turn); // Debug which car is moving
-    
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
     // console.log("world mouse(x, y): " + mouseWorldPosition);
@@ -125,16 +120,17 @@ export default class GameController {
     }
 
     // Log the car's new position for debugging
-    //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+    console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
     // Now pass previousPosition and newPos to check if the car has crossed the finish line
-    // this.checkFinishLine(previousPosition, car.position);
-    // if (this.checkFinishLine(previousPosition, car.position)) {
-    //   this.gameOver = true;
-    //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
-    //   const canvas = document.querySelector('#c');
-    //   canvas.removeEventListener('click', this.boundHandleCanvasClick);
-    // }
+//     if (this.checkFinishLine(previousPosition, car.position)) {
+//       this.gameOver = true;
+//       const winMessage = document.querySelector('#winMessage');
+//       winMessage.innerText = `Player ${this.turn + 1} has crossed the finish line first! Game Over.`;
+//       winMessage.style.display = 'block';  // Show the message when the finish line is crossed
+//       const canvas = document.querySelector('#c');
+//       canvas.removeEventListener('click', this.boundHandleCanvasClick);
+//     }
 
     // Move to the next turn, cycling back to the first car if necessary
     this.turn = (this.turn + 1) % this.players;
@@ -142,11 +138,12 @@ export default class GameController {
 
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
-      { y: 0, x: 0 }, { y: 1, x: 0 }, { y: 2, x: 0 }, { y: 3, x: 0 }, { y: 4, x: 0 }, { y: 5, x: 0 }, { y: 6, x: 0 }
+      { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }, { x: 7, y: 0 }, { x: 8, y: 0 }, { x: 9, y: 0 },
+      { x: 9, y: 0}, { x: 10, y: 0}, { x: 11, y: 0}, { x: 12, y: 0}, { x: 13, y: 0}, { x: 14, y: 0}, { x: 15, y: 0}, { x: 16, y: 0}, { x: 17, y: 0}, { x: 18, y: 0},
+      { x: 19, y: 0}, { x: 20, y: 0}, { x: 21, y: 0}, { x: 22, y: 0}, { x: 23, y: 0}, { x: 24, y: 0}, { x: 25, y: 0}, { x: 26, y: 0}, { x: 27, y: 0},
     ];
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.LEFT;
-
     for (const tile of finishLineTiles) {
       if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x, tile.y)) {
         const dotProduct = movementVector.dot(forwardDirection);
