@@ -30,8 +30,6 @@ export default class GameController {
     
     // Bind event handlers
     this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
-
-    //prev_vec
   }
 
   start() {
@@ -126,13 +124,7 @@ export default class GameController {
 
     // set targetPos to the location of the user click
     const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
-    //onstructor(turn,base_pox_x, base_pos_y,prev=null,color=[1,1,1,1]) 
-<<<<<<< Updated upstream
-    let vec = vector(this.turn, this.car.position.x, this.car.position.y,previousPosition,targetPos)
-=======
-    let vec = vector(this.turn, previousPosition,targetPos)
-    vec.render()
->>>>>>> Stashed changes
+
     // apply acceleration to car
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
@@ -143,8 +135,6 @@ export default class GameController {
     // calculate car map positions
     const carMapPosX = (car.position.x + 367) / this.map.scale.x;
     const carMapPosY = (car.position.z + 367) / this.map.scale.z;
-    // const carMapPosX = ((mouseWorldPosition[0] + 367) / this.map.scale.x);
-    // const carMapPosY = ((mouseWorldPosition[2] + 367) / this.map.scale.z);
 
     console.log("car map pos " + carMapPosX + " " + carMapPosY);
 
