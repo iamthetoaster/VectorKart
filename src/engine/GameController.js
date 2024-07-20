@@ -153,7 +153,7 @@ export default class GameController {
 
   updateVelocityVector(car) {
     const velMag = car.velocity.getMagnitude();
-    this.velocityVector.scale = [velMag, velMag, velMag];
+    this.velocityVector.scale = [25, 5, velMag];
     const pos = car.position.add(car.velocity.normalize().scalar_mult(20));
     this.velocityVector.translation = [pos.x, pos.y, pos.z];
     this.velocityVector.rotation = [0, Math.PI + Math.atan2(car.velocity.x, car.velocity.z), 0];
