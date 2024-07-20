@@ -6,8 +6,13 @@
     "fragmentShader": "shaders/fragment_shader.glsl"
   },
   {
+<<<<<<< HEAD
     "name": "vector",
     "obj": "models/vector.obj",
+=======
+    "name": "arrow",
+    "obj": "models/arrow.obj",
+>>>>>>> dev
     "vertexShader": "shaders/vertex_shader.glsl",
     "fragmentShader": "shaders/fragment_shader.glsl"
   }
