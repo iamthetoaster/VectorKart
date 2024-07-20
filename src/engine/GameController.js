@@ -77,6 +77,8 @@ export default class GameController {
     if (!this.pt) this.pt = time;
     this.dt = time - this.pt;
     this.pt = time;
+
+    this.cars.forEach(car => car.animate(this.dt));
   };
 
   handleCanvasClick(event) {
@@ -91,56 +93,57 @@ export default class GameController {
     // Get the current car based on turn
     const car = this.cars[this.turn];
 
-    // Store the previous position before updating the car's current position
-    const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
+    if (car.atPos) {
+      // Store the previous position before updating the car's current position
+      const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
 
-    // set targetPos to the location of the user click
-    const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+      // set targetPos to the location of the user click
+      const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
-    // apply acceleration to car
-    car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+      // apply acceleration to car
+      car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
-    // Call step() to update velocity and position based on current acceleration
-    car.step();
-    this.dashboard.update();
+      // Call step() to update velocity and position based on current acceleration
+      car.step();
+      this.dashboard.update();
 
-    // calculate car map positions (magic numbers)
-    const carMapPosX = (car.position.x + 367) / this.map.scale.x;
-    const carMapPosY = (car.position.z + 367) / this.map.scale.z;
+      // calculate car map positions (magic numbers)
+      const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
+      const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
 
-    const collisionRadius = 4;
+      const collisionRadius = 4;
 
-    // make sure car is in map
-    if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
-      if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
-        console.log("collision");
+      // make sure car is in map
+      if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
+        if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
+          console.log("collision");
+        }
+      } else {
+        console.log("car out of map");
       }
-    } else {
-      console.log("car out of map");
+
+      // Log the car's new position for debugging
+      //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+
+      // Now pass previousPosition and newPos to check if the car has crossed the finish line
+      //this.checkFinishLine(previousPosition, car.position);
+      // if (this.checkFinishLine(previousPosition, car.nextPos)) {
+      //   this.gameOver = true;
+      //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
+      //   const canvas = document.querySelector('#c');
+      //   canvas.removeEventListener('click', this.boundHandleCanvasClick);
+      // }
+
+      // Move to the next turn, cycling back to the first car if necessary
+      this.turn = (this.turn + 1) % this.players;
     }
-
-    // Log the car's new position for debugging
-    console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
-
-    // Now pass previousPosition and newPos to check if the car has crossed the finish line
-//     if (this.checkFinishLine(previousPosition, car.position)) {
-//       this.gameOver = true;
-//       const winMessage = document.querySelector('#winMessage');
-//       winMessage.innerText = `Player ${this.turn + 1} has crossed the finish line first! Game Over.`;
-//       winMessage.style.display = 'block';  // Show the message when the finish line is crossed
-//       const canvas = document.querySelector('#c');
-//       canvas.removeEventListener('click', this.boundHandleCanvasClick);
-//     }
-
-    // Move to the next turn, cycling back to the first car if necessary
-    this.turn = (this.turn + 1) % this.players;
   }
 
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
       { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }, { x: 7, y: 0 }, { x: 8, y: 0 }, { x: 9, y: 0 },
-      { x: 9, y: 0}, { x: 10, y: 0}, { x: 11, y: 0}, { x: 12, y: 0}, { x: 13, y: 0}, { x: 14, y: 0}, { x: 15, y: 0}, { x: 16, y: 0}, { x: 17, y: 0}, { x: 18, y: 0},
-      { x: 19, y: 0}, { x: 20, y: 0}, { x: 21, y: 0}, { x: 22, y: 0}, { x: 23, y: 0}, { x: 24, y: 0}, { x: 25, y: 0}, { x: 26, y: 0}, { x: 27, y: 0},
+      { x: 9, y: 0 }, { x: 10, y: 0 }, { x: 11, y: 0 }, { x: 12, y: 0 }, { x: 13, y: 0 }, { x: 14, y: 0 }, { x: 15, y: 0 }, { x: 16, y: 0 }, { x: 17, y: 0 }, { x: 18, y: 0 },
+      { x: 19, y: 0 }, { x: 20, y: 0 }, { x: 21, y: 0 }, { x: 22, y: 0 }, { x: 23, y: 0 }, { x: 24, y: 0 }, { x: 25, y: 0 }, { x: 26, y: 0 }, { x: 27, y: 0 },
     ];
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.LEFT;
@@ -157,8 +160,6 @@ export default class GameController {
 
   isLineCrossFinishTile(previousPosition, currentPosition, tileX, tileY) {
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
-           (previousPosition.x >= tileX && currentPosition.x <= tileX) || 
-           (previousPosition.y <= tileY && currentPosition.y >= tileY) ||
-           (previousPosition.y >= tileY && currentPosition.y <= tileY);
+      (previousPosition.x >= tileX && currentPosition.x <= tileX);
   }
 }
