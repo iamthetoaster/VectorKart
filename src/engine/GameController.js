@@ -35,6 +35,9 @@ export default class GameController {
       this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
     }
 
+    this.velocityVector = this.renderEngine.instantiateRenderObject('vector');
+    this.accelerationVector = this.renderEngine.instantiateRenderObject('vector');
+
     this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
     this.dashboard.attach();
 
@@ -79,6 +82,11 @@ export default class GameController {
     this.pt = time;
 
     this.cars.forEach(car => car.animate(this.dt));
+
+    const car = this.cars[0];
+    if (car && car.atPos) {
+      this.updateVelocityVector(car);
+    }
   };
 
   handleCanvasClick(event) {
@@ -101,10 +109,13 @@ export default class GameController {
       const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
       // apply acceleration to car
-      car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+      car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(50);
 
       // Call step() to update velocity and position based on current acceleration
       car.step();
+
+      this.updateVelocityVector(car);
+
       this.dashboard.update();
 
       // calculate car map positions (magic numbers)
@@ -137,6 +148,14 @@ export default class GameController {
       // Move to the next turn, cycling back to the first car if necessary
       this.turn = (this.turn + 1) % this.players;
     }
+  }
+
+  updateVelocityVector(car) {
+    const velMag = car.velocity.getMagnitude();
+    this.velocityVector.scale = [velMag, velMag, velMag];
+    const pos = car.position.add(car.velocity.normalize().scalar_mult(20));
+    this.velocityVector.translation = [pos.x, pos.y, pos.z];
+    this.velocityVector.rotation = [0, Math.PI + Math.atan2(car.velocity.x, car.velocity.z), 0];
   }
 
   checkFinishLine(previousPosition, currentPosition) {
