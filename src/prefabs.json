@@ -4,5 +4,11 @@
     "obj": "models/race.obj",
     "vertexShader": "shaders/vertex_shader.glsl",
     "fragmentShader": "shaders/fragment_shader.glsl"
+  },
+  {
+    "name": "arrow",
+    "obj": "models/arrow.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/fragment_shader.glsl"
   }
 ]
