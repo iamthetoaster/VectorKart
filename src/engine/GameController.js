@@ -130,7 +130,7 @@ export default class GameController {
       const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
       // apply acceleration to car
-      car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(50);
+      car.acceleration = targetPos.subtract(car.position.add(car.velocity)).normalize().scalar_mult(50);
 
       // Call step() to update velocity and position based on current acceleration
       car.step();
@@ -174,7 +174,7 @@ export default class GameController {
   updateVelocityVector(car) {
     const velMag = car.velocity.getMagnitude();
     this.velocityVector.scale = [25, 5, velMag];
-    const velPos = car.position.add(car.velocity.normalize().scalar_mult(20));
+    const velPos = car.position.add(car.velocity.normalize().scalar_mult(25));
     this.velocityVector.translation = [velPos.x, velPos.y, velPos.z];
     this.velocityVector.rotation = [0, Math.PI + Math.atan2(car.velocity.x, car.velocity.z), 0];
 
