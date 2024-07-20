@@ -23,12 +23,6 @@ export default class vector  extends GameObject3D {
       let y_len = this.target.y - this.prev.y;
       let z_sqrd = Math.pow(x_len, 2) + Math.pow(y_len, 2);
       return Math.sqrt(z_sqrd);
-      if (this.prev_vec == null) {
-          return;
-      }
-      //get previous velocity, 
-      return this.prev_vec.velocity + this.velocity
-
   }
   angleBetween(v1, v2){
       v1_mag = v1.magnitude()
