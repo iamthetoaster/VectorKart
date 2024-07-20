@@ -12,11 +12,16 @@ export default class GameController {
     this.turn = 0;
     this.cars = [];
 
-    this.mapWidth = 150;
-    this.mapHeight = 150;
+    this.mapWidth = 200;
+    this.mapHeight = 200;
 
-    this.worldWidth = 750;
-    this.worldHeight = 750;
+    this.newMap = [];
+    for (let x = 0; x < this.mapWidth; x++) {
+      this.newMap.push([]);
+      for (let y = 0; y < this.mapHeight; y++) {
+        this.newMap[x][y] = 1;
+      }
+    }
 
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
@@ -32,6 +37,17 @@ export default class GameController {
   start() {
     this.vectorRace = new VectorRace(this); // Manages the state of the game
     this.rotating = true; // Flag to control rotation state
+
+    const newMap = [];
+    for (let x = 0; x < this.mapWidth; x++) {
+      newMap.push([]);
+      for (let y = 0; y < this.mapHeight; y++) {
+        if (x > this.mapWidth / 2 && y > this.mapHeight / 2)
+          newMap[x][y] = 0;
+        else
+          newMap[x][y] = 1;
+      }
+    }
 
     // instantiate map
     this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
@@ -67,6 +83,9 @@ export default class GameController {
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
 
+    this.map.scale = Vector3.ZERO;
+    this.map = new MapObject(this.renderEngine, 'test', 200, 200, this.newMap);
+
     this.turn = 0;
     console.log("Game has been reset, turn set to 0.");
   };
@@ -95,8 +114,9 @@ export default class GameController {
     //console.log("Handling click for turn:", this.turn); // Debug which car is moving
     
     // Handle clicks on the canvas to move the car
-    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX - 8, event.clientY - 8);
-    // console.log("world mouse(x, y): " + mouseWorldPosition);
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    console.log("world mouse(x, y): " + mouseWorldPosition);
+
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -121,15 +141,20 @@ export default class GameController {
     this.dashboard.update();
 
     // calculate car map positions
-    const carMapPosX = (car.position.x + (this.worldWidth / 2)) / this.map.scale.x;
-    const carMapPosY = (car.position.z + (this.worldWidth / 2)) / this.map.scale.z;
+    const carMapPosX = (car.position.x + 367) / this.map.scale.x;
+    const carMapPosY = (car.position.z + 367) / this.map.scale.z;
+    // const carMapPosX = ((mouseWorldPosition[0] + 367) / this.map.scale.x);
+    // const carMapPosY = ((mouseWorldPosition[2] + 367) / this.map.scale.z);
 
-    const collisionRadius = 2;
+    console.log("car map pos " + carMapPosX + " " + carMapPosY);
+
+    const collisionRadius = 3;
 
     // make sure car is in map
     if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
-      if (!mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
+      if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
         console.log("collision");
+        this.newMap[Math.floor(carMapPosY)][Math.floor(carMapPosX)] = 0;
       }
     } else {
       console.log("car out of map");

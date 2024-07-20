@@ -3,11 +3,12 @@ import { Map } from '../map.js'
 import Vector3 from './Vector3.js';
 
 export default class MapObject extends GameObject3D {
-  constructor(renderEngine, name, width, height) {
+  constructor(renderEngine, name, width, height, newMap=null) {
     const map = new Map(width, height);
     switch (name) {
       case 'Circle':
-        map.Circle(35, 70, width / 2, height / 2);
+        // map.map = newMap;
+        map.Circle(45, 95, width / 2, height / 2);
         break;
 
       case 'Diamond':
@@ -16,6 +17,10 @@ export default class MapObject extends GameObject3D {
 
       case 'Bean':
         map.Bean(25, 40, width / 2, height / 2);
+        break;
+
+      case 'test':
+        map.map = newMap;
         break;
     }
 
@@ -30,9 +35,8 @@ export default class MapObject extends GameObject3D {
     this.map = map.map;
     this.width = width;
     this.height = height;
-    this.mapArray = this.map.map;
 
-    this.scale = new Vector3(5, 5, 5);
+    this.scale = new Vector3(3.75, 3.75, 3.75);
     this.rotation = 0;
     this.position = new Vector3((-this.width * this.scale.x) / 2, 0, (-this.height * this.scale.z) / 2);
   }
