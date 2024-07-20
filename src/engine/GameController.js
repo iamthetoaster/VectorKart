@@ -15,14 +15,6 @@ export default class GameController {
     this.mapWidth = 200;
     this.mapHeight = 200;
 
-    this.newMap = [];
-    for (let x = 0; x < this.mapWidth; x++) {
-      this.newMap.push([]);
-      for (let y = 0; y < this.mapHeight; y++) {
-        this.newMap[x][y] = 1;
-      }
-    }
-
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
@@ -35,17 +27,6 @@ export default class GameController {
   start() {
     this.vectorRace = new VectorRace(this); // Manages the state of the game
     this.rotating = true; // Flag to control rotation state
-
-    const newMap = [];
-    for (let x = 0; x < this.mapWidth; x++) {
-      newMap.push([]);
-      for (let y = 0; y < this.mapHeight; y++) {
-        if (x > this.mapWidth / 2 && y > this.mapHeight / 2)
-          newMap[x][y] = 0;
-        else
-          newMap[x][y] = 1;
-      }
-    }
 
     // instantiate map
     this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
@@ -80,9 +61,6 @@ export default class GameController {
     const canvas = document.querySelector('#c');
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
-
-    this.map.scale = Vector3.ZERO;
-    this.map = new MapObject(this.renderEngine, 'test', 200, 200, this.newMap);
 
     this.turn = 0;
     console.log("Game has been reset, turn set to 0.");
@@ -141,7 +119,6 @@ export default class GameController {
     if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
       if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
         console.log("collision");
-        this.newMap[Math.floor(carMapPosY)][Math.floor(carMapPosX)] = 0;
       }
     } else {
       console.log("car out of map");
@@ -151,7 +128,7 @@ export default class GameController {
     //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
     // Now pass previousPosition and newPos to check if the car has crossed the finish line
-    //this.checkFinishLine(previousPosition, car.position);
+    // this.checkFinishLine(previousPosition, car.position);
     // if (this.checkFinishLine(previousPosition, car.position)) {
     //   this.gameOver = true;
     //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
