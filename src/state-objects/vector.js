@@ -1,18 +1,15 @@
 export default class vector  extends GameObject3D {
-  constructor(turn,prev,target,color=[1,1,1,1]) {
+  constructor(turn,prev,target,prev_vec,color=[1,1,1,1]) {
       //assume
       super(renderObject);
       this.color = color;
-      //coordinates for point b
-      this.b_x; //b_x and b_y will be determined by user input, so they can just be made the same as point a by default
-      this.b_y;
       this.time = turn;
-      this.dist = dist
       this.matrix = new Matrix4()
       this.dist = this.get_distance()
-      this.velocity = dist / turn
+      this.velocity = this.dist / this.time
       this.prev = prev
       this.target = target
+      this.prev_vec = prev_vec
       this.acc = this.get_accelleration()
       this.verts = this.get_triangle()
       this.tri_height = this.verts[7]
