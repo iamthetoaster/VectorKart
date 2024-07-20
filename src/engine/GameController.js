@@ -51,11 +51,13 @@ export default class GameController {
   }
 
   resetGame = () => {
-    this.cars.forEach(car => car.reset());
+    for (const car of this.cars) {
+      car.reset();
+    }
     this.gameOver = false;
 
-    document.querySelector('#winMessage').style.display = 'none';  // Hide the win message on reset
-    document.querySelector('#winMessage').innerText = '';
+    document.querySelector('#winMessage').style.display = 'none'; // Hide the win message on reset
+    document.querySelector('#winMessage').textContent = '';
 
     const canvas = document.querySelector('#c');
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
@@ -78,7 +80,9 @@ export default class GameController {
     this.dt = time - this.pt;
     this.pt = time;
 
-    this.cars.forEach(car => car.animate(this.dt));
+    for (const car of this.cars) {
+      car.animate(this.dt);
+    }
   };
 
   handleCanvasClick(event) {
@@ -116,17 +120,17 @@ export default class GameController {
       // make sure car is in map
       if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
         if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
-          console.log("collision");
+          console.log('collision');
         }
       } else {
-        console.log("car out of map");
+        console.log('car out of map');
       }
 
       // Log the car's new position for debugging
-      //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+      // console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
       // Now pass previousPosition and newPos to check if the car has crossed the finish line
-      //this.checkFinishLine(previousPosition, car.position);
+      // this.checkFinishLine(previousPosition, car.position);
       // if (this.checkFinishLine(previousPosition, car.nextPos)) {
       //   this.gameOver = true;
       //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
