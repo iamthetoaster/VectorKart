@@ -18,16 +18,16 @@ export default class vector  extends GameObject3D {
   }
   //what will my vector need 
   get_distance() {
-      let x_len = this.b_x - this.a_x;
+      let x_len = this.target.x - this.prev.x;
       
-      let y_len = this.b_y - this.a_y;
+      let y_len = this.target.y - this.prev.y;
       let z_sqrd = Math.pow(x_len, 2) + Math.pow(y_len, 2);
       return Math.sqrt(z_sqrd);
-      if (this.prev == null) {
+      if (this.prev_vec == null) {
           return;
       }
       //get previous velocity, 
-      return this.prev.velocity + this.velocity
+      return this.prev_vec.velocity + this.velocity
 
   }
   angleBetween(v1, v2){
