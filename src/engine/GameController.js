@@ -2,16 +2,18 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
-import MapObject from '../state-objects/MapObject.js'
+import MapObject from '../state-objects/MapObject.js';
 import Vector3 from '../state-objects/Vector3.js';
+import { mapCollides } from '../mapCollision.js';
 
 export default class GameController {
   constructor() {
-    this.players = 2;
+    this.players = 1;
     this.turn = 0;
     this.cars = [];
-    this.mapWidth = 100;
-    this.mapHeight = 100;
+
+    this.mapWidth = 200;
+    this.mapHeight = 200;
 
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
@@ -20,8 +22,6 @@ export default class GameController {
 
     // Bind event handlers
     this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
-
-    //prev_vec
   }
 
   start() {
@@ -53,8 +53,10 @@ export default class GameController {
   resetGame = () => {
     this.cars.forEach(car => car.reset());
     this.gameOver = false;
+
     document.querySelector('#winMessage').style.display = 'none';  // Hide the win message on reset
     document.querySelector('#winMessage').innerText = '';
+
     const canvas = document.querySelector('#c');
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
@@ -83,6 +85,8 @@ export default class GameController {
 
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    // console.log("world mouse(x, y): " + mouseWorldPosition);
+
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -92,13 +96,7 @@ export default class GameController {
 
     // set targetPos to the location of the user click
     const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
-    //onstructor(turn,base_pox_x, base_pos_y,prev=null,color=[1,1,1,1]) 
-<<<<<<< Updated upstream
-    let vec = vector(this.turn, this.car.position.x, this.car.position.y,previousPosition,targetPos)
-=======
-    let vec = vector(this.turn, previousPosition,targetPos)
-    vec.render()
->>>>>>> Stashed changes
+
     // apply acceleration to car
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
@@ -106,18 +104,33 @@ export default class GameController {
     car.step();
     this.dashboard.update();
 
+    // calculate car map positions (magic numbers)
+    const carMapPosX = (car.position.x + 367) / this.map.scale.x;
+    const carMapPosY = (car.position.z + 367) / this.map.scale.z;
+
+    const collisionRadius = 4;
+
+    // make sure car is in map
+    if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
+      if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
+        console.log("collision");
+      }
+    } else {
+      console.log("car out of map");
+    }
+
     // Log the car's new position for debugging
     console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
     // Now pass previousPosition and newPos to check if the car has crossed the finish line
-    if (this.checkFinishLine(previousPosition, car.position)) {
-      this.gameOver = true;
-      const winMessage = document.querySelector('#winMessage');
-      winMessage.innerText = `Player ${this.turn + 1} has crossed the finish line first! Game Over.`;
-      winMessage.style.display = 'block';  // Show the message when the finish line is crossed
-      const canvas = document.querySelector('#c');
-      canvas.removeEventListener('click', this.boundHandleCanvasClick);
-    }
+//     if (this.checkFinishLine(previousPosition, car.position)) {
+//       this.gameOver = true;
+//       const winMessage = document.querySelector('#winMessage');
+//       winMessage.innerText = `Player ${this.turn + 1} has crossed the finish line first! Game Over.`;
+//       winMessage.style.display = 'block';  // Show the message when the finish line is crossed
+//       const canvas = document.querySelector('#c');
+//       canvas.removeEventListener('click', this.boundHandleCanvasClick);
+//     }
 
     // Move to the next turn, cycling back to the first car if necessary
     this.turn = (this.turn + 1) % this.players;
@@ -132,7 +145,7 @@ export default class GameController {
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.LEFT;
     for (const tile of finishLineTiles) {
-      if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x)) {
+      if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x, tile.y)) {
         const dotProduct = movementVector.dot(forwardDirection);
         if (dotProduct > 0) { // Correct direction
           return true;
@@ -142,8 +155,10 @@ export default class GameController {
     return false;
   }
 
-  isLineCrossFinishTile(previousPosition, currentPosition, tileX) {
+  isLineCrossFinishTile(previousPosition, currentPosition, tileX, tileY) {
     return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
-           (previousPosition.x >= tileX && currentPosition.x <= tileX);
+           (previousPosition.x >= tileX && currentPosition.x <= tileX) || 
+           (previousPosition.y <= tileY && currentPosition.y >= tileY) ||
+           (previousPosition.y >= tileY && currentPosition.y <= tileY);
   }
 }
