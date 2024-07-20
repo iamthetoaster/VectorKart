@@ -108,8 +108,8 @@ export default class GameController {
     this.dashboard.update();
 
     // calculate car map positions (magic numbers)
-    const carMapPosX = (car.position.x + 367) / this.map.scale.x;
-    const carMapPosY = (car.position.z + 367) / this.map.scale.z;
+    const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
+    const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
 
     const collisionRadius = 4;
 
