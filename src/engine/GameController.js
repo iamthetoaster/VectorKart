@@ -2,6 +2,7 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
+import Arrow from '../state-objects/Arrow.js';
 import MapObject from '../state-objects/MapObject.js';
 import Vector3 from '../state-objects/Vector3.js';
 import { mapCollides } from '../mapCollision.js';
@@ -35,12 +36,21 @@ export default class GameController {
       this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
     }
 
+    this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+
+    this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+
+    this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+
     this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
     this.dashboard.attach();
 
     // Setup to prevent adding multiple listeners to the same canvas
     const canvas = document.querySelector('#c');
     if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
+      canvas.addEventListener('mousemove', (event) => {
+        this.mousePos = new Vector3(...this.renderEngine.worldPosition(event.offsetX, event.offsetY));
+      });
       canvas.addEventListener('click', this.boundHandleCanvasClick);
       canvas.dataset.listenerAdded = 'true';
     }
@@ -83,6 +93,25 @@ export default class GameController {
     for (const car of this.cars) {
       car.animate(this.dt);
     }
+
+    if (this.cars.length > 0) {
+      const currentCar = this.cars[this.turn];
+      this.velocityArrow.from = new Vector3(currentCar.position.x, 100, currentCar.position.z);
+      const end = currentCar.position.add(currentCar.velocity);
+      this.velocityArrow.to = new Vector3(end.x, 100, end.z);
+
+      if (this.mousePos) {
+        this.accelerationArrow.from = new Vector3(end.x, 100, end.z);
+        const target = new Vector3(this.mousePos.x, 100, this.mousePos.z);
+        const delta = target.subtract(this.accelerationArrow.from);
+        const length = Math.min(delta.getMagnitude(), 100);
+        const result = this.accelerationArrow.from.add(delta.normalize().scalar_mult(length));
+        this.accelerationArrow.to = result;
+
+        this.newVelocityArrow.from = this.velocityArrow.from;
+        this.newVelocityArrow.to = this.accelerationArrow.to;
+      }
+    }
   };
 
   handleCanvasClick(event) {
@@ -90,7 +119,7 @@ export default class GameController {
     if (this.gameOver) return;
 
     // Handle clicks on the canvas to move the car
-    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.offsetX, event.offsetY);
     // console.log("world mouse(x, y): " + mouseWorldPosition);
 
 
@@ -99,13 +128,14 @@ export default class GameController {
 
     if (car.atPos) {
       // Store the previous position before updating the car's current position
-      const previousPosition = new Vector3(car.position.x, car.position.y, car.position.z);
+      const previousPosition = car.position.add(car.velocity);
 
       // set targetPos to the location of the user click
       const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
       // apply acceleration to car
-      car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
+      const attemptedAcceleration = targetPos.subtract(previousPosition).getMagnitude();
+      car.acceleration = targetPos.subtract(previousPosition).normalize().scalar_mult(Math.min(attemptedAcceleration, 100));
 
       // Call step() to update velocity and position based on current acceleration
       car.step();
