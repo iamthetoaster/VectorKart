@@ -61,7 +61,7 @@ export default class Car extends GameObject3D {
     }
   }
 
-  animate(dt) {
+  animate(dt, atPosCallback) {
     if (this.atPos) return;
 
     if (this.position.subtract(this.nextPos).getMagnitude() >= this.velocity.getMagnitude() * dt) {

@@ -35,8 +35,15 @@ export default class GameController {
       this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
     }
 
-    // instantiate velocity vector
+    // instantiate velocity and acceleration vectors
     this.velocityVector = this.renderEngine.instantiateRenderObject('vector');
+    this.accelerationVector = this.renderEngine.instantiateRenderObject('vector');
+
+    const firstCar = this.cars[0];
+    const accPos = firstCar.position.add(new Vector3(-25, 0, 0));
+
+    this.accelerationVector.translation = [accPos.x, accPos.y, accPos.z];
+    this.accelerationVector.scale = [25, 5, 50];
 
     // instantiate stats dashboard
     this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
@@ -47,6 +54,8 @@ export default class GameController {
     if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
       canvas.addEventListener('click', this.boundHandleCanvasClick);
       canvas.dataset.listenerAdded = 'true';
+
+      canvas.addEventListener('mousemove', this.mouseMove);
     }
 
     // reset button callback
@@ -65,6 +74,12 @@ export default class GameController {
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
     this.turn = 0;
+
+    const firstCar = this.cars[0];
+    const accPos = firstCar.position.add(new Vector3(-25, 0, 0));
+
+    this.accelerationVector.translation = [accPos.x, accPos.y, accPos.z];
+    this.accelerationVector.scale = [25, 5, 50];
   };
 
   frameUpdate = (time) => {
@@ -89,6 +104,11 @@ export default class GameController {
       this.updateVelocityVector(car);
     }
   };
+
+  mouseMove = (event) => {
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    this.updateAccelerationVector(this.cars[this.turn], mouseWorldPosition[0], mouseWorldPosition[2]);
+  }
 
   handleCanvasClick(event) {
     // Exit if the game is over
@@ -115,7 +135,7 @@ export default class GameController {
       // Call step() to update velocity and position based on current acceleration
       car.step();
 
-      this.updateVelocityVector(car);
+      this.updateAccelerationVector(car, mouseWorldPosition[0], mouseWorldPosition[2]);
 
       this.dashboard.update();
 
@@ -154,9 +174,22 @@ export default class GameController {
   updateVelocityVector(car) {
     const velMag = car.velocity.getMagnitude();
     this.velocityVector.scale = [25, 5, velMag];
-    const pos = car.position.add(car.velocity.normalize().scalar_mult(20));
-    this.velocityVector.translation = [pos.x, pos.y, pos.z];
+    const velPos = car.position.add(car.velocity.normalize().scalar_mult(20));
+    this.velocityVector.translation = [velPos.x, velPos.y, velPos.z];
     this.velocityVector.rotation = [0, Math.PI + Math.atan2(car.velocity.x, car.velocity.z), 0];
+
+    return velPos;
+  }
+
+  updateAccelerationVector(car, mouseWorldX, mouseWorldZ) {
+    const accMag = 50;
+    this.accelerationVector.scale = [25, 5, accMag];
+
+    const velPos = this.updateVelocityVector(car);
+
+    const accPos = velPos.add(car.velocity);
+    this.accelerationVector.translation = [accPos.x, accPos.y, accPos.z];
+    this.accelerationVector.rotation = [0, Math.PI + Math.atan2(mouseWorldX - accPos.x, mouseWorldZ - accPos.z), 0];
   }
 
   checkFinishLine(previousPosition, currentPosition) {
