@@ -38,6 +38,7 @@ export default class GameController {
     // instantiate velocity and acceleration vectors
     this.velocityVector = this.renderEngine.instantiateRenderObject('vector');
     this.accelerationVector = this.renderEngine.instantiateRenderObject('vector');
+    this.newVelVector = this.renderEngine.instantiateRenderObject('vector');
 
     const firstCar = this.cars[0];
     const accPos = firstCar.position.add(new Vector3(-25, 0, 0));
@@ -99,14 +100,14 @@ export default class GameController {
 
     this.cars.forEach(car => car.animate(this.dt));
 
-    const car = this.cars[0];
+    const car = this.cars[this.turn];
     if (car && car.atPos) {
       this.updateVelocityVector(car);
     }
   };
 
   mouseMove = (event) => {
-    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX - 8, event.clientY - 8);
     this.updateAccelerationVector(this.cars[this.turn], mouseWorldPosition[0], mouseWorldPosition[2]);
   }
 
@@ -115,7 +116,7 @@ export default class GameController {
     if (this.gameOver) return;
 
     // Handle clicks on the canvas to move the car
-    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
+    const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX - 8, event.clientY - 8);
     // console.log("world mouse(x, y): " + mouseWorldPosition);
 
 
@@ -190,6 +191,16 @@ export default class GameController {
     const accPos = velPos.add(car.velocity);
     this.accelerationVector.translation = [accPos.x, accPos.y, accPos.z];
     this.accelerationVector.rotation = [0, Math.PI + Math.atan2(mouseWorldX - accPos.x, mouseWorldZ - accPos.z), 0];
+
+    this.updateNewVelVector(car, mouseWorldX, mouseWorldZ, accPos.add(new Vector3(mouseWorldX - accPos.x, 0, mouseWorldZ - accPos.z).normalize().scalar_mult(accMag)));
+  }
+
+  updateNewVelVector(car, mouseWorldX, mouseWorldZ, accEndPos) {
+    const mag = accEndPos.subtract(car.position).getMagnitude() - 15;
+    this.newVelVector.scale = [25, 5, mag];
+    const pos = car.position.add(car.velocity.normalize().scalar_mult(25));
+    this.newVelVector.translation = [pos.x, pos.y, pos.z];
+    this.newVelVector.rotation = [0, Math.PI + Math.atan2(accEndPos.x - pos.x, accEndPos.z - pos.z), 0];
   }
 
   checkFinishLine(previousPosition, currentPosition) {
