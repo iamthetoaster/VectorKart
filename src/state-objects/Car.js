@@ -1,5 +1,6 @@
 import GameObject3D from './GameObject3D.js';
 import Vector3 from './Vector3.js';
+import vector from './vector.js';
 
 export default class Car extends GameObject3D {
   constructor(position, renderObject) {
@@ -19,6 +20,10 @@ export default class Car extends GameObject3D {
     this.lap = 0;
     this.turnsTaken = 0;
     this.maxSpeed = 0;
+
+    //vector vars
+    this.vec_list = [null]; //all previous vectors. will be helpful for getting previous velocity in some of the vector calculations. 
+
   }
 
   get velocity() {

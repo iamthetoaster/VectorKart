@@ -101,16 +101,14 @@ export default class GameController {
 
     // set targetPos to the location of the user click
     const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
-    //onstructor(turn,base_pox_x, base_pos_y,prev=null,color=[1,1,1,1]) 
-    let vec = vector(this.turn, previousPosition,targetPos)
-    vec.render()
     // apply acceleration to car
     car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
     // Call step() to update velocity and position based on current acceleration
     car.step();
+    let vec = new vector(car.turnsTaken, previousPosition, targetPos, car.vec_list[car.vec_list.length - 1])
+    car.vec_list.push(vec)
     this.dashboard.update();
-
     // Log the car's new position for debugging
     //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
