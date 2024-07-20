@@ -103,24 +103,24 @@ export default class GameController {
       // apply acceleration to car
       car.acceleration = targetPos.subtract(car.position).normalize().scalar_mult(100);
 
-    // Call step() to update velocity and position based on current acceleration
-    car.step();
-    this.dashboard.update();
+      // Call step() to update velocity and position based on current acceleration
+      car.step();
+      this.dashboard.update();
 
-    // calculate car map positions (magic numbers)
-    const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
-    const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
+      // calculate car map positions (magic numbers)
+      const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
+      const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
 
-    const collisionRadius = 4;
+      const collisionRadius = 4;
 
-    // make sure car is in map
-    if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
-      if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
-        console.log("collision");
+      // make sure car is in map
+      if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
+        if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
+          console.log("collision");
+        }
+      } else {
+        console.log("car out of map");
       }
-    } else {
-      console.log("car out of map");
-    }
 
       // Log the car's new position for debugging
       //console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
@@ -142,8 +142,8 @@ export default class GameController {
   checkFinishLine(previousPosition, currentPosition) {
     const finishLineTiles = [
       { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }, { x: 7, y: 0 }, { x: 8, y: 0 }, { x: 9, y: 0 },
-      { x: 9, y: 0}, { x: 10, y: 0}, { x: 11, y: 0}, { x: 12, y: 0}, { x: 13, y: 0}, { x: 14, y: 0}, { x: 15, y: 0}, { x: 16, y: 0}, { x: 17, y: 0}, { x: 18, y: 0},
-      { x: 19, y: 0}, { x: 20, y: 0}, { x: 21, y: 0}, { x: 22, y: 0}, { x: 23, y: 0}, { x: 24, y: 0}, { x: 25, y: 0}, { x: 26, y: 0}, { x: 27, y: 0},
+      { x: 9, y: 0 }, { x: 10, y: 0 }, { x: 11, y: 0 }, { x: 12, y: 0 }, { x: 13, y: 0 }, { x: 14, y: 0 }, { x: 15, y: 0 }, { x: 16, y: 0 }, { x: 17, y: 0 }, { x: 18, y: 0 },
+      { x: 19, y: 0 }, { x: 20, y: 0 }, { x: 21, y: 0 }, { x: 22, y: 0 }, { x: 23, y: 0 }, { x: 24, y: 0 }, { x: 25, y: 0 }, { x: 26, y: 0 }, { x: 27, y: 0 },
     ];
     const movementVector = currentPosition.subtract(previousPosition).normalize();
     const forwardDirection = Vector3.LEFT;
