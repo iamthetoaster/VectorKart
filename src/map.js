@@ -176,10 +176,30 @@ export function Map(x, y) {
   };
 
   this.Circle = function (innerRadius, outerRadius, xCenter, yCenter) {
-    this.createCircle(innerRadius, 360, xCenter, yCenter, WALL);
-    this.createCircle(outerRadius, 360, xCenter, yCenter, WALL);
-    this.fill();
-    this.vLine(yCenter - outerRadius + 1, yCenter - innerRadius - 1, xCenter, START);
+    // this.createCircle(innerRadius, 360, xCenter, yCenter, WALL);
+    // this.createCircle(outerRadius, 360, xCenter, yCenter, WALL);
+    // this.fill();
+    // this.vLine(yCenter - outerRadius + 1, yCenter - innerRadius - 1, xCenter, START);
+
+    const width = this.x;
+    const height = this.y;
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+
+        const centerDistX = x - xCenter;
+        const centerDistY = y - yCenter;
+        const centerDist = Math.sqrt((centerDistX*centerDistX)+(centerDistY*centerDistY));
+
+        if (centerDist <= innerRadius) {
+          this.map[x][y] = 0;
+        } else if (centerDist >= outerRadius) {
+          this.map[x][y] = 0;
+        } else {
+          this.map[x][y] = 1;
+        }
+      } 
+    }
   };
 
   this.createBean = function (radius, innerRadius, xCenter, yCenter, type) {

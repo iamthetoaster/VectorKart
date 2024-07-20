@@ -7,6 +7,9 @@ export default class Car extends GameObject3D {
 
     this.startPosition = position;
     this.position = this.startPosition;
+    this.nextPos = this.position;
+    this.atPos = true;
+    this.atRotation = true;
 
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
@@ -44,7 +47,8 @@ export default class Car extends GameObject3D {
     this._velocity.setComponents(next.x, next.y, next.z);
 
     // Update car position
-    this.position = this.position.add(this.velocity);
+    this.nextPos = this.position.add(this.velocity);
+    this.atPos = false;
 
     // update rotation based on velocity
     this.rotation = Math.atan2(this._velocity.x, this._velocity.z);
@@ -57,12 +61,26 @@ export default class Car extends GameObject3D {
     }
   }
 
+  animate(dt) {
+    if (this.atPos) return;
+
+    if (this.position.subtract(this.nextPos).getMagnitude() >= this.velocity.getMagnitude() * dt) {
+      this.position = this.position.add(this.nextPos.subtract(this.position)
+        .normalize().scalar_mult(this.velocity.getMagnitude())
+        .scalar_mult(dt));
+    } else {
+      this.atPos = true;
+      this.position = this.nextPos;
+    }
+  }
+
   // resets car state
   reset() {
     this._velocity = new Vector3(0, 0, 0);
     this.acceleration = new Vector3(0, 0, 0);
     this.position = this.startPosition;
     this.rotation = -Math.PI / 2;
+    this.atNextPos = true;
   }
 
   printState() {
