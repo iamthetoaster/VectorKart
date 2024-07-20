@@ -35,9 +35,10 @@ export default class GameController {
       this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
     }
 
+    // instantiate velocity vector
     this.velocityVector = this.renderEngine.instantiateRenderObject('vector');
-    this.accelerationVector = this.renderEngine.instantiateRenderObject('vector');
 
+    // instantiate stats dashboard
     this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
     this.dashboard.attach();
 
