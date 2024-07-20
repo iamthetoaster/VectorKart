@@ -1,9 +1,9 @@
 import GameObject3D from './GameObject3D.js';
-import { Map } from '../map.js'
+import { Map } from '../map.js';
 import Vector3 from './Vector3.js';
 
 export default class MapObject extends GameObject3D {
-  constructor(renderEngine, name, width, height, newMap=null) {
+  constructor(renderEngine, name, width, height) {
     const map = new Map(width, height);
     switch (name) {
       case 'Circle': // more magic numbers around here
@@ -16,10 +16,6 @@ export default class MapObject extends GameObject3D {
 
       case 'Bean':
         map.Bean(25, 40, width / 2, height / 2);
-        break;
-
-      case 'test':
-        map.map = newMap;
         break;
     }
 

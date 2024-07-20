@@ -2,7 +2,7 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
-import MapObject from '../state-objects/MapObject.js'
+import MapObject from '../state-objects/MapObject.js';
 import Vector3 from '../state-objects/Vector3.js';
 import { mapCollides } from '../mapCollision.js';
 
@@ -19,7 +19,7 @@ export default class GameController {
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
     this.renderEngine.init().then(() => this.start());
-    
+
     // Bind event handlers
     this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
   }
@@ -56,16 +56,15 @@ export default class GameController {
   resetGame = () => {
     this.cars.forEach(car => car.reset());
     this.gameOver = false;
-    document.querySelector('#winMessage').innerText = '';
+    document.querySelector('#winMessage').textContent = '';
 
     const canvas = document.querySelector('#c');
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
 
     this.turn = 0;
-    console.log("Game has been reset, turn set to 0.");
+    console.log('Game has been reset, turn set to 0.');
   };
-
 
   frameUpdate = (time) => {
     // Update the state of the game each frame
@@ -85,7 +84,7 @@ export default class GameController {
 
   handleCanvasClick(event) {
     // Exit if the game is over
-    if (this.gameOver) return; 
+    if (this.gameOver) return;
 
     //console.log("Handling click for turn:", this.turn); // Debug which car is moving
     
