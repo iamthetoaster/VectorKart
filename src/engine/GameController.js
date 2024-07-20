@@ -91,7 +91,7 @@ export default class GameController {
     
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.clientX, event.clientY);
-    console.log("world mouse(x, y): " + mouseWorldPosition);
+    // console.log("world mouse(x, y): " + mouseWorldPosition);
 
 
     // Get the current car based on turn
