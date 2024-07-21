@@ -121,68 +121,74 @@ export default class GameController {
     const car = this.cars[this.turn];
 
     if (car.atPos) {
-      // Store the previous position before updating the car's current position
-      const previousPosition = car.position.add(car.velocity);
+        // Store the previous position before updating the car's current position
+        const previousPosition = car.position.add(car.velocity);
 
-      // set targetPos to the location of the user click
-      const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+        // set targetPos to the location of the user click
+        const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
 
-      // apply acceleration to car
-      const attemptedAcceleration = targetPos.subtract(previousPosition).getMagnitude();
-      car.acceleration = targetPos.subtract(previousPosition).normalize().scalar_mult(Math.min(attemptedAcceleration, 100));
+        // apply acceleration to car
+        const attemptedAcceleration = targetPos.subtract(previousPosition).getMagnitude();
+        car.acceleration = targetPos.subtract(previousPosition).normalize().scalar_mult(Math.min(attemptedAcceleration, 100));
 
-      // Call step() to update velocity and position based on current acceleration
-      car.step();
-      this.dashboard.update();
+        // Call step() to update velocity and position based on current acceleration
+        car.step();
+        this.dashboard.update();
 
-      // calculate car map positions (magic numbers)
-      const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
-      const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
+        // calculate car map positions (magic numbers)
+        const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
+        const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
 
-      const collisionRadius = 4;
+        const collisionRadius = 4;
 
-      // make sure car is in map
-      if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
-        if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
-          console.log('collision');
+        // Check if the car is within the map bounds and for collisions
+        if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
+            if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) {
+              console.log('Collision detected, car will stop.');
+              car.stop(); // Use the stop method to halt the car immediately
+            }
+        } 
+        else {
+            console.log('Car is out of map bounds.');
         }
-      } else {
-        console.log('car out of map');
-      }
 
-      // Log the car's new position for debugging
-      console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+        // Log the car's new position for debugging
+        console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
 
-      if (this.isInFinishLine(car.position)) {
-        console.log(`Player ${this.turn + 1} in finish line bounds.`);
-        if (!this.finishLineCrossed[this.turn]) {
-          this.finishLineCrossed[this.turn] = true;
-          //console.log(`Player ${this.turn + 1} crossed the finish line initially.`);
-          if (this.finishLineCrossed.every(Boolean)) {
-            this.raceStarted = true;
-            console.log("Race has officially started!");
-          }
-        } else if (this.raceStarted) {
-          this.gameOver = true;
-          const winMessage = document.querySelector('#winMessage');
-          winMessage.innerText = `Player ${this.turn + 1} has won the race!`;
-          winMessage.style.display = 'block';
-          //console.log(`Player ${this.turn + 1} has won the race! Game Over.`);
-          const canvas = document.querySelector('#c');
-          canvas.removeEventListener('click', this.boundHandleCanvasClick);
+        if (this.isInFinishLine(car.position)) {
+            console.log(`Player ${this.turn + 1} in finish line bounds.`);
+            if (!this.finishLineCrossed[this.turn]) {
+                this.finishLineCrossed[this.turn] = true;
+                console.log(`Player ${this.turn + 1} crossed the finish line initially.`);
+                if (this.finishLineCrossed.every(Boolean)) {
+                    this.raceStarted = true;
+                    console.log("Race has officially started!");
+                }
+            } else if (this.raceStarted) {
+                this.gameOver = true;
+                const winMessage = document.querySelector('#winMessage');
+                winMessage.innerText = `Player ${this.turn + 1} has won the race!`;
+                winMessage.style.display = 'block';
+                //console.log(`Player ${this.turn + 1} has won the race! Game Over.`);
+                const canvas = document.querySelector('#c');
+                canvas.removeEventListener('click', this.boundHandleCanvasClick);
+            }
         }
-      }
-      this.turn = (this.turn + 1) % this.players;
+        this.turn = (this.turn + 1) % this.players;
     }
   }
 
   isInFinishLine(position) {
-    const inXBounds = position.x >= -150 && position.x <= 45;
-    const inZBounds = position.z >= -370 && position.z <= -210;
-    console.log(`Checking finish line: Position X=${position.x}, Z=${position.z}`);
-    console.log(`In X bounds: ${inXBounds}, In Z bounds: ${inZBounds}`);
+    //const inXBounds = position.x >= 0 && position.x <= 1;// was from -150 to 100
 
-    return inXBounds && inZBounds;
+    const inXBounds = position.x == 100;
+    //const inZBounds = position.z >= -354 && position.z <= -280;//was frok -305 to -240
+    console.log(`Checking finish line: Position X=${position.x}, Z=${position.z}`);
+    //console.log(`In X bounds: ${inXBounds}, In Z bounds: ${inZBounds}`);
+    console.log(`In X bounds: ${inXBounds}`);
+
+    //return inXBounds && inZBounds;
+    return inXBounds;
   }
 
 }

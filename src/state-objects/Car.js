@@ -74,6 +74,14 @@ export default class Car extends GameObject3D {
     }
   }
 
+  // Making the car stop moving
+  stop() {
+    this._velocity = Vector3.ZERO;
+    this.acceleration = Vector3.ZERO;
+    this.atPos = true; // Ensure the car does not continue to animate
+  }
+
+
   // resets car state
   reset() {
     this._velocity = new Vector3(0, 0, 0);
