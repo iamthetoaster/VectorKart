@@ -1,8 +1,9 @@
-function Map(x, y) {
+export function Map(x, y) {
   const UNASSIGNED = 0;
   const WALL = 1;
   const TRACK = 2;
   const START = 3;
+  const PI = 3.141_592_653;
 
   this.map = [];
   this.x = x;
@@ -167,7 +168,6 @@ function Map(x, y) {
   };
 
   this.upperCircle = function (radius, angle, xCenter, yCenter, type) {
-    const PI = 3.141_592_653;
     for (let degree = 360; degree > angle; degree--) {
       const xShift = Math.round(radius * Math.cos(degree * PI / 180));
       const yShift = Math.round(radius * Math.sin(degree * PI / 180));
@@ -176,10 +176,30 @@ function Map(x, y) {
   };
 
   this.Circle = function (innerRadius, outerRadius, xCenter, yCenter) {
-    this.createCircle(innerRadius, 360, xCenter, yCenter, WALL);
-    this.createCircle(outerRadius, 360, xCenter, yCenter, WALL);
-    this.fill();
-    this.vLine(yCenter - outerRadius + 1, yCenter - innerRadius - 1, xCenter, START);
+    // this.createCircle(innerRadius, 360, xCenter, yCenter, WALL);
+    // this.createCircle(outerRadius, 360, xCenter, yCenter, WALL);
+    // this.fill();
+    // this.vLine(yCenter - outerRadius + 1, yCenter - innerRadius - 1, xCenter, START);
+
+    const width = this.x;
+    const height = this.y;
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+
+        const centerDistX = x - xCenter;
+        const centerDistY = y - yCenter;
+        const centerDist = Math.sqrt((centerDistX*centerDistX)+(centerDistY*centerDistY));
+
+        if (centerDist <= innerRadius) {
+          this.map[x][y] = 0;
+        } else if (centerDist >= outerRadius) {
+          this.map[x][y] = 0;
+        } else {
+          this.map[x][y] = 1;
+        }
+      } 
+    }
   };
 
   this.createBean = function (radius, innerRadius, xCenter, yCenter, type) {
@@ -202,7 +222,23 @@ function Map(x, y) {
     this.fill();
     this.vLine(yCenter + Math.round(outerRadius / 4) + 1, yCenter + Math.round(innerRadius / 2) - 1, xCenter, START);
   };
-/*
+
+  /*
+  this.randomGen = function(maxRadius, xCenter, yCenter){
+
+    let radius;
+    let minRadius = maxRadius / 2;
+    for (let degree = 0; degree < 360; degree+=45) {
+      radius = Math.floor(Math.random() * (maxRadius - minRadius + 1) + minRadius);
+      console.log(radius);
+      const xShift = Math.round(radius * Math.cos(degree * PI / 180));
+      const yShift = Math.round(radius * Math.sin(degree * PI / 180));
+
+      this.createCircle(1, 360, xShift + xCenter, yShift + yCenter, WALL);
+    }
+    this.map[xCenter][yCenter] = START;
+  };
+
   this.createMexico = function (radius, xCenter, yCenter, type) {
     this.diagonalDown(20, 45, 25, 50, type);
     this.hLine(15, 20, 25, type);
@@ -226,9 +262,9 @@ function Map(x, y) {
 
 // main
 
-const x = 71;
-const y = 71;
-const nemo = new Map(x, y); // nemo cuz why not
+// const x = 71;
+// const y = 71;
+// const nemo = new Map(x, y); // nemo cuz why not
 
 // Rectangle
 /*
@@ -245,7 +281,7 @@ nemo.vLine(0, 9, 23);
 */
 
 // nemo.Diamond(26, 32, 35, 35);
-nemo.Circle(26, 32, 35, 35);
+// nemo.Circle(26, 32, 35, 35);
 // nemo.Bean(26, 32, 35, 35);
 
-nemo.visMap();
+// nemo.visMap();

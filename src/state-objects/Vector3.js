@@ -26,7 +26,8 @@ export default class Vector3 {
   }
 
   static get LEFT() {
-    return new Vector3.RIGHT.scalar_mult(-1);
+    // return new Vector3.RIGHT.scalar_mult(-1);
+    return Vector3.RIGHT.scalar_mult(-1);
   }
 
   static get DOWN() {
@@ -87,6 +88,10 @@ export default class Vector3 {
       return new Vector3(0, 0, 0);
     }
     return new Vector3(this.x / mag, this.y / mag, this.z / mag);
+  }
+
+  dot(vector3) {
+    return this.x * vector3.x + this.y * vector3.y + this.z * vector3.z;
   }
 
   toArray() {

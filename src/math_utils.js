@@ -293,7 +293,7 @@ const mat4 = {
     ];
   },
 
-  apply: function(m, v) {
+  apply: function (m, v) {
     const m00 = m[0 * 4 + 0];
     const m01 = m[0 * 4 + 1];
     const m02 = m[0 * 4 + 2];
