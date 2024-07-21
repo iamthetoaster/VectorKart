@@ -17,6 +17,10 @@ export default class GameController {
     this.mapHeight = 200;
     this.finishLineCrossed = [false, false]; // Track initial crossing for both players
     this.raceStarted = false; // To check if both players have crossed the finish line initially
+    
+    // Dynamic boundaries for the finish line
+    this.dynamicMinX = 100; // Initial minX value before the race starts
+    this.dynamicMaxX = 120; // Initial maxX value before the race starts
 
     // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
@@ -121,8 +125,6 @@ export default class GameController {
 
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.offsetX, event.offsetY);
-    // console.log("world mouse(x, y): " + mouseWorldPosition);
-
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -133,6 +135,9 @@ export default class GameController {
 
         // set targetPos to the location of the user click
         const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+
+        // Log the car's current position.
+        console.log(`Car position: X=${car.position.x}, Y=${car.position.y}, Z=${car.position.z}`);
 
         // apply acceleration to car
         const attemptedAcceleration = targetPos.subtract(previousPosition).getMagnitude();
@@ -152,7 +157,7 @@ export default class GameController {
         if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
           if (mapCollides(this.map.map, carMapPosY, carMapPosX, 4)) {
               car.incrementCollision();
-              console.log(`Collision detected for player ${this.turn + 1}. Total: ${car.collisionCount}`);
+              //console.log(`Collision detected for player ${this.turn + 1}. Total: ${car.collisionCount}`);
               car.stop(); // Use the stop method to halt the car immediately
               this.dashboard.update();  // Update the dashboard to reflect changes
               if (car.collisionCount >= 3) {
@@ -173,24 +178,24 @@ export default class GameController {
           console.log('Car is out of map bounds.');
         }
 
-        // Log the car's new position for debugging
-        console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
-
         if (this.isInFinishLine(car.position)) {
             console.log(`Player ${this.turn + 1} in finish line bounds.`);
             if (!this.finishLineCrossed[this.turn]) {
                 this.finishLineCrossed[this.turn] = true;
-                console.log(`Player ${this.turn + 1} crossed the finish line initially.`);
+                //console.log(`Player ${this.turn + 1} crossed the finish line initially.`);
                 if (this.finishLineCrossed.every(Boolean)) {
                     this.raceStarted = true;
+                    this.dynamicMinX = 70; // Change minX for the active race phase
+                    this.dynamicMaxX = 200; // Change maxX to a new limit for the race phase
                     console.log("Race has officially started!");
                 }
             } else if (this.raceStarted) {
                 this.gameOver = true;
+                const winnerIndex = this.turn; // The current player wins because they crossed the finish line during the race.
+                const loserIndex = 1 - this.turn; // Calculate the other player's index for a two-player game.
                 const winMessage = document.querySelector('#winMessage');
-                winMessage.innerText = `Player ${this.turn + 1} has won the race!`;
+                winMessage.innerText = `Player ${winnerIndex + 1} has won the race! Player ${loserIndex + 1} loses.`;
                 winMessage.style.display = 'block';
-                //console.log(`Player ${this.turn + 1} has won the race! Game Over.`);
                 const canvas = document.querySelector('#c');
                 canvas.removeEventListener('click', this.boundHandleCanvasClick);
             }
@@ -200,16 +205,13 @@ export default class GameController {
   }
 
   isInFinishLine(position) {
-    //const inXBounds = position.x >= 0 && position.x <= 1;// was from -150 to 100
+    const inXBounds = position.x >= this.dynamicMinX && position.x <= this.dynamicMaxX;
+    const inZBounds = position.z >= -305 && position.z <= -130; // Adjust Z bounds as needed
 
-    const inXBounds = position.x == 100;
-    //const inZBounds = position.z >= -354 && position.z <= -280;//was frok -305 to -240
     console.log(`Checking finish line: Position X=${position.x}, Z=${position.z}`);
-    //console.log(`In X bounds: ${inXBounds}, In Z bounds: ${inZBounds}`);
-    console.log(`In X bounds: ${inXBounds}`);
+    console.log(`In X bounds: ${inXBounds}, In Z bounds: ${inZBounds}`);
 
-    //return inXBounds && inZBounds;
-    return inXBounds;
+    return inXBounds && inZBounds;
   }
 
 }

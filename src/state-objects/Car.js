@@ -94,6 +94,9 @@ export default class Car extends GameObject3D {
     this.position = this.startPosition;
     this.rotation = -Math.PI / 2;
     this.atNextPos = true;
+    this.lap = 0;
+    this.maxSpeed = 0;
+    this.collisionCount = 0;  // Reset collision count
   }
 
   printState() {
