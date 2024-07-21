@@ -10,6 +10,7 @@ export default class Car extends GameObject3D {
     this.nextPos = this.position;
     this.atPos = true;
     this.atRotation = true;
+    this.collisionCount = 0;  // Track collisions with the wall
 
     this._velocity = Vector3.ZERO; // Do not set directly! Use step()
     this.acceleration = Vector3.ZERO;
@@ -72,6 +73,18 @@ export default class Car extends GameObject3D {
       this.atPos = true;
       this.position = this.nextPos;
     }
+  }
+
+  // Making the car stop moving
+  stop() {
+    this._velocity = Vector3.ZERO;
+    this.acceleration = Vector3.ZERO;
+    this.atPos = true; // Ensure the car does not continue to animate
+  }
+
+  // To increment the number of collision for a player
+  incrementCollision() {
+    this.collisionCount = (this.collisionCount || 0) + 1;
   }
 
   // resets car state

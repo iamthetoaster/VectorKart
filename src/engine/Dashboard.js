@@ -11,17 +11,17 @@ class Dashboard {
     this.announcer.textContent = 'Ready, Set, GO!!!';
 
     for (let index = 0; index < cars.length; index++) {
-      const carDash = Dashboard.makeElement('div', 'car-dash',
-        `player-${index + 1}-dash`);
+      const carDash = Dashboard.makeElement('div', 'car-dash', `player-${index + 1}-dash`);
 
       const title = Dashboard.makeElement('h2', 'car-dash-title');
       title.textContent = `Player ${index + 1}`;
       carDash.append(title);
 
-      Dashboard.addField(carDash, 'lap');
-      Dashboard.addField(carDash, 'speed');
-      Dashboard.addField(carDash, 'angle');
-      Dashboard.addField(carDash, 'max-speed');
+      Dashboard.addField(carDash, 'lap', `lap-${index + 1}`);
+      Dashboard.addField(carDash, 'speed', `speed-${index + 1}`);
+      Dashboard.addField(carDash, 'angle', `angle-${index + 1}`);
+      Dashboard.addField(carDash, 'max-speed', `max-speed-${index + 1}`);
+      Dashboard.addField(carDash, 'collisions', `collision-${index + 1}`);
 
       this.carDashes.push(carDash);
     }
@@ -41,16 +41,18 @@ class Dashboard {
       const car = this.cars[index];
 
       const dash = {
-        lap: carDash.querySelector('.lap'),
-        speed: carDash.querySelector('.speed'),
-        angle: carDash.querySelector('.angle'),
-        maxSpeed: carDash.querySelector('.max-speed'),
+        lap: carDash.querySelector(`.lap`),
+        speed: carDash.querySelector(`.speed`),
+        angle: carDash.querySelector(`.angle`),
+        maxSpeed: carDash.querySelector(`.max-speed`),
+        collisions: carDash.querySelector(`.collisions`)
       };
 
       dash.lap.textContent = `Lap ${car.lap || 1}/${LAP_TOTAL}`;
       dash.speed.textContent = `Speed: ${car.getSpeed().toFixed(2)} m/s`;
       dash.angle.textContent = `Angle: ${car.getRotationDeg().toFixed(0)} deg`;
       dash.maxSpeed.textContent = `Max Speed: ${car.maxSpeed.toFixed(2)} m/s`;
+      dash.collisions.textContent = `Collisions: ${car.collisionCount}`;
     }
 
     if (this.winner > 0) {
@@ -72,7 +74,8 @@ class Dashboard {
 
   static addField(dash, className, id) {
     const field = Dashboard.makeElement('p', className, id);
-    dash.append(field);
+    field.className = className; // Ensure the class is correctly set
+    dash.appendChild(field);
 
     return field;
   }
