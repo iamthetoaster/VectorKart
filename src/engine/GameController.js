@@ -66,6 +66,11 @@ export default class GameController {
     for (const car of this.cars) {
       car.reset();
     }
+    this.cars.forEach(car => {
+      car.lap = 0;  // Reset laps
+      car.maxSpeed = 0;  // Reset max speed
+      car.collisionCount = 0;  // Ensure this property exists and reset collision count
+    });
     this.cars.forEach(car => car.reset());
     this.finishLineCrossed = [false, false];
     this.raceStarted = false;
@@ -78,6 +83,8 @@ export default class GameController {
     canvas.removeEventListener('click', this.boundHandleCanvasClick);
     canvas.addEventListener('click', this.boundHandleCanvasClick);
     this.turn = 0;
+
+    this.dashboard.update();  // Call update to refresh the dashboard display
   };
 
   frameUpdate = (time) => {
@@ -147,6 +154,7 @@ export default class GameController {
               car.incrementCollision();
               console.log(`Collision detected for player ${this.turn + 1}. Total: ${car.collisionCount}`);
               car.stop(); // Use the stop method to halt the car immediately
+              this.dashboard.update();  // Update the dashboard to reflect changes
               if (car.collisionCount >= 3) {
                 this.gameOver = true;
                 const winningPlayerIndex = (this.turn + 1) % this.players;  // This is currently giving you the next player, not the other player

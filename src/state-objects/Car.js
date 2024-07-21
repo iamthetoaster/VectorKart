@@ -82,9 +82,9 @@ export default class Car extends GameObject3D {
     this.atPos = true; // Ensure the car does not continue to animate
   }
 
-  // Increment the collision counter
+  // To increment the number of collision for a player
   incrementCollision() {
-    this.collisionCount++;
+    this.collisionCount = (this.collisionCount || 0) + 1;
   }
 
   // resets car state
