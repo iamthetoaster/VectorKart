@@ -1,21 +1,34 @@
+const LAP_TOTAL = 3;
+
 class Dashboard {
   constructor(parentNode, cars) {
     this.parent = parentNode;
     this.cars = cars;
     this.carDashes = [];
+    this.winner = 0;
+
+    this.announcer = Dashboard.makeElement('h1', undefined, 'announcer');
+    this.announcer.textContent = 'Ready, Set, GO!!!';
 
     for (let index = 0; index < cars.length; index++) {
-      const carDash = Dashboard.makeElement('div', 'car-dash',
-        `player-${index + 1}-dashboard`);
-      Dashboard.addField(carDash, 'speed');
-      Dashboard.addField(carDash, 'angle');
-      Dashboard.addField(carDash, 'max-speed');
+      const carDash = Dashboard.makeElement('div', 'car-dash', `player-${index + 1}-dash`);
+
+      const title = Dashboard.makeElement('h2', 'car-dash-title');
+      title.textContent = `Player ${index + 1}`;
+      carDash.append(title);
+
+      Dashboard.addField(carDash, 'lap', `lap-${index + 1}`);
+      Dashboard.addField(carDash, 'speed', `speed-${index + 1}`);
+      Dashboard.addField(carDash, 'angle', `angle-${index + 1}`);
+      Dashboard.addField(carDash, 'max-speed', `max-speed-${index + 1}`);
+      Dashboard.addField(carDash, 'collisions', `collision-${index + 1}`);
 
       this.carDashes.push(carDash);
     }
   }
 
   attach() {
+    this.parent.append(this.announcer);
     for (const carDash of this.carDashes) {
       this.parent.append(carDash);
     }
@@ -24,15 +37,26 @@ class Dashboard {
 
   update() {
     for (let index = 0; index < this.carDashes.length; index++) {
-      const statistics = {
-        speed: this.carDashes[index].querySelector('.speed'),
-        angle: this.carDashes[index].querySelector('.angle'),
-        maxSpeed: this.carDashes[index].querySelector('.max-speed'),
+      const carDash = this.carDashes[index];
+      const car = this.cars[index];
+
+      const dash = {
+        lap: carDash.querySelector(`.lap`),
+        speed: carDash.querySelector(`.speed`),
+        angle: carDash.querySelector(`.angle`),
+        maxSpeed: carDash.querySelector(`.max-speed`),
+        collisions: carDash.querySelector(`.collisions`)
       };
 
-      statistics.speed.textContent = `Speed: ${this.cars[index].getSpeed()} m/s`;
-      statistics.angle.textContent = `Angle: ${this.cars[index].rotation} deg`;
-      statistics.maxSpeed.textContent = `Max Speed: ${this.cars[index].maxSpeed} m/s`;
+      dash.lap.textContent = `Lap ${car.lap || 1}/${LAP_TOTAL}`;
+      dash.speed.textContent = `Speed: ${car.getSpeed().toFixed(2)} m/s`;
+      dash.angle.textContent = `Angle: ${car.getRotationDeg().toFixed(0)} deg`;
+      dash.maxSpeed.textContent = `Max Speed: ${car.maxSpeed.toFixed(2)} m/s`;
+      dash.collisions.textContent = `Collisions: ${car.collisionCount}`;
+    }
+
+    if (this.winner > 0) {
+      this.announcer.textContent = `Player ${this.winner} wins!`;
     }
   }
 
@@ -50,7 +74,8 @@ class Dashboard {
 
   static addField(dash, className, id) {
     const field = Dashboard.makeElement('p', className, id);
-    dash.append(field);
+    field.className = className; // Ensure the class is correctly set
+    dash.appendChild(field);
 
     return field;
   }
