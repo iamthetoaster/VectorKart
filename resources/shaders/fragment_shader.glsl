@@ -6,6 +6,7 @@
 
     // we need to declare an output for the fragment shader
     in vec4 v_Normal;
+    in vec3 u_Eye;
     vec4 v_VertPos;
     uniform vec3 u_lightPosition;
     uniform vec3 u_lightRGB;
