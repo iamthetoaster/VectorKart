@@ -1,6 +1,5 @@
 import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
-import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
 import Arrow from '../state-objects/Arrow.js';
 import MapObject from '../state-objects/MapObject.js';
@@ -22,48 +21,43 @@ export default class GameController {
     this.dynamicMinX = 100; // Initial minX value before the race starts
     this.dynamicMaxX = 120; // Initial maxX value before the race starts
 
-    // Initialize the core components of the game
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
-    this.renderEngine.init().then(() => this.start());
-
-    // Bind event handlers
-    this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
   }
 
   start() {
-    this.vectorRace = new VectorRace(this); // Manages the state of the game
+    this.renderEngine.init().then(() => {
+      // instantiate map
+      this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
 
-    // instantiate map
-    this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
+      // instantiate car for each player
+      for (let index = 0; index < this.players; index++) {
+        this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
+      }
 
-    // instantiate car for each player
-    for (let index = 0; index < this.players; index++) {
-      this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
-    }
+      this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
 
-    this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
 
-    this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
 
-    this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
+      this.dashboard.attach();
 
-    this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
-    this.dashboard.attach();
+      // Setup to prevent adding multiple listeners to the same canvas
+      const canvas = document.querySelector('#c');
+      if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
+        canvas.addEventListener('mousemove', (event) => {
+          this.mousePos = new Vector3(...this.renderEngine.worldPosition(event.offsetX, event.offsetY));
+        });
+        canvas.addEventListener('click', this.handleCanvasClick);
+        canvas.dataset.listenerAdded = 'true';
+      }
 
-    // Setup to prevent adding multiple listeners to the same canvas
-    const canvas = document.querySelector('#c');
-    if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
-      canvas.addEventListener('mousemove', (event) => {
-        this.mousePos = new Vector3(...this.renderEngine.worldPosition(event.offsetX, event.offsetY));
-      });
-      canvas.addEventListener('click', this.boundHandleCanvasClick);
-      canvas.dataset.listenerAdded = 'true';
-    }
-
-    // reset button callback
-    const resetButton = document.querySelector('#reset-button');
-    resetButton.addEventListener('click', this.resetGame);
+      // reset button callback
+      const resetButton = document.querySelector('#reset-button');
+      resetButton.addEventListener('click', this.resetGame);
+    });
   }
 
   resetGame = () => {
@@ -84,8 +78,11 @@ export default class GameController {
     document.querySelector('#winMessage').textContent = '';
 
     const canvas = document.querySelector('#c');
-    canvas.removeEventListener('click', this.boundHandleCanvasClick);
-    canvas.addEventListener('click', this.boundHandleCanvasClick);
+    canvas.removeEventListener('click', this.handleCanvasClick);
+    canvas.addEventListener('click', this.handleCanvasClick);
+    const resetButton = document.querySelector('#reset-button');
+    resetButton.removeEventListener('click', this.resetGame);
+    resetButton.addEventListener('click', this.resetGame);
     this.turn = 0;
 
     this.dashboard.update(); // Call update to refresh the dashboard display
@@ -120,7 +117,7 @@ export default class GameController {
     }
   };
 
-  handleCanvasClick(event) {
+  handleCanvasClick = (event) => {
     if (this.gameOver) return;
 
     // Handle clicks on the canvas to move the car
@@ -151,8 +148,6 @@ export default class GameController {
       const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
       const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
 
-      const collisionRadius = 4;
-
       // Check if the car is within the map bounds and for collisions
       if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
         if (mapCollides(this.map.map, carMapPosY, carMapPosX, 4)) {
@@ -163,14 +158,13 @@ export default class GameController {
           this.dashboard.warnOffTrack(this.turn);
           if (car.collisionCount >= 3) {
             this.gameOver = true;
-            const winningPlayerIndex = (this.turn + 1) % this.players; // This is currently giving you the next player, not the other player
             const losingPlayerIndex = this.turn + 1; // Adjust to correctly reference losing player
 
             // Correct calculation for the other player (if two players, the other index is simply 1 - this.turn)
-            const correctWinningPlayerIndex = 1 - this.turn; // Adjusts for a two-player game to find the other player
+            const winningPlayerIndex = 1 - this.turn; // Adjusts for a two-player game to find the other player
 
             const winMessage = document.querySelector('#winMessage');
-            winMessage.innerText = `Player ${losingPlayerIndex} loses the game due to too many off-tracks. Player ${correctWinningPlayerIndex + 1} wins!`;
+            winMessage.textContent = `Player ${losingPlayerIndex} loses the game due to too many off-tracks. Player ${winningPlayerIndex + 1} wins!`;
             winMessage.style.display = 'block';
             return; // Stop further processing
           }
@@ -182,14 +176,13 @@ export default class GameController {
         console.log('Car is out of map bounds.');
         if (car.collisionCount >= 3) {
           this.gameOver = true;
-          const winningPlayerIndex = (this.turn + 1) % this.players; // This is currently giving you the next player, not the other player
           const losingPlayerIndex = this.turn + 1; // Adjust to correctly reference losing player
 
           // Correct calculation for the other player (if two players, the other index is simply 1 - this.turn)
-          const correctWinningPlayerIndex = 1 - this.turn; // Adjusts for a two-player game to find the other player
+          const winningPlayerIndex = 1 - this.turn; // Adjusts for a two-player game to find the other player
 
           const winMessage = document.querySelector('#winMessage');
-          winMessage.innerText = `Player ${losingPlayerIndex} loses the game due to too many collisions. Player ${correctWinningPlayerIndex + 1} wins!`;
+          winMessage.textContent = `Player ${losingPlayerIndex} loses the game due to too many collisions. Player ${winningPlayerIndex + 1} wins!`;
           winMessage.style.display = 'block';
           return; // Stop further processing
         }
@@ -210,10 +203,10 @@ export default class GameController {
           const winnerIndex = this.turn; // The current player wins because they crossed the finish line during the race.
           const loserIndex = 1 - this.turn; // Calculate the other player's index for a two-player game.
           const winMessage = document.querySelector('#winMessage');
-          winMessage.innerText = `Player ${winnerIndex + 1} has won the race! Player ${loserIndex + 1} loses.`;
+          winMessage.textContent = `Player ${winnerIndex + 1} has won the race! Player ${loserIndex + 1} loses.`;
           winMessage.style.display = 'block';
           const canvas = document.querySelector('#c');
-          canvas.removeEventListener('click', this.boundHandleCanvasClick);
+          canvas.removeEventListener('click', this.handleCanvasClick);
         }
       }
       this.turn = (this.turn + 1) % this.players;
