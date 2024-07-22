@@ -2,7 +2,6 @@ import Car from "./Car-Just-Vectors.js";
 import Vector3 from '../src/state-objects/Vector3.js'
 import assert from 'node:assert/strict'
 
-
 //check velocity
 function checkVelocity(car, expected, turn){
     try {
