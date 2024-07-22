@@ -17,7 +17,7 @@ export default class GameController {
     this.mapHeight = 200;
     this.finishLineCrossed = [false, false]; // Track initial crossing for both players
     this.raceStarted = false; // To check if both players have crossed the finish line initially
-    
+
     // Dynamic boundaries for the finish line
     this.dynamicMinX = 100; // Initial minX value before the race starts
     this.dynamicMaxX = 120; // Initial maxX value before the race starts
@@ -160,19 +160,20 @@ export default class GameController {
               //console.log(`Collision detected for player ${this.turn + 1}. Total: ${car.collisionCount}`);
               car.stop(); // Use the stop method to halt the car immediately
               this.dashboard.update();  // Update the dashboard to reflect changes
+              this.dashboard.warnOffTrack(this.turn);
               if (car.collisionCount >= 3) {
                 this.gameOver = true;
                 const winningPlayerIndex = (this.turn + 1) % this.players;  // This is currently giving you the next player, not the other player
                 const losingPlayerIndex = this.turn + 1;  // Adjust to correctly reference losing player
-                
+
                 // Correct calculation for the other player (if two players, the other index is simply 1 - this.turn)
                 const correctWinningPlayerIndex = 1 - this.turn;  // Adjusts for a two-player game to find the other player
-            
+
                 const winMessage = document.querySelector('#winMessage');
-                winMessage.innerText = `Player ${losingPlayerIndex} loses the game due to too many collisions. Player ${correctWinningPlayerIndex + 1} wins!`;
+                winMessage.innerText = `Player ${losingPlayerIndex} loses the game due to too many off-tracks. Player ${correctWinningPlayerIndex + 1} wins!`;
                 winMessage.style.display = 'block';
                 return;  // Stop further processing
-              }                        
+              }
           }
         } else {
           car.incrementCollision();
