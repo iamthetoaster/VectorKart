@@ -193,7 +193,7 @@ export default class GameController {
             return;  // Stop further processing
           }          
         }
-        if (this.isInFinishLine(car.position)) {
+        if (this.isCrossingFinishLine(car.position, car.nextPos)) {
             console.log(`Player ${this.turn + 1} in finish line bounds.`);
             if (!this.finishLineCrossed[this.turn]) {
                 this.finishLineCrossed[this.turn] = true;
@@ -219,7 +219,7 @@ export default class GameController {
     }
   }
 
-  isInFinishLine(pos, nextPos) {
+  isCrossingFinishLine(pos, nextPos) {
     pos = pos.add(new Vector3(367, 0, 367));
     nextPos = nextPos.add(new Vector3(367, 0, 367));
 
