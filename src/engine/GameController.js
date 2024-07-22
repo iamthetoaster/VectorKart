@@ -193,7 +193,7 @@ export default class GameController {
             return;  // Stop further processing
           }          
         }
-        if (this.isInFinishLine(car.position)) {
+        if (this.isCrossingFinishLine(car.position, car.nextPos)) {
             console.log(`Player ${this.turn + 1} in finish line bounds.`);
             if (!this.finishLineCrossed[this.turn]) {
                 this.finishLineCrossed[this.turn] = true;
@@ -219,14 +219,16 @@ export default class GameController {
     }
   }
 
-  isInFinishLine(position) {
-    const inXBounds = position.x >= this.dynamicMinX && position.x <= this.dynamicMaxX;
-    const inZBounds = position.z >= -305 && position.z <= -130; // Adjust Z bounds as needed
+  isCrossingFinishLine(pos, nextPos) {
+    pos = pos.add(new Vector3(367, 0, 367));
+    nextPos = nextPos.add(new Vector3(367, 0, 367));
 
-    console.log(`Checking finish line: Position X=${position.x}, Z=${position.z}`);
-    console.log(`In X bounds: ${inXBounds}, In Z bounds: ${inZBounds}`);
+    if (pos.x > 375 && nextPos.x <= 375) {
+      if (nextPos.z > 20 && nextPos.z < 197) {
+        return true;
+      }
+    }
 
-    return inXBounds && inZBounds;
+    return false;
   }
-
 }
