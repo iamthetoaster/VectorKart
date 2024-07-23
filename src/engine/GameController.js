@@ -212,7 +212,7 @@ export default class GameController {
       }
       this.turn = (this.turn + 1) % this.players;
     }
-  }
+  };
 
   isCrossingFinishLine(pos, nextPos) {
     const x = nextPos.x - pos.x;

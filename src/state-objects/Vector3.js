@@ -35,7 +35,7 @@ export default class Vector3 {
   }
 
   static get UP() {
-    return new Vector3.DOWN.scalar_mult(-1);
+    return Vector3.DOWN.scalar_mult(-1);
   }
 
   static get BACK() {
@@ -43,7 +43,7 @@ export default class Vector3 {
   }
 
   static get FORWARD() {
-    return new Vector3.BACK.scalar_mult(-1);
+    return Vector3.BACK.scalar_mult(-1);
   }
 
   getMagnitude() {

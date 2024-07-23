@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "description": "A turn-based game based on [Racetrack](https://en.wikipedia.org/wiki/Racetrack_(game)) and made with WebGL.",
-  "main": "/src/main.js",
+  "main": "src/main.js",
   "engines": {
     "npm": "10.7.x",
     "node": "20.15.x"
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint src/**/*.js tests/*.test.js",
     "lint-fix": "eslint --fix src/**/*.js tests/*.test.js",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "repository": {
     "type": "git",
