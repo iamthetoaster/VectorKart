@@ -16,7 +16,7 @@ canvas {
 #reset-button {
   height: 50px;
   width: 150px;
-  margin-top: 30px;
+  margin-top: -50px;
   justify-self: center;
   grid-row: 4;
   grid-column: 4;
