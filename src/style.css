@@ -18,7 +18,7 @@ canvas {
   width: 150px;
   margin-top: 30px;
   justify-self: center;
-  grid-row: 3;
+  grid-row: 4;
   grid-column: 4;
   font-size: 20px;
 }
@@ -32,6 +32,36 @@ canvas {
   background-color: white;
   border-radius: 10px;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+#instructions {
+  grid-row: 2 / auto;
+  grid-column: 4 / span 2;
+  display: flex;
+  margin: 10px;
+  height: fit-content;
+  background-color: white;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.instruction-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.instruction-img {
+  grid-row: 3;
+  /* grid-column: 4  / span 2; */
+  display: flex;
+  margin: 10px;
+  height: 200px;
+  width: 300px;
+  background-color: white;
+  border-radius: 5px;
+  align-self: center;
 }
 
 .car-dash-title {

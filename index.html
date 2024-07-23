@@ -1,15 +1,17 @@
 <!doctype html>
 <html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>VectorKart</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/src/style.css">
-    </head>
-    <body>
-        <!--[if lt IE 8]>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>VectorKart</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+  <!--[if lt IE 8]>
             <p class="browserupgrade">
             You are using an <strong>outdated</strong> browser. Please
             <a href="http://browsehappy.com/">upgrade your browser</a> to improve
@@ -17,23 +19,36 @@
             </p>
         <![endif]-->
 
-        <!-- WebGL Canvas -->
-        <canvas id="c" width=750 height=750></canvas>
-        <button id="reset-button">Reset</button>
-        <!-- input id="testButton" type="button" value="Click me" -->
+  <!-- WebGL Canvas -->
+  <canvas id="c" width=750 height=750></canvas>
+  <button id="reset-button">Reset</button>
+  <!-- input id="testButton" type="button" value="Click me" -->
 
-        <!-- Player Statistics Dashboard -->
-        <div id="dashboard"></div>
+  <!-- Player Statistics Dashboard -->
+  <div id="dashboard"></div>
+  <div id="instructions">
+    <p class="instruction-title">How To Play VectorKART</p>
+    <p class="instruction-text">This is a turn based game.
+    You can only move your car during your turn.
+    Each turn you are able to create a small acceleration vector (by clicking) in order to slightly modify your
+    velocity.
+    Try not to crash into the wall.
+    Whoever makes it around the map first or with the least wall crashes wins!</p>
+    <img class="instruction-img" src="./cars.png">
 
-        <div id="winMessage"></div>
+  </div>
 
-        <!-- Container for the Map -->
-        <!--div id="mapContainer"></div-->
 
-        <!-- Map Script -->
-        <!--script src="/src/map.js"></script-->
+  <div id="winMessage"></div>
 
-        <!-- Main Script for Car and Game Logic -->
-        <script type="module" src="/src/main.js"></script>
-    </body>
+  <!-- Container for the Map -->
+  <!--div id="mapContainer"></div-->
+
+  <!-- Map Script -->
+  <!--script src="/src/map.js"></script-->
+
+  <!-- Main Script for Car and Game Logic -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>
