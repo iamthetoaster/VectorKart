@@ -122,6 +122,7 @@ export default class GameController {
 
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.offsetX, event.offsetY);
+    console.log(mouseWorldPosition);
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -214,12 +215,14 @@ export default class GameController {
   }
 
   isCrossingFinishLine(pos, nextPos) {
-    pos = pos.add(new Vector3(367, 0, 367));
-    nextPos = nextPos.add(new Vector3(367, 0, 367));
+    const x = nextPos.x - pos.x;
+    const z = nextPos.z - pos.z;
 
-    if (pos.x > 375 && nextPos.x <= 375 && nextPos.z > 20 && nextPos.z < 197) {
+    const slope = z / x;
+    const zIntersect = (slope * (Math.abs(pos.x) - 2)) + pos.z;
+
+    if (zIntersect > -355 && zIntersect < -167)
       return true;
-    }
 
     return false;
   }
