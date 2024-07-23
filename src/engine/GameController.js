@@ -2,6 +2,7 @@ import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
 import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
+import light from '../state-objects/light.js';
 import Arrow from '../state-objects/Arrow.js';
 import MapObject from '../state-objects/MapObject.js';
 import Vector3 from '../state-objects/Vector3.js';
