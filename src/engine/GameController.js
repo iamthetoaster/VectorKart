@@ -1,6 +1,5 @@
 import RenderEngine from './RenderEngine.js';
 import Dashboard from './Dashboard.js';
-import VectorRace from '../state-objects/VectorRace.js';
 import Car from '../state-objects/Car.js';
 import Arrow from '../state-objects/Arrow.js';
 import MapObject from '../state-objects/MapObject.js';
@@ -9,83 +8,87 @@ import { mapCollides } from '../mapCollision.js';
 
 export default class GameController {
   constructor() {
-    this.players = 1;
+    this.players = 2;
     this.turn = 0;
     this.cars = [];
 
     this.mapWidth = 200;
     this.mapHeight = 200;
+    this.finishLineCrossed = [false, false]; // Track initial crossing for both players
+    this.raceStarted = false; // To check if both players have crossed the finish line initially
 
-    // Initialize the core components of the game
+    // Dynamic boundaries for the finish line
+    this.dynamicMinX = 100; // Initial minX value before the race starts
+    this.dynamicMaxX = 120; // Initial maxX value before the race starts
+
     this.renderEngine = new RenderEngine(this); // Handles the rendering of objects
     this.renderEngine.update(this.frameUpdate); // Link frame updates to the rendering engine
-    this.renderEngine.init().then(() => this.start());
-
-    // Bind event handlers
-    this.boundHandleCanvasClick = this.handleCanvasClick.bind(this);
   }
 
   start() {
-    this.vectorRace = new VectorRace(this); // Manages the state of the game
+    this.renderEngine.init().then(() => {
+      // instantiate map
+      this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
 
-    // instantiate map
-    this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
+      // instantiate car for each player
+      for (let index = 0; index < this.players; index++) {
+        this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
+      }
 
-    // instantiate car for each player
-    for (let index = 0; index < this.players; index++) {
-      this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
-    }
+      this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
 
-    this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
 
-    this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
 
-    this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
+      this.dashboard.attach();
 
-    this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
-    this.dashboard.attach();
+      // Setup to prevent adding multiple listeners to the same canvas
+      const canvas = document.querySelector('#c');
+      if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
+        canvas.addEventListener('mousemove', (event) => {
+          this.mousePos = new Vector3(...this.renderEngine.worldPosition(event.offsetX, event.offsetY));
+        });
+        canvas.addEventListener('click', this.handleCanvasClick);
+        canvas.dataset.listenerAdded = 'true';
+      }
 
-    // Setup to prevent adding multiple listeners to the same canvas
-    const canvas = document.querySelector('#c');
-    if (!Object.hasOwn(canvas.dataset, 'listenerAdded')) {
-      canvas.addEventListener('mousemove', (event) => {
-        this.mousePos = new Vector3(...this.renderEngine.worldPosition(event.offsetX, event.offsetY));
-      });
-      canvas.addEventListener('click', this.boundHandleCanvasClick);
-      canvas.dataset.listenerAdded = 'true';
-    }
-
-    // reset button callback
-    const resetButton = document.querySelector('#reset-button');
-    resetButton.addEventListener('click', this.resetGame);
+      // reset button callback
+      const resetButton = document.querySelector('#reset-button');
+      resetButton.addEventListener('click', this.resetGame);
+    });
   }
 
   resetGame = () => {
     for (const car of this.cars) {
       car.reset();
     }
+    for (const car of this.cars) {
+      car.lap = 0; // Reset laps
+      car.maxSpeed = 0; // Reset max speed
+      car.collisionCount = 0; // Ensure this property exists and reset collision count
+    }
+    for (const car of this.cars) car.reset();
+    this.finishLineCrossed = [false, false];
+    this.raceStarted = false;
     this.gameOver = false;
 
     document.querySelector('#winMessage').style.display = 'none'; // Hide the win message on reset
     document.querySelector('#winMessage').textContent = '';
 
     const canvas = document.querySelector('#c');
-    canvas.removeEventListener('click', this.boundHandleCanvasClick);
-    canvas.addEventListener('click', this.boundHandleCanvasClick);
+    canvas.removeEventListener('click', this.handleCanvasClick);
+    canvas.addEventListener('click', this.handleCanvasClick);
+    const resetButton = document.querySelector('#reset-button');
+    resetButton.removeEventListener('click', this.resetGame);
+    resetButton.addEventListener('click', this.resetGame);
     this.turn = 0;
+
+    this.dashboard.update(); // Call update to refresh the dashboard display
   };
 
   frameUpdate = (time) => {
-    // Update the state of the game each frame
-
-    // **saving this code for the mems :(
-    // const car = this.cars[this.turn];
-    // if (car && this.rotating) {
-    //   const rotationAngle = degToRad(10 * time % 360);
-    //   car.rotation = rotationAngle;
-    // }
-
-    // Update time variables for smooth animations
     if (!this.pt) this.pt = time;
     this.dt = time - this.pt;
     this.pt = time;
@@ -114,14 +117,12 @@ export default class GameController {
     }
   };
 
-  handleCanvasClick(event) {
-    // Exit if the game is over
+  handleCanvasClick = (event) => {
     if (this.gameOver) return;
 
     // Handle clicks on the canvas to move the car
     const mouseWorldPosition = this.renderEngine.worldPosition(event.offsetX, event.offsetY);
-    // console.log("world mouse(x, y): " + mouseWorldPosition);
-
+    console.log(mouseWorldPosition);
 
     // Get the current car based on turn
     const car = this.cars[this.turn];
@@ -132,6 +133,9 @@ export default class GameController {
 
       // set targetPos to the location of the user click
       const targetPos = new Vector3(mouseWorldPosition[0], mouseWorldPosition[1], mouseWorldPosition[2]);
+
+      // Log the car's current position.
+      console.log(`Car position: X=${car.position.x}, Y=${car.position.y}, Z=${car.position.z}`);
 
       // apply acceleration to car
       const attemptedAcceleration = targetPos.subtract(previousPosition).getMagnitude();
@@ -145,55 +149,83 @@ export default class GameController {
       const carMapPosX = (car.nextPos.x + 367) / this.map.scale.x;
       const carMapPosY = (car.nextPos.z + 367) / this.map.scale.z;
 
-      const collisionRadius = 4;
-
-      // make sure car is in map
+      // Check if the car is within the map bounds and for collisions
       if (carMapPosX >= 0 && carMapPosX < this.map.width && carMapPosY >= 0 && carMapPosY < this.map.height) {
-        if (mapCollides(this.map.map, carMapPosY, carMapPosX, collisionRadius)) { // check for car-map collisions with radius
-          console.log('collision');
+        if (mapCollides(this.map.map, carMapPosY, carMapPosX, 4)) {
+          car.incrementCollision();
+          // console.log(`Collision detected for player ${this.turn + 1}. Total: ${car.collisionCount}`);
+          car.stop(); // Use the stop method to halt the car immediately
+          this.dashboard.update(); // Update the dashboard to reflect changes
+          this.dashboard.warnOffTrack(this.turn);
+          if (car.collisionCount >= 3) {
+            this.gameOver = true;
+            const losingPlayerIndex = this.turn + 1; // Adjust to correctly reference losing player
+
+            // Correct calculation for the other player (if two players, the other index is simply 1 - this.turn)
+            const winningPlayerIndex = 1 - this.turn; // Adjusts for a two-player game to find the other player
+
+            const winMessage = document.querySelector('#winMessage');
+            winMessage.textContent = `Player ${losingPlayerIndex} loses the game due to too many off-tracks. Player ${winningPlayerIndex + 1} wins!`;
+            winMessage.style.display = 'block';
+            return; // Stop further processing
+          }
         }
       } else {
-        console.log('car out of map');
-      }
+        car.incrementCollision();
+        car.stop(); // Use the stop method to halt the car immediately
+        this.dashboard.update(); // Update the dashboard to reflect changes
+        console.log('Car is out of map bounds.');
+        if (car.collisionCount >= 3) {
+          this.gameOver = true;
+          const losingPlayerIndex = this.turn + 1; // Adjust to correctly reference losing player
 
-      // Log the car's new position for debugging
-      // console.log(`Car position: (${car.position.x}, ${car.position.y}, ${car.position.z})`);
+          // Correct calculation for the other player (if two players, the other index is simply 1 - this.turn)
+          const winningPlayerIndex = 1 - this.turn; // Adjusts for a two-player game to find the other player
 
-      // Now pass previousPosition and newPos to check if the car has crossed the finish line
-      // this.checkFinishLine(previousPosition, car.position);
-      // if (this.checkFinishLine(previousPosition, car.nextPos)) {
-      //   this.gameOver = true;
-      //   document.querySelector('#winMessage').innerText = "Car correctly crossed the finish line! Game Over.";
-      //   const canvas = document.querySelector('#c');
-      //   canvas.removeEventListener('click', this.boundHandleCanvasClick);
-      // }
-
-      // Move to the next turn, cycling back to the first car if necessary
-      this.turn = (this.turn + 1) % this.players;
-    }
-  }
-
-  checkFinishLine(previousPosition, currentPosition) {
-    const finishLineTiles = [
-      { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }, { x: 7, y: 0 }, { x: 8, y: 0 }, { x: 9, y: 0 },
-      { x: 9, y: 0 }, { x: 10, y: 0 }, { x: 11, y: 0 }, { x: 12, y: 0 }, { x: 13, y: 0 }, { x: 14, y: 0 }, { x: 15, y: 0 }, { x: 16, y: 0 }, { x: 17, y: 0 }, { x: 18, y: 0 },
-      { x: 19, y: 0 }, { x: 20, y: 0 }, { x: 21, y: 0 }, { x: 22, y: 0 }, { x: 23, y: 0 }, { x: 24, y: 0 }, { x: 25, y: 0 }, { x: 26, y: 0 }, { x: 27, y: 0 },
-    ];
-    const movementVector = currentPosition.subtract(previousPosition).normalize();
-    const forwardDirection = Vector3.LEFT;
-    for (const tile of finishLineTiles) {
-      if (this.isLineCrossFinishTile(previousPosition, currentPosition, tile.x, tile.y)) {
-        const dotProduct = movementVector.dot(forwardDirection);
-        if (dotProduct > 0) { // Correct direction
-          return true;
+          const winMessage = document.querySelector('#winMessage');
+          winMessage.textContent = `Player ${losingPlayerIndex} loses the game due to too many collisions. Player ${winningPlayerIndex + 1} wins!`;
+          winMessage.style.display = 'block';
+          return; // Stop further processing
         }
       }
+      if (this.isCrossingFinishLine(car.position, car.nextPos)) {
+        console.log(`Player ${this.turn + 1} in finish line bounds.`);
+        if (!this.finishLineCrossed[this.turn]) {
+          this.finishLineCrossed[this.turn] = true;
+          // console.log(`Player ${this.turn + 1} crossed the finish line initially.`);
+          if (this.finishLineCrossed.every(Boolean)) {
+            this.raceStarted = true;
+            this.dynamicMinX = 70; // Change minX for the active race phase
+            this.dynamicMaxX = 200; // Change maxX to a new limit for the race phase
+            console.log('Race has officially started!');
+          }
+        } else if (this.raceStarted) {
+          this.gameOver = true;
+          const winnerIndex = this.turn; // The current player wins because they crossed the finish line during the race.
+          const loserIndex = 1 - this.turn; // Calculate the other player's index for a two-player game.
+          const winMessage = document.querySelector('#winMessage');
+          winMessage.textContent = `Player ${winnerIndex + 1} has won the race! Player ${loserIndex + 1} loses.`;
+          winMessage.style.display = 'block';
+          const canvas = document.querySelector('#c');
+          canvas.removeEventListener('click', this.handleCanvasClick);
+        }
+      }
+      this.turn = (this.turn + 1) % this.players;
     }
-    return false;
-  }
+  };
 
-  isLineCrossFinishTile(previousPosition, currentPosition, tileX, tileY) {
-    return (previousPosition.x <= tileX && currentPosition.x >= tileX) ||
-      (previousPosition.x >= tileX && currentPosition.x <= tileX);
+  isCrossingFinishLine(pos, nextPos) {
+    const x = nextPos.x - pos.x;
+    const z = nextPos.z - pos.z;
+
+    const finishX = 2;
+
+    const slope = z / x;
+    const zIntersect = (slope * (pos.x - finishX)) + pos.z;
+
+    if (zIntersect > -355 && zIntersect < -167 && pos.x > finishX && nextPos.x <= finishX)
+      return true;
+ 
+    return false;
   }
 }

@@ -6,17 +6,20 @@ export default class MapObject extends GameObject3D {
   constructor(renderEngine, name, width, height) {
     const map = new Map(width, height);
     switch (name) {
-      case 'Circle': // more magic numbers around here
+      case 'Circle': { // more magic numbers around here
         map.Circle(45, 95, width / 2, height / 2);
         break;
+      }
 
-      case 'Diamond':
+      case 'Diamond': {
         map.Diamond(25, 40, width / 2, height / 2);
         break;
+      }
 
-      case 'Bean':
+      case 'Bean': {
         map.Bean(25, 40, width / 2, height / 2);
         break;
+      }
     }
 
     // instantiate prefab

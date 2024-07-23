@@ -186,19 +186,18 @@ export function Map(x, y) {
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
+        const centerDistributionX = x - xCenter;
+        const centerDistributionY = y - yCenter;
+        const centerDistribution = Math.hypot((centerDistributionX), (centerDistributionY));
 
-        const centerDistX = x - xCenter;
-        const centerDistY = y - yCenter;
-        const centerDist = Math.sqrt((centerDistX*centerDistX)+(centerDistY*centerDistY));
-
-        if (centerDist <= innerRadius) {
+        if (centerDistribution <= innerRadius) {
           this.map[x][y] = 0;
-        } else if (centerDist >= outerRadius) {
+        } else if (centerDistribution >= outerRadius) {
           this.map[x][y] = 0;
         } else {
           this.map[x][y] = 1;
         }
-      } 
+      }
     }
   };
 

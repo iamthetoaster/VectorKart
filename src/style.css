@@ -1,27 +1,67 @@
 body {
-    background-color: teal;
-    font-family: 'Courier New', Courier, monospace; /* Ensures fixed-width font */
-    /* font-size: 20px; */
+  display: grid;
+  grid-template: repeat(3, 250px) / repeat(5, 250px);
+  background-color: teal;
+  font-family: 'Courier New', Courier, monospace; /* Ensures fixed-width font */
+  /* font-size: 20px; */
 }
 
 
 canvas {
-    background-color: white;
+  background-color: white;
+  grid-row: 1 / 3;
+  grid-column: 1 / 4;
+}
+
+#reset-button {
+  height: 50px;
+  width: 150px;
+  margin-top: -50px;
+  justify-self: center;
+  grid-row: 4;
+  grid-column: 4;
+  font-size: 20px;
 }
 
 #dashboard {
-  display: grid;
-  grid-template: auto / repeat(6, 1fr);
-  width: fit-content;
+  grid-row: 1 / auto;
+  grid-column: 4 / span 2;
+  display: flex;
   margin: 10px;
+  height: fit-content;
   background-color: white;
   border-radius: 10px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-#announcer {
-  text-align: center;
-  grid-column: 1 / -1;
+#instructions {
+  grid-row: 2 / auto;
+  grid-column: 4 / span 2;
+  display: flex;
+  margin: 10px;
+  height: fit-content;
+  background-color: white;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.instruction-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.instruction-img {
+  grid-row: 3;
+  /* grid-column: 4  / span 2; */
+  display: flex;
+  margin: 10px;
+  height: 200px;
+  width: 300px;
+  background-color: white;
+  border-radius: 5px;
+  align-self: center;
 }
 
 .car-dash-title {
@@ -33,20 +73,31 @@ canvas {
 }
 
 .car-dash {
+  flex-grow: 1;
   margin: 10px;
   grid-column: auto / span 3;
   grid-row: 2;
 }
 
+.warning {
+  color: red;
+}
+
 #winMessage {
-  position: absolute;
-  right: 100px;   /* Adjust based on your layout */
-  top: 50%;      /* Center vertically, adjust as needed */
-  transform: translateY(-50%);
+  height: fit-content;
+  width: fit-content;
+  justify-self: center;
+  align-self: center;
+  grid-row: 2;
+  grid-column: 1 / 4;
   background-color: white; /* Ensure visibility */
   padding: 10px;
   border: 2px solid red; /* Make it visible */
   z-index: 1000; /* Make sure it's above other elements */
   display: none; /* Hide the message box initially */
+}
+
+.hidden {
+  display: none;
 }
 
