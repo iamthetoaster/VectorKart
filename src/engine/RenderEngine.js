@@ -27,7 +27,7 @@ export default class RenderEngine {
     }
 
     // LOADING PREFABS
-    const prefabs = await fetch('/src/prefabs.json')
+    const prefabs = await fetch('./src/prefabs.json')
       .then((response) => response.json());
 
     for (const prefab of prefabs) {
@@ -61,7 +61,7 @@ export default class RenderEngine {
     if (typeof obj === 'string' || obj instanceof String) {
       obj = (prefab.obj in this.objs) ?
         this.objs[prefab.obj] : // if this has already been fetched, go with that
-        await fetch(`/resources/${prefab.obj}`) // Otherwise, fetch it,
+        await fetch(`./resources/${prefab.obj}`) // Otherwise, fetch it,
           .then((response) => response.text())
           .then((text) => {
             const obj = parseObjText(text); // Parse it,
@@ -76,7 +76,7 @@ export default class RenderEngine {
 
     vertexShader = (prefab.vertexShader in this.vertexShaders) ?
       this.vertexShaders[prefab.vertexShader] : // if already fetched, use that
-      await fetch(`/resources/${prefab.vertexShader}`) // otherwise fetch it,
+      await fetch(`./resources/${prefab.vertexShader}`) // otherwise fetch it,
         .then((response) => response.text())
         .then((source) => {
           const shader = createShader(gl, gl.VERTEX_SHADER, source); // compile it
@@ -86,7 +86,7 @@ export default class RenderEngine {
 
     fragmentShader = (prefab.fragmentShader in this.fragmentShaders) ?
       this.fragmentShaders[prefab.fragmentShader] : // same as above
-      await fetch(`/resources/${prefab.fragmentShader}`)
+      await fetch(`./resources/${prefab.fragmentShader}`)
         .then((response) => response.text())
         .then((source) => {
           const shader = createShader(gl, gl.FRAGMENT_SHADER, source);
