@@ -10,7 +10,7 @@ class Dashboard {
       const carDash = Dashboard.makeElement('div', 'car-dash', `player-${index + 1}-dash`);
 
       const warning = Dashboard.addField(carDash, 'warning hidden');
-      warning.textContent = 'Off-track!'
+      warning.textContent = 'Off-track!';
 
       const title = Dashboard.makeElement('h2', 'car-dash-title');
       title.textContent = `Player ${index + 1}`;
