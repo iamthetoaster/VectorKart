@@ -34,7 +34,8 @@ export default class GameController {
 
   start() {
     this.vectorRace = new VectorRace(this); // Manages the state of the game
-
+    //get light
+    this.light = new light(this.RenderEngine);
     // instantiate map
     this.map = new MapObject(this.renderEngine, 'Circle', this.mapWidth, this.mapHeight);
 
