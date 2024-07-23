@@ -61,7 +61,7 @@ export default class RenderEngine {
     if (typeof obj === 'string' || obj instanceof String) {
       obj = (prefab.obj in this.objs) ?
         this.objs[prefab.obj] : // if this has already been fetched, go with that
-        await fetch(`/resources/${prefab.obj}`) // Otherwise, fetch it,
+        await fetch(`./resources/${prefab.obj}`) // Otherwise, fetch it,
           .then((response) => response.text())
           .then((text) => {
             const obj = parseObjText(text); // Parse it,
