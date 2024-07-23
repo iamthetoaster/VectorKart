@@ -33,7 +33,7 @@ export default [
     }
   },
   {
-    files: ["src/engine/*", "src/state-objects/*"],
+    files: ["src/engine/*", "src/state-objects/*", "tests"],
     rules: {
       "unicorn/filename-case": ["error", {"case": "pascalCase"}],
     }

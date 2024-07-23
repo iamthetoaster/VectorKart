@@ -211,7 +211,7 @@ export default class GameController {
       }
       this.turn = (this.turn + 1) % this.players;
     }
-  }
+  };
 
   isCrossingFinishLine(pos, nextPos) {
     pos = pos.add(new Vector3(367, 0, 367));
