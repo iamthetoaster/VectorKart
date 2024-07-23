@@ -218,12 +218,14 @@ export default class GameController {
     const x = nextPos.x - pos.x;
     const z = nextPos.z - pos.z;
 
+    const finishX = 2;
+
     const slope = z / x;
-    const zIntersect = (slope * (Math.abs(pos.x) - 2)) + pos.z;
+    const zIntersect = (slope * (pos.x - finishX)) + pos.z;
 
-    if (zIntersect > -355 && zIntersect < -167)
+    if (zIntersect > -355 && zIntersect < -167 && pos.x > finishX && nextPos.x <= finishX)
       return true;
-
+ 
     return false;
   }
 }
