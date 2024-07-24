@@ -22,5 +22,29 @@
     "obj": "models/arrow.obj",
     "vertexShader": "shaders/vertex_shader.glsl",
     "fragmentShader": "shaders/fragment_shader.glsl"
+  },
+  {
+    "name": "arrowR",
+    "obj": "models/arrow.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/red_frag_shader.glsl"
+  },
+  {
+    "name": "arrowB",
+    "obj": "models/arrow.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/blue_frag_shader.glsl"
+  },
+  {
+    "name": "arrowG",
+    "obj": "models/arrow.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/green_frag_shader.glsl"
+  },
+  {
+    "name": "nothing",
+    "obj": "models/race.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/black_frag_shader.glsl"
   }
 ]

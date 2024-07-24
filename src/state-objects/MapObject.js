@@ -25,7 +25,7 @@ export default class MapObject extends GameObject3D {
     // instantiate prefab
     const prefab = name + '-map';
     const vertexShader = 'shaders/vertex_shader.glsl';
-    const fragShader = 'shaders/fragment_shader.glsl';
+    const fragShader = 'shaders/black_frag_shader.glsl';
     renderEngine.addPrefab(prefab, map.map, vertexShader, fragShader);
     const renderObject = renderEngine.instantiateRenderObject(prefab); // create renderObject
 

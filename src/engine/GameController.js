@@ -35,11 +35,11 @@ export default class GameController {
         this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject(`car${index+1}`)));
       }
 
-      this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrowR'));
 
-      this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.newVelocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrowG'));
 
-      this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));
+      this.accelerationArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrowB'));
 
       this.dashboard = new Dashboard(document.querySelector('#dashboard'), this.cars);
       this.dashboard.attach();
