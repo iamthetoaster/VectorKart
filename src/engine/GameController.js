@@ -32,7 +32,7 @@ export default class GameController {
 
       // instantiate car for each player
       for (let index = 0; index < this.players; index++) {
-        this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject('car')));
+        this.cars.push(new Car(new Vector3(100, 0, (index * 50) - 305), this.renderEngine.instantiateRenderObject(`car${index+1}`)));
       }
 
       this.velocityArrow = new Arrow(this.renderEngine.instantiateRenderObject('arrow'));

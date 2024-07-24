@@ -6,6 +6,18 @@
     "fragmentShader": "shaders/fragment_shader.glsl"
   },
   {
+    "name": "car1",
+    "obj": "models/race.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/blue_frag_shader.glsl"
+  },
+  {
+    "name": "car2",
+    "obj": "models/race.obj",
+    "vertexShader": "shaders/vertex_shader.glsl",
+    "fragmentShader": "shaders/red_frag_shader.glsl"
+  },
+  {
     "name": "arrow",
     "obj": "models/arrow.obj",
     "vertexShader": "shaders/vertex_shader.glsl",
