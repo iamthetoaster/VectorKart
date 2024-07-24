@@ -9,6 +9,6 @@
     out vec4 outColor;
 
     void main() {
-      // Just set the output to a constant blue
-      outColor = vec4((normalize(v_normal.xyz) + vec3(0, -0.75, 1)), 1);
+      // Just set the output to a constant green
+      outColor = vec4((normalize(v_normal.xyz) + vec3(1, 1, 1)) * 0.5, 1);
     }
